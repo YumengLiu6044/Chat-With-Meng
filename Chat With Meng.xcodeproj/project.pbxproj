@@ -11,6 +11,8 @@
 		E23554762C405632008C71DE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554752C405632008C71DE /* ContentView.swift */; };
 		E23554782C405634008C71DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E23554772C405634008C71DE /* Assets.xcassets */; };
 		E235547B2C405634008C71DE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E235547A2C405634008C71DE /* Preview Assets.xcassets */; };
+		E23554842C405648008C71DE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554832C405648008C71DE /* LoginView.swift */; };
+		E23554862C40C1F5008C71DE /* PasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554852C40C1F5008C71DE /* PasswordView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +21,8 @@
 		E23554752C405632008C71DE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E23554772C405634008C71DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E235547A2C405634008C71DE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		E23554832C405648008C71DE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		E23554852C40C1F5008C71DE /* PasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +55,7 @@
 		E23554722C405632008C71DE /* Chat With Meng */ = {
 			isa = PBXGroup;
 			children = (
+				E23554812C40563A008C71DE /* Views */,
 				E23554732C405632008C71DE /* Chat_With_MengApp.swift */,
 				E23554752C405632008C71DE /* ContentView.swift */,
 				E23554772C405634008C71DE /* Assets.xcassets */,
@@ -65,6 +70,23 @@
 				E235547A2C405634008C71DE /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		E23554812C40563A008C71DE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E23554822C40563E008C71DE /* Login */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E23554822C40563E008C71DE /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				E23554832C405648008C71DE /* LoginView.swift */,
+				E23554852C40C1F5008C71DE /* PasswordView.swift */,
+			);
+			path = Login;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,8 +159,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E23554842C405648008C71DE /* LoginView.swift in Sources */,
 				E23554762C405632008C71DE /* ContentView.swift in Sources */,
 				E23554742C405632008C71DE /* Chat_With_MengApp.swift in Sources */,
+				E23554862C40C1F5008C71DE /* PasswordView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
