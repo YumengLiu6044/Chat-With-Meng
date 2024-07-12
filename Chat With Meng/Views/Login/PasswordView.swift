@@ -8,46 +8,49 @@
 import SwiftUI
 
 struct PasswordView: View {
+    var prompt: String
+    var disableHide: Bool = false
+    var width: CGFloat
+    var height: CGFloat
+    
     @Binding var userPassword: String
     @State var isShowingPassword: Bool = false
     
     var body: some View {
         HStack {
-            if !isShowingPassword {
-                SecureField("Password", text: $userPassword)
-                    .padding()
-                    .background(Color.white)
-                    .clipShape(.rect(cornerRadius: 5))
+            if isShowingPassword {
+                TextField(prompt, text: $userPassword)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .keyboardType(.asciiCapable)
-                                    
+                    .frame(height: height)
             }
             else {
-                TextField("Password", text: $userPassword)
-                    .padding()
-                    .background(Color.white)
-                    .clipShape(.rect(cornerRadius: 5))
+                SecureField(prompt, text: $userPassword)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .keyboardType(.asciiCapable)
+                    .frame(height: height)
             }
-            
             Spacer()
-            Button {
-                isShowingPassword.toggle()
-            } label: {
-                Image(systemName: isShowingPassword ? "eye" : "eye.slash")
-                    .contentTransition(.symbolEffect(.replace))
-                    .foregroundStyle(.black)
-                    
+            if !disableHide{
+                Button {
+                    isShowingPassword.toggle()
+                } label: {
+                    Image(systemName: isShowingPassword ? "eye" : "eye.slash")
+                        .contentTransition(.symbolEffect(.replace))
+                        .foregroundStyle(.black)
+                        .frame(height: height)
+                }
             }
-            .frame(height:5)
         }
+        
     }
 }
 
 #Preview {
-    PasswordView(userPassword: .constant("sample_password"))
-        
+    GeometryReader{ geometry in
+        PasswordView(prompt: "Password", width: geometry.size.width, height: geometry.size.height, userPassword: .constant("sample_password"))
+    }
+    
 }

@@ -13,16 +13,18 @@ enum MenuOptions: String, CaseIterable {
 }
 
 struct LoginView: View {
+    var width: CGFloat
+    var height: CGFloat
     
     @State private var menuOption: MenuOptions  =   .login
     @State private var userEmail: String        =   ""
     @State private var userPassword: String     =   ""
+    @State private var confirmPassword: String  =   ""
     @State private var isLoginSuccess: Bool     =   false
-    @State private var isShowPassword: Bool     =   false
     
     var body: some View {
         NavigationStack{
-            VStack(spacing: 10) {
+            VStack(spacing: height * 0.01) {
                 Picker(selection: $menuOption, label: Text("Login")) {
                     ForEach(MenuOptions.allCases, id: \.self) {
                         option in
@@ -33,36 +35,42 @@ struct LoginView: View {
                 
                 Image(systemName: imageDisplayPredicate(isLoginSuccess: isLoginSuccess, menuOption: menuOption))
                     .padding()
-                    .font(.system(size: 80))
+                    .font(.system(size: width * 0.3))
                     .overlay {
                         Circle()
                             .stroke(lineWidth: 4)
                             .shadow(radius: 3)
-                            .frame(width:150, height: 150)
+                            .frame(width: width * 0.5, height: height * 0.5)
                         
                     }
-                    .frame(width:80, height: 80)
-                    .padding(50.0)
+                    .frame(width: width * 0.3, height: height * 0.3)
                     .contentTransition(.symbolEffect(.replace))
+                    .padding(height * 0.05)
+                    
                 
                 TextField("Email", text: $userEmail)
+                    .frame(height: height * 0.04)
                     .padding()
                     .background(Color.white)
-                    .clipShape(.rect(cornerRadius: 5))
+                    .clipShape(.rect(cornerRadius: width * 0.03))
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .keyboardType(.asciiCapable)
                 
-                PasswordView(userPassword: $userPassword)
+                PasswordView(prompt: "Password", width: width, height: height * 0.04,  userPassword: $userPassword)
+                    .padding()
                     .background(Color.white)
-                    .clipShape(.rect(cornerRadius: 5))
-                    
+                    .clipShape(.rect(cornerRadius: width * 0.03))
                 
-                
+                if menuOption == .create {
+                    PasswordView(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.04, userPassword: $confirmPassword)
+                        .padding()
+                        .background(Color.white)
+                        .clipShape(.rect(cornerRadius: width * 0.03))
+                        
+                }
                 
                 Button {
-                    isLoginSuccess.toggle()
-                    isShowPassword.toggle()
                     
                 } label: {
                     HStack {
@@ -73,7 +81,7 @@ struct LoginView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.roundedRectangle(radius: 5))
+                .buttonBorderShape(.roundedRectangle(radius: width * 0.02))
                 .padding(.top)
                 Spacer()
             }
@@ -93,5 +101,7 @@ struct LoginView: View {
 
 
 #Preview {
-    LoginView()
+    GeometryReader{ geometry in
+        LoginView(width: geometry.size.width, height: geometry.size.height)
+    }
 }
