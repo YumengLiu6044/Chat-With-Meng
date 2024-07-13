@@ -30,6 +30,7 @@ struct LoginView: View {
                     ForEach(MenuOptions.allCases, id: \.self) {
                         option in
                         Text(option.rawValue)
+                            .font(.subheadline)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -41,17 +42,16 @@ struct LoginView: View {
                         Circle()
                             .stroke(lineWidth: 4)
                             .shadow(radius: 3)
-                            .frame(width: width * 0.5, height: height * 0.5)
-                        
+                            .frame(width: width * 0.4, height: height * 0.4)
                     }
                     .frame(width: width * 0.3, height: height * 0.3)
                     
-                    .padding(height * 0.05)
+                    
                     
                 
                 VStack {
                     TextField("Email", text: $userEmail, prompt: Text("Email").foregroundStyle(.gray))
-                        .frame(height: height * 0.04)
+                        .frame(height: height * 0.03)
                         .padding()
                         .background(.ultraThinMaterial)
                         .clipShape(.rect(cornerRadius: width * 0.03))
@@ -59,13 +59,13 @@ struct LoginView: View {
                         .textInputAutocapitalization(.never)
                         .keyboardType(.asciiCapable)
                     
-                    PasswordView(prompt: "Password", width: width, height: height * 0.04,  userPassword: $userPassword)
+                    PasswordView(prompt: "Password", width: width, height: height * 0.03,  userPassword: $userPassword)
                         .padding()
                         .background(.ultraThinMaterial)
                         .clipShape(.rect(cornerRadius: width * 0.03))
                     
                     if menuOption == .create {
-                        PasswordView(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.04, userPassword: $confirmPassword)
+                        PasswordView(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.03, userPassword: $confirmPassword)
                             .padding()
                             .background(.ultraThinMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
@@ -88,16 +88,18 @@ struct LoginView: View {
                     }
                     .padding()
                 }
+                
                 Spacer()
                 Button {
                     
                 } label: {
                     HStack {
                         Spacer()
-                        Text(menuOption.rawValue)
+                        Text(menuOption == .login ? "Login" : "Register Account")
                             .animation(.easeIn, value: menuOption)
                         Spacer()
                     }
+                    .padding()
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.roundedRectangle(radius: width * 0.02))
