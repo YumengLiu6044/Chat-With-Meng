@@ -16,12 +16,12 @@ struct LoginView: View {
     var width: CGFloat
     var height: CGFloat
     
-    @State private var menuOption: MenuOptions  =   .login
-    @State private var userEmail: String        =   ""
-    @State private var userPassword: String     =   ""
-    @State private var confirmPassword: String  =   ""
-    @State private var isLoginSuccess: Bool     =   false
-    @State private var rememberMe = false
+    @State private var menuOption:      MenuOptions =   .login
+    @State private var userEmail:       String      =   ""
+    @State private var userPassword:    String      =   ""
+    @State private var confirmPassword: String      =   ""
+    @State private var isLoginSuccess:  Bool        =   false
+    @State private var rememberMe                   =   false
     
     var body: some View {
         NavigationStack{
