@@ -41,8 +41,8 @@ struct LoginView: View {
                     .overlay {
                         Circle()
                             .stroke(lineWidth: 4)
-                            .shadow(radius: 3)
-                            .frame(width: width * 0.4, height: height * 0.4)
+                            
+                            .frame(width: width * 0.45, height: height * 0.45)
                     }
                     .frame(width: width * 0.3, height: height * 0.3)
                     
@@ -53,22 +53,25 @@ struct LoginView: View {
                     TextField("Email", text: $userEmail, prompt: Text("Email").foregroundStyle(.gray))
                         .frame(height: height * 0.03)
                         .padding()
-                        .background(.ultraThinMaterial)
+                        .background(.ultraThickMaterial)
                         .clipShape(.rect(cornerRadius: width * 0.03))
+                        .shadow(radius: 3)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .keyboardType(.asciiCapable)
                     
                     PasswordView(prompt: "Password", width: width, height: height * 0.03,  userPassword: $userPassword)
                         .padding()
-                        .background(.ultraThinMaterial)
+                        .background(.ultraThickMaterial)
                         .clipShape(.rect(cornerRadius: width * 0.03))
+                        .shadow(radius: 3)
                     
                     if menuOption == .create {
                         PasswordView(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.03, userPassword: $confirmPassword)
                             .padding()
-                            .background(.ultraThinMaterial)
+                            .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
+                            .shadow(radius: 3)
                             
                     }
                 }
@@ -91,18 +94,19 @@ struct LoginView: View {
                 
                 Spacer()
                 Button {
-                    
+                    isLoginSuccess.toggle()
                 } label: {
                     HStack {
                         Spacer()
                         Text(menuOption == .login ? "Login" : "Register Account")
+                            .font(.title2)
                             .animation(.easeIn, value: menuOption)
                         Spacer()
                     }
-                    .padding()
+                    
                 }
                 .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.roundedRectangle(radius: width * 0.02))
+                .buttonBorderShape(.roundedRectangle(radius: width * 0.03))
                 
                 Spacer()
             }
