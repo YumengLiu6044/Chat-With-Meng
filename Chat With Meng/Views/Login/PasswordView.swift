@@ -19,14 +19,14 @@ struct PasswordView: View {
     var body: some View {
         HStack {
             if isShowingPassword {
-                TextField(prompt, text: $userPassword)
+                TextField(prompt, text: $userPassword, prompt: Text(prompt).foregroundStyle(.gray))
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .keyboardType(.asciiCapable)
                     .frame(height: height)
             }
             else {
-                SecureField(prompt, text: $userPassword)
+                SecureField(prompt, text: $userPassword, prompt: Text(prompt).foregroundStyle(.gray))
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .keyboardType(.asciiCapable)
@@ -39,7 +39,7 @@ struct PasswordView: View {
                 } label: {
                     Image(systemName: isShowingPassword ? "eye" : "eye.slash")
                         .contentTransition(.symbolEffect(.replace))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.foreground)
                         .frame(height: height)
                 }
             }
