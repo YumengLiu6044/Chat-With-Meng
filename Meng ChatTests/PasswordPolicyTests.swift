@@ -64,7 +64,66 @@ final class PasswordPolicyTests: XCTestCase {
         
         passwordManager.requireSpecialSymbolFromSet(of: symbolSet)
         
+        XCTAssertFalse(passwordManager.passwordIsValid(for: testPassword))
+    }
+    
+    func testPolicyRequireUpperCasePass() {
+        let testPassword = "diugrwefD"
+        
+        passwordManager.requireUpperCase()
+        
         XCTAssertTrue(passwordManager.passwordIsValid(for: testPassword))
     }
-
+    
+    func testPolicyRequireUpperCaseFail() {
+        let testPassword = "diugrweff"
+        
+        passwordManager.requireUpperCase()
+        
+        XCTAssertFalse(passwordManager.passwordIsValid(for: testPassword))
+    }
+    
+    func testPolicyRequireLowerCasePass() {
+        let testPassword = "diugrwefD"
+        
+        passwordManager.requireLowerCase()
+        
+        XCTAssertTrue(passwordManager.passwordIsValid(for: testPassword))
+    }
+    
+    func testPolicyRequireLowerCaseFail() {
+        let testPassword = "IDON\'THAVEALOWERCASEDLETTER"
+        
+        passwordManager.requireLowerCase()
+        
+        XCTAssertFalse(passwordManager.passwordIsValid(for: testPassword))
+    }
+    
+    func testAllPossiblePoliciesPass() {
+        let testPassword = "Jiuwefd*_3fd8dua"
+        let minimumSize = 10
+        let symbolSet = "~!@#$%^&*()_-+=|\\}]{[:;"
+        
+        passwordManager.requireLowerCase()
+        passwordManager.requireUpperCase()
+        passwordManager.requireMinimumSize(of: minimumSize)
+        passwordManager.requireSpecialSymbolFromSet(of: symbolSet)
+        
+        XCTAssertTrue(passwordManager.passwordIsValid(for: testPassword))
+        
+    }
+    
+    func testAllPossiblePoliciesFail() {
+        let testPassword = "Jiuwefd3fd8dua"
+        let minimumSize = 10
+        let symbolSet = "~!@#$%^&*()_-+=|\\}]{[:;"
+        
+        passwordManager.requireLowerCase()
+        passwordManager.requireUpperCase()
+        passwordManager.requireMinimumSize(of: minimumSize)
+        passwordManager.requireSpecialSymbolFromSet(of: symbolSet)
+        
+        XCTAssertFalse(passwordManager.passwordIsValid(for: testPassword))
+        
+    }
 }

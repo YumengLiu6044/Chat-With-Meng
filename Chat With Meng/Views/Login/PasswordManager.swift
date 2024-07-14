@@ -25,15 +25,40 @@ class PasswordManager: ObservableObject {
         func checkSpecialSymbol(with password: String) -> Bool {
             return password.filter{symbolSet.contains($0)}.count > 0
         }
+        
+        policies.append(
+            PasswordPolicy(
+                message: "at least one character from \(symbolSet)",
+                policy: checkSpecialSymbol
+            )
+        )
     }
     
     
     public func requireUpperCase() {
+        func checkUpperCase(with password: String) -> Bool {
+            return password.filter{$0.isUppercase}.count > 0
+        }
         
+        policies.append(
+            PasswordPolicy(
+                message: "at least one uppercased letter",
+                policy: checkUpperCase
+            )
+        )
     }
     
     public func requireLowerCase() {
+        func checkLowerCase(with password: String) -> Bool {
+            return password.filter{$0.isLowercase}.count > 0
+        }
         
+        policies.append(
+            PasswordPolicy(
+                message: "at least one lowercased letter",
+                policy: checkLowerCase
+            )
+        )
     }
     
     
