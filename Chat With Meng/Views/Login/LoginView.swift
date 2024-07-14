@@ -16,15 +16,22 @@ enum MenuOptions: String, CaseIterable {
 struct LoginView: View {
     var width: CGFloat
     var height: CGFloat
+    @ObservedObject var passwordManager = PasswordManager()
     
     init(width: CGFloat, height: CGFloat) {
         self.width = width
         self.height = height
         
-        FirebaseApp.configure()
+        // FirebaseApp.configure()
+        
+        passwordManager.requireLowerCase()
+        passwordManager.requireUpperCase()
+        passwordManager.requireMinimumSize(of: 10)
+        passwordManager.requireSpecialSymbolFromSet(of: "!@#$%^&*()-_=+\\|[]{};:/?.<>~`\"\'")
+        
     }
     
-    @State private var menuOption:          MenuOptions =   .login
+    @State private var menuOption:          MenuOptions =   .create
     
     @State private var userEmail:           String      =   ""
     @State private var userPassword:        String      =   ""
@@ -48,7 +55,7 @@ struct LoginView: View {
                 
                 Image(systemName: imageDisplayPredicate(isLoginSuccess: isLoginSuccess, menuOption: menuOption))
                     .padding()
-                    .font(.system(size: width * 0.3))
+                    .font(.system(size: width * 0.25))
                     .overlay {
                         Circle()
                             .stroke(lineWidth: 4)
@@ -80,6 +87,18 @@ struct LoginView: View {
                             .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
                             .shadow(radius: 3)
+                        
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text("Password must contain")
+                            ForEach(passwordManager.policies) {
+                                policy in
+                                Text("•\(policy.message)")
+                                
+                            }
+                        }
+                        
+                        .scaledToFit()
+                        .minimumScaleFactor(0.5)
                             
                     }
                 }

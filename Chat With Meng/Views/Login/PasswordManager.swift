@@ -15,9 +15,11 @@ class PasswordManager: ObservableObject {
             return password.count >= size
         }
         
-        policies.append(PasswordPolicy(
-            message: "at least \(size) characters",
-            policy: checkMinimumSize)
+        policies.append(
+            PasswordPolicy(
+                message: "at least \(size) characters",
+                policy: checkMinimumSize
+            )
         )
     }
     
@@ -28,7 +30,7 @@ class PasswordManager: ObservableObject {
         
         policies.append(
             PasswordPolicy(
-                message: "at least one character from \(symbolSet)",
+                message: "at least one special symbol",
                 policy: checkSpecialSymbol
             )
         )

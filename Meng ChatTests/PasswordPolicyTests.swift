@@ -49,7 +49,7 @@ final class PasswordPolicyTests: XCTestCase {
     }
     
     func testPolicyRequireSpecialSymbolPass() {
-        let symbolSet = "!@#$%^&*()-_=+\\|[]{};:/?.>"
+        let symbolSet = "!@#$%^&*()-_=+\\|[]{};:/?.<>"
         let testPassword = "Lym_23902921"
         
         passwordManager.requireSpecialSymbolFromSet(of: symbolSet)
