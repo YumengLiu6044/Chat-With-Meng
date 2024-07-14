@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PasswordView: View {
+struct PasswordField: View {
     var prompt: String
     var disableHide: Bool = false
     var width: CGFloat
@@ -50,7 +50,7 @@ struct PasswordView: View {
 
 #Preview {
     GeometryReader{ geometry in
-        PasswordView(prompt: "Password", width: geometry.size.width, height: geometry.size.height, userPassword: .constant("sample_password"))
+        PasswordField(prompt: "Password", width: geometry.size.width, height: geometry.size.height, userPassword: .constant("sample_password"))
     }
     
 }

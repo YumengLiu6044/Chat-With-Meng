@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 enum MenuOptions: String, CaseIterable {
     case login = "Login"
@@ -16,12 +17,22 @@ struct LoginView: View {
     var width: CGFloat
     var height: CGFloat
     
-    @State private var menuOption:      MenuOptions =   .login
-    @State private var userEmail:       String      =   ""
-    @State private var userPassword:    String      =   ""
-    @State private var confirmPassword: String      =   ""
-    @State private var isLoginSuccess:  Bool        =   false
-    @State private var rememberMe                   =   false
+    init(width: CGFloat, height: CGFloat) {
+        self.width = width
+        self.height = height
+        
+        FirebaseApp.configure()
+    }
+    
+    @State private var menuOption:          MenuOptions =   .login
+    
+    @State private var userEmail:           String      =   ""
+    @State private var userPassword:        String      =   ""
+    @State private var confirmPassword:     String      =   ""
+    
+    @State private var isLoginSuccess:      Bool        =   false
+    @State private var isForgetPassword:    Bool        =   false
+    @State private var rememberMe:          Bool        =   false
     
     var body: some View {
         NavigationStack{
@@ -42,12 +53,9 @@ struct LoginView: View {
                         Circle()
                             .stroke(lineWidth: 4)
                             
-                            .frame(width: width * 0.45, height: height * 0.45)
+                            .frame(width: width * 0.43, height: height * 0.43)
                     }
                     .frame(width: width * 0.3, height: height * 0.3)
-                    
-                    
-                    
                 
                 VStack {
                     TextField("Email", text: $userEmail, prompt: Text("Email").foregroundStyle(.gray))
@@ -60,14 +68,14 @@ struct LoginView: View {
                         .textInputAutocapitalization(.never)
                         .keyboardType(.asciiCapable)
                     
-                    PasswordView(prompt: "Password", width: width, height: height * 0.03,  userPassword: $userPassword)
+                    PasswordField(prompt: "Password", width: width, height: height * 0.03,  userPassword: $userPassword)
                         .padding()
                         .background(.ultraThickMaterial)
                         .clipShape(.rect(cornerRadius: width * 0.03))
                         .shadow(radius: 3)
                     
                     if menuOption == .create {
-                        PasswordView(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.03, userPassword: $confirmPassword)
+                        PasswordField(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.03, userPassword: $confirmPassword)
                             .padding()
                             .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
@@ -79,6 +87,12 @@ struct LoginView: View {
                 
                 if menuOption == .login {
                     HStack {
+                        Button {
+                            isForgetPassword = true
+                        } label: {
+                            Text("Forgot Password")
+                            
+                        }
                         Spacer()
                         Button {
                             rememberMe.toggle()
@@ -87,8 +101,10 @@ struct LoginView: View {
                             Image(systemName: rememberMe ? "checkmark.square" : "square")
                                 
                         }
-                        .foregroundStyle(.foreground)
+                        
                     }
+                    .font(.subheadline)
+                    .foregroundStyle(.foreground)
                     .padding()
                 }
                 
@@ -116,12 +132,24 @@ struct LoginView: View {
             .padding()
             .background(Color(.init(white: 0, alpha: 0.1))
                 .ignoresSafeArea())
+            .sheet(isPresented: $isForgetPassword) {
+                PasswordResetView(isForgetPassword: $isForgetPassword)
+            }
+            
         }
         
     }
     
     private func imageDisplayPredicate(isLoginSuccess: Bool, menuOption: MenuOptions) -> String {
         return menuOption == .login ? (isLoginSuccess ? "lock.open.fill" : "lock.fill" ) : "person.fill"
+    }
+    
+    private func handleLogin() {
+        
+    }
+    
+    private func handleAccountCreation() {
+        
     }
 }
 

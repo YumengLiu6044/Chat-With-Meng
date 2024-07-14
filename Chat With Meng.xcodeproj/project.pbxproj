@@ -12,21 +12,53 @@
 		E23554782C405634008C71DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E23554772C405634008C71DE /* Assets.xcassets */; };
 		E235547B2C405634008C71DE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E235547A2C405634008C71DE /* Preview Assets.xcassets */; };
 		E23554842C405648008C71DE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554832C405648008C71DE /* LoginView.swift */; };
-		E23554862C40C1F5008C71DE /* PasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554852C40C1F5008C71DE /* PasswordView.swift */; };
+		E23554862C40C1F5008C71DE /* PasswordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554852C40C1F5008C71DE /* PasswordField.swift */; };
+		E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB08512C42E9400094740E /* PasswordResetView.swift */; };
+		E2BB08552C42F14D0094740E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E2BB08542C42F14D0094740E /* FirebaseAuth */; };
+		E2BB08572C42F14D0094740E /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E2BB08562C42F14D0094740E /* FirebaseStorage */; };
+		E2BB08592C42F3620094740E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2BB08582C42F3620094740E /* GoogleService-Info.plist */; };
+		E2BB085B2C42F64D0094740E /* PasswordManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB085A2C42F64C0094740E /* PasswordManager.swift */; };
+		E2BB08632C432A970094740E /* Meng_ChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB08622C432A970094740E /* Meng_ChatTests.swift */; };
+		E2BB086A2C432AF70094740E /* PasswordPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB08692C432AF70094740E /* PasswordPolicyTests.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		E2BB08642C432A970094740E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E23554682C405632008C71DE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E235546F2C405632008C71DE;
+			remoteInfo = "Chat With Meng";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		E23554702C405632008C71DE /* Chat With Meng.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chat With Meng.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E23554702C405632008C71DE /* Meng Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Meng Chat.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E23554732C405632008C71DE /* Chat_With_MengApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat_With_MengApp.swift; sourceTree = "<group>"; };
 		E23554752C405632008C71DE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E23554772C405634008C71DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E235547A2C405634008C71DE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E23554832C405648008C71DE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		E23554852C40C1F5008C71DE /* PasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordView.swift; sourceTree = "<group>"; };
+		E23554852C40C1F5008C71DE /* PasswordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordField.swift; sourceTree = "<group>"; };
+		E2BB08512C42E9400094740E /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
+		E2BB08582C42F3620094740E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		E2BB085A2C42F64C0094740E /* PasswordManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordManager.swift; sourceTree = "<group>"; };
+		E2BB08602C432A970094740E /* Meng ChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Meng ChatTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2BB08622C432A970094740E /* Meng_ChatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meng_ChatTests.swift; sourceTree = "<group>"; };
+		E2BB08692C432AF70094740E /* PasswordPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPolicyTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		E235546D2C405632008C71DE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2BB08552C42F14D0094740E /* FirebaseAuth in Frameworks */,
+				E2BB08572C42F14D0094740E /* FirebaseStorage in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2BB085D2C432A970094740E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -40,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				E23554722C405632008C71DE /* Chat With Meng */,
+				E2BB08612C432A970094740E /* Meng ChatTests */,
 				E23554712C405632008C71DE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -47,7 +80,8 @@
 		E23554712C405632008C71DE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E23554702C405632008C71DE /* Chat With Meng.app */,
+				E23554702C405632008C71DE /* Meng Chat.app */,
+				E2BB08602C432A970094740E /* Meng ChatTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -57,6 +91,7 @@
 			children = (
 				E23554812C40563A008C71DE /* Views */,
 				E23554732C405632008C71DE /* Chat_With_MengApp.swift */,
+				E2BB08582C42F3620094740E /* GoogleService-Info.plist */,
 				E23554752C405632008C71DE /* ContentView.swift */,
 				E23554772C405634008C71DE /* Assets.xcassets */,
 				E23554792C405634008C71DE /* Preview Content */,
@@ -84,9 +119,20 @@
 			isa = PBXGroup;
 			children = (
 				E23554832C405648008C71DE /* LoginView.swift */,
-				E23554852C40C1F5008C71DE /* PasswordView.swift */,
+				E23554852C40C1F5008C71DE /* PasswordField.swift */,
+				E2BB08512C42E9400094740E /* PasswordResetView.swift */,
+				E2BB085A2C42F64C0094740E /* PasswordManager.swift */,
 			);
 			path = Login;
+			sourceTree = "<group>";
+		};
+		E2BB08612C432A970094740E /* Meng ChatTests */ = {
+			isa = PBXGroup;
+			children = (
+				E2BB08622C432A970094740E /* Meng_ChatTests.swift */,
+				E2BB08692C432AF70094740E /* PasswordPolicyTests.swift */,
+			);
+			path = "Meng ChatTests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -105,9 +151,31 @@
 			dependencies = (
 			);
 			name = "Chat With Meng";
+			packageProductDependencies = (
+				E2BB08542C42F14D0094740E /* FirebaseAuth */,
+				E2BB08562C42F14D0094740E /* FirebaseStorage */,
+			);
 			productName = "Chat With Meng";
-			productReference = E23554702C405632008C71DE /* Chat With Meng.app */;
+			productReference = E23554702C405632008C71DE /* Meng Chat.app */;
 			productType = "com.apple.product-type.application";
+		};
+		E2BB085F2C432A970094740E /* Meng ChatTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E2BB08662C432A970094740E /* Build configuration list for PBXNativeTarget "Meng ChatTests" */;
+			buildPhases = (
+				E2BB085C2C432A970094740E /* Sources */,
+				E2BB085D2C432A970094740E /* Frameworks */,
+				E2BB085E2C432A970094740E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E2BB08652C432A970094740E /* PBXTargetDependency */,
+			);
+			name = "Meng ChatTests";
+			productName = "Meng ChatTests";
+			productReference = E2BB08602C432A970094740E /* Meng ChatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -122,6 +190,10 @@
 					E235546F2C405632008C71DE = {
 						CreatedOnToolsVersion = 15.4;
 					};
+					E2BB085F2C432A970094740E = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = E235546F2C405632008C71DE;
+					};
 				};
 			};
 			buildConfigurationList = E235546B2C405632008C71DE /* Build configuration list for PBXProject "Chat With Meng" */;
@@ -133,11 +205,15 @@
 				Base,
 			);
 			mainGroup = E23554672C405632008C71DE;
+			packageReferences = (
+				E2BB08532C42F14D0094740E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = E23554712C405632008C71DE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				E235546F2C405632008C71DE /* Chat With Meng */,
+				E2BB085F2C432A970094740E /* Meng ChatTests */,
 			);
 		};
 /* End PBXProject section */
@@ -149,6 +225,14 @@
 			files = (
 				E235547B2C405634008C71DE /* Preview Assets.xcassets in Resources */,
 				E23554782C405634008C71DE /* Assets.xcassets in Resources */,
+				E2BB08592C42F3620094740E /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2BB085E2C432A970094740E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,13 +244,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				E23554842C405648008C71DE /* LoginView.swift in Sources */,
+				E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */,
+				E2BB085B2C42F64D0094740E /* PasswordManager.swift in Sources */,
 				E23554762C405632008C71DE /* ContentView.swift in Sources */,
 				E23554742C405632008C71DE /* Chat_With_MengApp.swift in Sources */,
-				E23554862C40C1F5008C71DE /* PasswordView.swift in Sources */,
+				E23554862C40C1F5008C71DE /* PasswordField.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2BB085C2C432A970094740E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E2BB086A2C432AF70094740E /* PasswordPolicyTests.swift in Sources */,
+				E2BB08632C432A970094740E /* Meng_ChatTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E2BB08652C432A970094740E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E235546F2C405632008C71DE /* Chat With Meng */;
+			targetProxy = E2BB08642C432A970094740E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E235547C2C405634008C71DE /* Debug */ = {
@@ -309,7 +412,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Bob-s-Fun-Room.Chat-With-Meng";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Meng Chat";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -337,10 +440,46 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Bob-s-Fun-Room.Chat-With-Meng";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Meng Chat";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E2BB08672C432A970094740E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7P8Y78RF8D;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Bob-s-Fun-Room.Meng-ChatTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Meng Chat.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Meng Chat";
+			};
+			name = Debug;
+		};
+		E2BB08682C432A970094740E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7P8Y78RF8D;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Bob-s-Fun-Room.Meng-ChatTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Meng Chat.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Meng Chat";
 			};
 			name = Release;
 		};
@@ -365,7 +504,40 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		E2BB08662C432A970094740E /* Build configuration list for PBXNativeTarget "Meng ChatTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E2BB08672C432A970094740E /* Debug */,
+				E2BB08682C432A970094740E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E2BB08532C42F14D0094740E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.29.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E2BB08542C42F14D0094740E /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E2BB08532C42F14D0094740E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		E2BB08562C42F14D0094740E /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E2BB08532C42F14D0094740E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E23554682C405632008C71DE /* Project object */;
 }
