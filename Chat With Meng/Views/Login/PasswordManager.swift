@@ -38,7 +38,10 @@ class PasswordManager: ObservableObject {
     
     
     public func passwordIsValid(for password: String) -> Bool {
-        return policies.map{$0.policy(password)}.filter{$0}.count >= policies.count
+        let passedPolicyCount = policies.map{$0.policy(password)}.filter{$0}.count
+        let totalPolicyCount = policies.count
+        
+        return passedPolicyCount >= totalPolicyCount
     }
 }
 
