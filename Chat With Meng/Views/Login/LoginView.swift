@@ -88,17 +88,21 @@ struct LoginView: View {
                             .clipShape(.rect(cornerRadius: width * 0.03))
                             .shadow(radius: 3)
                         
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text("Password must contain")
-                            ForEach(passwordManager.policies) {
-                                policy in
-                                Text("•\(policy.message)")
-                                
+                        HStack{
+                            
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("Password must contain:")
+                                ForEach(passwordManager.policies) {
+                                    policy in
+                                    Text("•\(policy.message)")
+                                        .font(.caption)
+                                    
+                                }
                             }
+                            
+                            Spacer()
                         }
-                        
-                        .scaledToFit()
-                        .minimumScaleFactor(0.5)
+                        .padding()
                             
                     }
                 }

@@ -114,16 +114,25 @@ final class PasswordPolicyTests: XCTestCase {
     }
     
     func testAllPossiblePoliciesFail() {
-        let testPassword = "Jiuwefd3fd8dua"
+        let testPassword = "kiuwefd3fd8dua"
         let minimumSize = 10
         let symbolSet = "~!@#$%^&*()_-+=|\\}]{[:;"
+        let failedPolicies = [
+            PasswordPolicy(message: "at least one uppercased letter", policy: {(password: String) -> (Bool) in return true}),
+            PasswordPolicy(message: "at least one special symbol", policy: {(password: String) -> (Bool) in return true})
+        ]
         
         passwordManager.requireLowerCase()
         passwordManager.requireUpperCase()
         passwordManager.requireMinimumSize(of: minimumSize)
         passwordManager.requireSpecialSymbolFromSet(of: symbolSet)
         
-        XCTAssertFalse(passwordManager.passwordIsValid(for: testPassword))
+        XCTAssertFalse(
+            passwordManager.passwordIsValid(for: testPassword) &&
+            failedPolicies == passwordManager.policies.filter{$0.passed == false}
+        )
         
     }
+    
+    
 }

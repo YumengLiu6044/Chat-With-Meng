@@ -65,16 +65,21 @@ class PasswordManager: ObservableObject {
     
     
     public func passwordIsValid(for password: String) -> Bool {
-        let passedPolicyCount = policies.map{$0.policy(password)}.filter{$0}.count
-        let totalPolicyCount = policies.count
-        
-        return passedPolicyCount >= totalPolicyCount
+        for i in 0..<policies.count {
+            policies[i].passed = policies[i].policy(password)
+        }
+        return policies.allSatisfy{$0.passed}
     }
 }
 
 
-struct PasswordPolicy: Identifiable {
+struct PasswordPolicy: Identifiable, Equatable {
+    static func == (lhs: PasswordPolicy, rhs: PasswordPolicy) -> Bool {
+        return lhs.message == rhs.message
+    }
+    
     let id = UUID()
     let message: String
     let policy: ((String) -> Bool)
+    var passed: Bool = false
 }
