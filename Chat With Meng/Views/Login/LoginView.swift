@@ -117,6 +117,7 @@ struct LoginView: View {
                             .minimumScaleFactor(0.5)
                             Spacer()
                         }
+                        .padding(.leading)
                         
                             
                     }
@@ -193,6 +194,10 @@ struct LoginView: View {
     
     private func handleAccountCreation() {
         if !passwordManager.passwordIsValid(for: userPassword) {
+            return
+        }
+        
+        if userPassword != confirmPassword {
             return
         }
         
