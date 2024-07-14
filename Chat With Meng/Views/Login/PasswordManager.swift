@@ -17,12 +17,14 @@ class PasswordManager: ObservableObject {
         
         policies.append(PasswordPolicy(
             message: "at least \(size) characters",
-            content: checkMinimumSize)
+            policy: checkMinimumSize)
         )
     }
     
     public func requireSpecialSymbolFromSet(of symbolSet: String) {
-        
+        func checkSpecialSymbol(with password: String) -> Bool {
+            return password.filter{symbolSet.contains($0)}.count > 0
+        }
     }
     
     
@@ -35,13 +37,8 @@ class PasswordManager: ObservableObject {
     }
     
     
-    public func passwordIsValid(of password: String) -> Bool {
-        for policy in self.policies {
-            if !policy.content(password) {
-                return false
-            }
-        }
-        return true
+    public func passwordIsValid(for password: String) -> Bool {
+        return policies.map{$0.policy(password)}.filter{$0}.count >= policies.count
     }
 }
 
@@ -49,5 +46,5 @@ class PasswordManager: ObservableObject {
 struct PasswordPolicy: Identifiable {
     let id = UUID()
     let message: String
-    let content: ((String) -> Bool)
+    let policy: ((String) -> Bool)
 }
