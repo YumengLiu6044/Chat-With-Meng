@@ -14,9 +14,8 @@ enum MenuOptions: String, CaseIterable {
 }
 
 struct LoginView: View {
-    var width: CGFloat
+    var width:  CGFloat
     var height: CGFloat
-    @ObservedObject var passwordManager = PasswordManager()
     
     init(width: CGFloat, height: CGFloat) {
         self.width = width
@@ -31,6 +30,8 @@ struct LoginView: View {
         
     }
     
+    @ObservedObject var passwordManager = PasswordManager()
+    
     @State private var menuOption:          MenuOptions =   .create
     
     @State private var userEmail:           String      =   ""
@@ -39,7 +40,8 @@ struct LoginView: View {
     
     @State private var isLoginSuccess:      Bool        =   false
     @State private var isForgetPassword:    Bool        =   false
-    @State private var rememberMe:          Bool        =   false
+    @State private var isRememberMe:        Bool        =   false
+    @State private var isPasswordEqual:     Bool        =   true
     
     var body: some View {
         NavigationStack{
@@ -52,6 +54,7 @@ struct LoginView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                
                 
                 Image(systemName: imageDisplayPredicate(isLoginSuccess: isLoginSuccess, menuOption: menuOption))
                     .padding()
@@ -74,12 +77,18 @@ struct LoginView: View {
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .keyboardType(.asciiCapable)
+                        .onChange(of: menuOption) {
+                            userEmail = ""
+                        }
                     
                     PasswordField(prompt: "Password", width: width, height: height * 0.03,  userPassword: $userPassword)
                         .padding()
                         .background(.ultraThickMaterial)
                         .clipShape(.rect(cornerRadius: width * 0.03))
                         .shadow(radius: 3)
+                        .onChange(of: menuOption) {
+                            userPassword = ""
+                        }
                     
                     if menuOption == .create {
                         PasswordField(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.03, userPassword: $confirmPassword)
@@ -87,6 +96,9 @@ struct LoginView: View {
                             .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
                             .shadow(radius: 3)
+                            .onChange(of: menuOption) {
+                                confirmPassword = ""
+                            }
                         
                         HStack{
                             
@@ -96,13 +108,16 @@ struct LoginView: View {
                                     policy in
                                     Text("•\(policy.message)")
                                         .font(.caption)
+                                        .foregroundStyle(policy.passed ? Color.primary : .red)
+                                        .animation(.easeInOut, value: policy.passed)
                                     
                                 }
                             }
-                            
+                            .scaledToFit()
+                            .minimumScaleFactor(0.5)
                             Spacer()
                         }
-                        .padding()
+                        
                             
                     }
                 }
@@ -118,10 +133,10 @@ struct LoginView: View {
                         }
                         Spacer()
                         Button {
-                            rememberMe.toggle()
+                            isRememberMe.toggle()
                         } label: {
                             Text("Remember me")
-                            Image(systemName: rememberMe ? "checkmark.square" : "square")
+                            Image(systemName: isRememberMe ? "checkmark.square" : "square")
                                 
                         }
                         
@@ -133,7 +148,12 @@ struct LoginView: View {
                 
                 Spacer()
                 Button {
-                    isLoginSuccess.toggle()
+                    if menuOption == .login {
+                        handleLogin()
+                    }
+                    else {
+                        handleAccountCreation()
+                    }
                 } label: {
                     HStack {
                         Spacer()
@@ -172,6 +192,9 @@ struct LoginView: View {
     }
     
     private func handleAccountCreation() {
+        if !passwordManager.passwordIsValid(for: userPassword) {
+            return
+        }
         
     }
 }
@@ -180,6 +203,6 @@ struct LoginView: View {
 #Preview {
     GeometryReader{ geometry in
         LoginView(width: geometry.size.width, height: geometry.size.height)
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(.light)
     }
 }

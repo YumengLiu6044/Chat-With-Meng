@@ -81,5 +81,5 @@ struct PasswordPolicy: Identifiable, Equatable {
     let id = UUID()
     let message: String
     let policy: ((String) -> Bool)
-    var passed: Bool = false
+    var passed: Bool = true
 }
