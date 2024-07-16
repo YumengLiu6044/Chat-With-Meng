@@ -58,14 +58,14 @@ struct LoginView: View {
                 
                 Image(systemName: imageDisplayPredicate(isLoginSuccess: isLoginSuccess, menuOption: menuOption))
                     .padding()
-                    .font(.system(size: width * 0.25))
+                    .font(.system(size: width * 0.2))
                     .overlay {
                         Circle()
                             .stroke(lineWidth: 4)
                             
-                            .frame(width: width * 0.43, height: height * 0.43)
+                            .frame(width: width * 0.4, height: height * 0.4)
                     }
-                    .frame(width: width * 0.3, height: height * 0.3)
+                    .frame(width: width * 0.25, height: height * 0.25)
                 
                 VStack {
                     TextField("Email", text: $userEmail, prompt: Text("Email").foregroundStyle(.gray))
@@ -117,7 +117,7 @@ struct LoginView: View {
                             .minimumScaleFactor(0.5)
                             Spacer()
                         }
-                        .padding(.leading)
+                        .padding()
                         
                             
                     }
