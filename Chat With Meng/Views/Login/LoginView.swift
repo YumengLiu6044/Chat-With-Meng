@@ -13,6 +13,13 @@ enum MenuOptions: String, CaseIterable {
     case create = "Create Account"
 }
 
+enum LoginMessages: String {
+    case createPasswordInvalid = "Invalid password"
+    case confirmPasswordNotMatch = "Confirm password does not match with password"
+    case loginCredentialsInvalid = "The email or the password provided is incorrect"
+    case accountCreationSuccessful = "Successfully created account"
+}
+
 struct LoginView: View {
     var width:  CGFloat
     var height: CGFloat
@@ -32,6 +39,7 @@ struct LoginView: View {
     
     @ObservedObject var passwordManager = PasswordManager()
     
+    @State private var toast:               Toast?      =   nil
     @State private var menuOption:          MenuOptions =   .create
     
     @State private var userEmail:           String      =   ""
@@ -96,12 +104,11 @@ struct LoginView: View {
                             .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
                             .shadow(radius: 3)
-                            .onChange(of: menuOption) {
+                            .onDisappear() {
                                 confirmPassword = ""
                             }
-                        
+
                         HStack{
-                            
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("Password must contain:")
                                 ForEach(passwordManager.policies) {
@@ -179,6 +186,8 @@ struct LoginView: View {
             .sheet(isPresented: $isForgetPassword) {
                 PasswordResetView(isForgetPassword: $isForgetPassword)
             }
+            .ignoresSafeArea(.keyboard)
+            .toastView(toast: $toast)
             
         }
         
@@ -194,12 +203,16 @@ struct LoginView: View {
     
     private func handleAccountCreation() {
         if !passwordManager.passwordIsValid(for: userPassword) {
+            toast = Toast(style: .error, message: LoginMessages.createPasswordInvalid.rawValue)
             return
         }
         
         if userPassword != confirmPassword {
+            toast = Toast(style: .error, message: LoginMessages.confirmPasswordNotMatch.rawValue)
             return
         }
+        
+        
         
     }
 }
@@ -208,6 +221,6 @@ struct LoginView: View {
 #Preview {
     GeometryReader{ geometry in
         LoginView(width: geometry.size.width, height: geometry.size.height)
-            .preferredColorScheme(.light)
+            .preferredColorScheme(.dark)
     }
 }

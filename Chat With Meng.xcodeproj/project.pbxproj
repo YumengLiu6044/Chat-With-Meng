@@ -13,8 +13,10 @@
 		E235547B2C405634008C71DE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E235547A2C405634008C71DE /* Preview Assets.xcassets */; };
 		E23554842C405648008C71DE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554832C405648008C71DE /* LoginView.swift */; };
 		E23554862C40C1F5008C71DE /* PasswordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554852C40C1F5008C71DE /* PasswordField.swift */; };
-		E25F5F9F2C445C1700CD37E6 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E25F5F9E2C445C1700CD37E6 /* FirebaseAuth */; };
-		E25F5FA12C445C1700CD37E6 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E25F5FA02C445C1700CD37E6 /* FirebaseStorage */; };
+		E23648B02C4C36EA003775B8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E23648AF2C4C36EA003775B8 /* FirebaseAuth */; };
+		E23648B22C4C36EA003775B8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E23648B12C4C36EA003775B8 /* FirebaseStorage */; };
+		E23648B62C4C3B19003775B8 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23648B52C4C3B19003775B8 /* ToastView.swift */; };
+		E23648B82C4C3B53003775B8 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23648B72C4C3B53003775B8 /* ToastModifier.swift */; };
 		E2A9A85A2C43AEF900B6C3CF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A9A8592C43AEF900B6C3CF /* GoogleService-Info.plist */; };
 		E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB08512C42E9400094740E /* PasswordResetView.swift */; };
 		E2BB085B2C42F64D0094740E /* PasswordManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB085A2C42F64C0094740E /* PasswordManager.swift */; };
@@ -40,6 +42,8 @@
 		E235547A2C405634008C71DE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E23554832C405648008C71DE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		E23554852C40C1F5008C71DE /* PasswordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordField.swift; sourceTree = "<group>"; };
+		E23648B52C4C3B19003775B8 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		E23648B72C4C3B53003775B8 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
 		E2A9A8592C43AEF900B6C3CF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2BB08512C42E9400094740E /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
 		E2BB085A2C42F64C0094740E /* PasswordManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordManager.swift; sourceTree = "<group>"; };
@@ -53,8 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E25F5F9F2C445C1700CD37E6 /* FirebaseAuth in Frameworks */,
-				E25F5FA12C445C1700CD37E6 /* FirebaseStorage in Frameworks */,
+				E23648B02C4C36EA003775B8 /* FirebaseAuth in Frameworks */,
+				E23648B22C4C36EA003775B8 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +93,7 @@
 		E23554722C405632008C71DE /* Chat With Meng */ = {
 			isa = PBXGroup;
 			children = (
+				E23648B32C4C3AEA003775B8 /* Components */,
 				E23554812C40563A008C71DE /* Views */,
 				E23554732C405632008C71DE /* Chat_With_MengApp.swift */,
 				E2A9A8592C43AEF900B6C3CF /* GoogleService-Info.plist */,
@@ -126,6 +131,23 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
+		E23648B32C4C3AEA003775B8 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E23648B42C4C3AF6003775B8 /* Toast */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		E23648B42C4C3AF6003775B8 /* Toast */ = {
+			isa = PBXGroup;
+			children = (
+				E23648B52C4C3B19003775B8 /* ToastView.swift */,
+				E23648B72C4C3B53003775B8 /* ToastModifier.swift */,
+			);
+			path = Toast;
+			sourceTree = "<group>";
+		};
 		E2BB08612C432A970094740E /* Meng ChatTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,8 +174,8 @@
 			);
 			name = "Chat With Meng";
 			packageProductDependencies = (
-				E25F5F9E2C445C1700CD37E6 /* FirebaseAuth */,
-				E25F5FA02C445C1700CD37E6 /* FirebaseStorage */,
+				E23648AF2C4C36EA003775B8 /* FirebaseAuth */,
+				E23648B12C4C36EA003775B8 /* FirebaseStorage */,
 			);
 			productName = "Chat With Meng";
 			productReference = E23554702C405632008C71DE /* Meng Chat.app */;
@@ -206,7 +228,7 @@
 			);
 			mainGroup = E23554672C405632008C71DE;
 			packageReferences = (
-				E25F5F9D2C445C1700CD37E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				E23648AE2C4C36EA003775B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = E23554712C405632008C71DE /* Products */;
 			projectDirPath = "";
@@ -243,7 +265,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E23648B82C4C3B53003775B8 /* ToastModifier.swift in Sources */,
 				E23554842C405648008C71DE /* LoginView.swift in Sources */,
+				E23648B62C4C3B19003775B8 /* ToastView.swift in Sources */,
 				E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */,
 				E2BB085B2C42F64D0094740E /* PasswordManager.swift in Sources */,
 				E23554762C405632008C71DE /* ContentView.swift in Sources */,
@@ -516,7 +540,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E25F5F9D2C445C1700CD37E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		E23648AE2C4C36EA003775B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
@@ -527,14 +551,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E25F5F9E2C445C1700CD37E6 /* FirebaseAuth */ = {
+		E23648AF2C4C36EA003775B8 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E25F5F9D2C445C1700CD37E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = E23648AE2C4C36EA003775B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-		E25F5FA02C445C1700CD37E6 /* FirebaseStorage */ = {
+		E23648B12C4C36EA003775B8 /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E25F5F9D2C445C1700CD37E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = E23648AE2C4C36EA003775B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
