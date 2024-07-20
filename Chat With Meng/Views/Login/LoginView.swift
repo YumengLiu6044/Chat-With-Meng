@@ -212,6 +212,7 @@ struct LoginView: View {
             return
         }
         
+        toast = Toast(style: .success, message: LoginMessages.accountCreationSuccessful.rawValue)
         
         
     }
@@ -221,6 +222,6 @@ struct LoginView: View {
 #Preview {
     GeometryReader{ geometry in
         LoginView(width: geometry.size.width, height: geometry.size.height)
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(.light)
     }
 }

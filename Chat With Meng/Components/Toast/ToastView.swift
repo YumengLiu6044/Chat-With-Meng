@@ -64,6 +64,7 @@ struct ToastView: View {
         RoundedRectangle(cornerRadius: 8)
             .stroke(style.themeColor, lineWidth: 1)
             
+            
     }
     .padding(.horizontal, 16)
     
