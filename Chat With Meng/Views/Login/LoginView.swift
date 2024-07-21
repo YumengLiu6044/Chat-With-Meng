@@ -216,13 +216,22 @@ struct LoginView: View {
             return
         }
         
+        if userEmail.isEmpty {
+            toast = Toast(style: .error, message: LoginMessages.createUserError.rawValue)
+            return
+        }
+        
         Auth.auth().createUser(withEmail: userEmail, password: userPassword) { result, err in
             if let err = err {
                 print(err.localizedDescription)
-                toast = Toast(style: .error, message: LoginMessages.createUserError.rawValue)
+                toast = Toast(style: .error, message: err.localizedDescription)
+                return
             }
             
-            toast = Toast(style: .success, message: "\(LoginMessages.accountCreationSuccessful.rawValue) for \(String(describing: result?.user.uid))")
+            if let result = result {
+                toast = Toast(style: .success, message: "\(LoginMessages.accountCreationSuccessful.rawValue) for \(String(describing: result.user.uid))")
+            }
+            
             
         }
         

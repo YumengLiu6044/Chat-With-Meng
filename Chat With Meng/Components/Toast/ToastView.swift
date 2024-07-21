@@ -47,6 +47,8 @@ struct ToastView: View {
         .foregroundColor(style.themeColor)
       Text(message)
         .foregroundColor(.primary)
+        .scaledToFit()
+        .minimumScaleFactor(0.7)
       
       Spacer(minLength: 10)
       
