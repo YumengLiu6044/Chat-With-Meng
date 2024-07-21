@@ -9,9 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        GeometryReader{ geometry in
-            LoginView(width: geometry.size.width, height: geometry.size.height)
-        }
+        LoginView()
+        
     }
 }
 
