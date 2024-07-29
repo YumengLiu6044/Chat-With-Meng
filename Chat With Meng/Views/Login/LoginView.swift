@@ -16,21 +16,18 @@ enum MenuOptions: String, CaseIterable {
 enum LoginMessages: String {
     case createPasswordInvalid = "Invalid password"
     case createUserError = "User creation failed"
+    case createUserSuccessful = "Successfully created account"
     case confirmPasswordNotMatch = "Confirm password does not match with password"
     case loginCredentialsInvalid = "The email or the password provided is incorrect"
-    case accountCreationSuccessful = "Successfully created account"
+    case loginSuccessful = "Successfully logged in"
 }
 
 struct LoginView: View {
     init() {
-        
-        FirebaseApp.configure()
-        
         passwordManager.requireLowerCase()
         passwordManager.requireUpperCase()
         passwordManager.requireMinimumSize(of: 10)
         passwordManager.requireSpecialSymbolFromSet(of: "!@#$%^&*()-_=+\\|[]{};:/?.<>~`\"\'")
-        
     }
     
     @ObservedObject var passwordManager = PasswordManager()
@@ -106,6 +103,7 @@ struct LoginView: View {
                                 .shadow(radius: 3)
                                 .onDisappear() {
                                     confirmPassword = ""
+                                    
                                 }
                             
                             HStack{
@@ -177,6 +175,7 @@ struct LoginView: View {
                     
                     Spacer()
                 }
+                .ignoresSafeArea(.keyboard)
                 .font(.title3)
                 .navigationTitle(menuOption.rawValue)
                 .contentTransition(.symbolEffect(.replace))
@@ -186,7 +185,6 @@ struct LoginView: View {
                 .sheet(isPresented: $isForgetPassword) {
                     PasswordResetView(isForgetPassword: $isForgetPassword)
                 }
-                .ignoresSafeArea(.keyboard)
                 .toastView(toast: $toast)
                 
             }
@@ -202,7 +200,24 @@ struct LoginView: View {
     }
     
     private func handleLogin() {
+        if userEmail.isEmpty || userPassword.isEmpty {
+            toast = Toast(style: .error, message: LoginMessages.loginCredentialsInvalid.rawValue)
+            return
+        }
         
+        FirebaseManager.shared.auth.signIn(withEmail: userEmail, password: userPassword) { result, err in
+            if let err = err {
+                toast = Toast(style: .error, message: err.localizedDescription)
+                return
+            }
+            if let result = result {
+                toast = Toast(style: .success, message: LoginMessages.loginSuccessful.rawValue)
+                print(result.user.uid)
+            }
+            else  {
+                toast = Toast(style: .error, message: LoginMessages.loginCredentialsInvalid.rawValue)
+            }
+        }
     }
     
     private func handleAccountCreation() {
@@ -221,7 +236,7 @@ struct LoginView: View {
             return
         }
         
-        Auth.auth().createUser(withEmail: userEmail, password: userPassword) { result, err in
+        FirebaseManager.shared.auth.createUser(withEmail: userEmail, password: userPassword) { result, err in
             if let err = err {
                 print(err.localizedDescription)
                 toast = Toast(style: .error, message: err.localizedDescription)
@@ -229,7 +244,10 @@ struct LoginView: View {
             }
             
             if let result = result {
-                toast = Toast(style: .success, message: "\(LoginMessages.accountCreationSuccessful.rawValue) for \(String(describing: result.user.uid))")
+                toast = Toast(style: .success, message: LoginMessages.createUserSuccessful.rawValue)
+            }
+            else {
+                toast = Toast(style: .error, message: LoginMessages.createUserError.rawValue)
             }
             
             
