@@ -243,7 +243,7 @@ struct LoginView: View {
                 return
             }
             
-            if let result = result {
+            if let _ = result {
                 toast = Toast(style: .success, message: LoginMessages.createUserSuccessful.rawValue)
             }
             else {

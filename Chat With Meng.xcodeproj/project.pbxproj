@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -53,6 +53,10 @@
 		E2BB08622C432A970094740E /* Meng_ChatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meng_ChatTests.swift; sourceTree = "<group>"; };
 		E2BB08692C432AF70094740E /* PasswordPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPolicyTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E27E1C5A2CB1B838009E2D3E /* Chat */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Chat; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		E235546D2C405632008C71DE /* Frameworks */ = {
@@ -118,6 +122,7 @@
 		E23554812C40563A008C71DE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				E27E1C5A2CB1B838009E2D3E /* Chat */,
 				E23554822C40563E008C71DE /* Login */,
 			);
 			path = Views;
@@ -182,6 +187,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E27E1C5A2CB1B838009E2D3E /* Chat */,
 			);
 			name = "Chat With Meng";
 			packageProductDependencies = (
