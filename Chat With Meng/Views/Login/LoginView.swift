@@ -46,11 +46,14 @@ struct LoginView: View {
     @State private var isForgetPassword:    Bool        =   false
     @State private var isRememberMe:        Bool        =   false
     @State private var isPasswordEqual:     Bool        =   true
+    @State private var showImagePicker:     Bool        =   false
+    
+    @State private var profilePic:          UIImage?    =   nil
     
     var body: some View {
         GeometryReader {geometry in
             NavigationStack{
-                VStack(spacing: height * 0.01) {
+                VStack {
                     Picker(selection: $menuOption, label: Text("Login")) {
                         ForEach(MenuOptions.allCases, id: \.self) {
                             option in
@@ -61,20 +64,54 @@ struct LoginView: View {
                     .pickerStyle(.segmented)
                     
                     
-                    Image(systemName: imageDisplayPredicate(isLoginSuccess: isLoginSuccess, menuOption: menuOption))
-                        .padding()
-                        .font(.system(size: width * 0.2))
-                        .overlay {
-                            Circle()
-                                .stroke(lineWidth: 4)
-                            
-                                .frame(width: width * 0.4, height: height * 0.4)
+                    if menuOption == .login {
+                        Image(systemName: "lock.fill")
+                            .padding()
+                            .font(.system(size: width * 0.2))
+                            .overlay {
+                                Circle()
+                                    .stroke(lineWidth: 4)
+                                
+                                    .frame(width: width * 0.4, height: height * 0.4)
+                            }
+                            .frame(width: width * 0.25, height: height * 0.25)
+                    }
+                    else if menuOption == .create {
+                        Button {
+                            showImagePicker.toggle()
+                        } label: {
+                            if let profilePic = profilePic {
+                                Image(uiImage: profilePic)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: width * 0.4, height: width * 0.4)
+                                    .clipShape(Circle())
+                                    .overlay {
+                                        Circle()
+                                            .stroke(lineWidth: 4)
+                                    }
+                                    .tint(Color.primary)
+                                    .padding()
+                                
+                            } else {
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: width * 0.2))
+                                    .overlay {
+                                        Circle()
+                                            .stroke(lineWidth: 4)
+                                        
+                                            .frame(width: width * 0.4, height: height * 0.4)
+                                    }
+                                    .frame(width: width * 0.25, height: height * 0.25)
+                                    .tint(Color.primary)
+                            }
                         }
-                        .frame(width: width * 0.25, height: height * 0.25)
+                        
+                    }
                     
                     VStack {
                         TextField("Email", text: $userEmail, prompt: Text("Email").foregroundStyle(.gray))
-                            .frame(height: height * 0.03)
+                            .frame(height: height * 0.02)
                             .padding()
                             .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
@@ -86,7 +123,7 @@ struct LoginView: View {
                                 userEmail = ""
                             }
                         
-                        PasswordField(prompt: "Password", width: width, height: height * 0.03,  userPassword: $userPassword)
+                        PasswordField(prompt: "Password", width: width, height: height * 0.02,  userPassword: $userPassword)
                             .padding()
                             .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
@@ -96,7 +133,7 @@ struct LoginView: View {
                             }
                         
                         if menuOption == .create {
-                            PasswordField(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.03, userPassword: $confirmPassword)
+                            PasswordField(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.02, userPassword: $confirmPassword)
                                 .padding()
                                 .background(.ultraThickMaterial)
                                 .clipShape(.rect(cornerRadius: width * 0.03))
@@ -112,10 +149,8 @@ struct LoginView: View {
                                     ForEach(passwordManager.policies) {
                                         policy in
                                         Text("•\(policy.message)")
-                                            .font(.caption)
+                                            .font(.body)
                                             .foregroundStyle(policy.passed ? Color.primary : .red)
-                                            .animation(.easeInOut, value: policy.passed)
-                                        
                                     }
                                 }
                                 .scaledToFit()
@@ -185,6 +220,9 @@ struct LoginView: View {
                 .sheet(isPresented: $isForgetPassword) {
                     PasswordResetView(isForgetPassword: $isForgetPassword)
                 }
+                .fullScreenCover(isPresented: $showImagePicker, onDismiss: nil) {
+                    ImagePicker(image: $profilePic)
+                }
                 .toastView(toast: $toast)
                 
             }
@@ -193,10 +231,6 @@ struct LoginView: View {
                 height = geometry.size.height
             }
         }
-    }
-    
-    private func imageDisplayPredicate(isLoginSuccess: Bool, menuOption: MenuOptions) -> String {
-        return menuOption == .login ? (isLoginSuccess ? "lock.open.fill" : "lock.fill" ) : "person.fill"
     }
     
     private func handleLogin() {

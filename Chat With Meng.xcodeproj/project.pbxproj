@@ -17,6 +17,7 @@
 		E23648B22C4C36EA003775B8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E23648B12C4C36EA003775B8 /* FirebaseStorage */; };
 		E23648B62C4C3B19003775B8 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23648B52C4C3B19003775B8 /* ToastView.swift */; };
 		E23648B82C4C3B53003775B8 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23648B72C4C3B53003775B8 /* ToastModifier.swift */; };
+		E26052922CB459EE00F1CE63 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26052912CB459EE00F1CE63 /* ImagePicker.swift */; };
 		E2B785552C4DF1AF0015BECA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2B785542C4DF1AF0015BECA /* GoogleService-Info.plist */; };
 		E2B785582C4ED9890015BECA /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B785572C4ED9890015BECA /* FirebaseManager.swift */; };
 		E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB08512C42E9400094740E /* PasswordResetView.swift */; };
@@ -45,6 +46,7 @@
 		E23554852C40C1F5008C71DE /* PasswordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordField.swift; sourceTree = "<group>"; };
 		E23648B52C4C3B19003775B8 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		E23648B72C4C3B53003775B8 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
+		E26052912CB459EE00F1CE63 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		E2B785542C4DF1AF0015BECA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2B785572C4ED9890015BECA /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
 		E2BB08512C42E9400094740E /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 		E23648B32C4C3AEA003775B8 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E26052912CB459EE00F1CE63 /* ImagePicker.swift */,
 				E23648B42C4C3AF6003775B8 /* Toast */,
 			);
 			path = Components;
@@ -290,6 +293,7 @@
 				E2B785582C4ED9890015BECA /* FirebaseManager.swift in Sources */,
 				E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */,
 				E2BB085B2C42F64D0094740E /* PasswordManager.swift in Sources */,
+				E26052922CB459EE00F1CE63 /* ImagePicker.swift in Sources */,
 				E23554762C405632008C71DE /* ContentView.swift in Sources */,
 				E23554742C405632008C71DE /* Chat_With_MengApp.swift in Sources */,
 				E23554862C40C1F5008C71DE /* PasswordField.swift in Sources */,
