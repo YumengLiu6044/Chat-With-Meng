@@ -69,6 +69,17 @@ struct PasswordResetView: View {
     }
     
     func sendResetEmail() {
+        
+        guard !email.isEmpty else {
+            toast = Toast(style: .error, message: "The email address is empty")
+            return
+        }
+        
+        guard email.contains("@") else {
+            toast = Toast(style: .error, message: "The email address is badly formatted")
+            return
+        }
+        
         FirebaseManager.shared.auth.sendPasswordReset(withEmail: email) {error in
             if let error = error {
                 toast = Toast(style: .error, message: error.localizedDescription)

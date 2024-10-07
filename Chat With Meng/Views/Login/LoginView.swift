@@ -174,6 +174,9 @@ struct LoginView: View {
                                 .clipShape(.rect(cornerRadius: width * 0.03))
                                 .shadow(radius: 3)
                                 .focused($focus, equals: .password)
+                                .onChange(of: userPassword) {
+                                    let _ = passwordManager.passwordIsValid(for: userPassword)
+                                }
                                 .onDisappear {
                                     focus = nil
                                 }
