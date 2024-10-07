@@ -11,17 +11,14 @@ struct PasswordResetView: View {
     
     @Binding var isForgetPassword:  Bool
     
+    var width:    CGFloat
+    var height:   CGFloat
+    
     @State private var email:       String      =   ""
-    
-    @State private var width:       CGFloat     =   100
-    @State private var height:      CGFloat     =   100
-    
     @State private var toast:       Toast?      =   nil
     
     var body: some View {
-        GeometryReader{
-            geometry in
-            VStack(alignment: .leading, spacing: height * 0.02) {
+        VStack(alignment: .leading, spacing: height * 0.02) {
                 HStack {
                     Text("Forgot Password")
                         .font(.largeTitle)
@@ -34,8 +31,8 @@ struct PasswordResetView: View {
                     }
                 }
                 .padding()
-                
-                Text("Input your email below, if it exists, a reset link will be sent to it")
+            
+                Text("Type your email below, if it exists, a reset link will be sent to it")
                     .font(.body)
                     .fontWeight(.semibold)
                     .padding()
@@ -50,7 +47,7 @@ struct PasswordResetView: View {
                     .keyboardType(.asciiCapable)
                 
                 Button {
-                    toast = Toast(style: .success, message: "Email sent")
+                    sendResetEmail()
                 } label: {
                     HStack {
                         Spacer()
@@ -67,18 +64,24 @@ struct PasswordResetView: View {
                 Spacer()
             }
             .padding()
-            .onAppear {
-                width = geometry.size.width
-                height = geometry.size.height
-            }
             .toastView(toast: $toast)
+        
+    }
+    
+    func sendResetEmail() {
+        FirebaseManager.shared.auth.sendPasswordReset(withEmail: email) {error in
+            if let error = error {
+                toast = Toast(style: .error, message: error.localizedDescription)
+                return
+            }
+            else {
+                toast = Toast(style: .success, message: "Reset email sent")
+            }
+            
         }
-        
-        
-        
     }
 }
 
 #Preview {
-    PasswordResetView(isForgetPassword: .constant(true))
+    PasswordResetView(isForgetPassword: .constant(true), width: 200, height:500)
 }

@@ -240,7 +240,7 @@ struct LoginView: View {
                 .background(Color(.init(white: 0, alpha: 0.1))
                     .ignoresSafeArea())
                 .sheet(isPresented: $isForgetPassword) {
-                    PasswordResetView(isForgetPassword: $isForgetPassword)
+                    PasswordResetView(isForgetPassword: $isForgetPassword, width: width, height: height)
                 }
                 .fullScreenCover(isPresented: $showImagePicker, onDismiss: nil) {
                     ImagePicker(image: $profilePic)
