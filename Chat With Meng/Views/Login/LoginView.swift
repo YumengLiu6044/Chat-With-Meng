@@ -22,6 +22,10 @@ enum LoginMessages: String {
     case loginSuccessful = "Successfully logged in"
 }
 
+enum FocusField: Hashable {
+    case email, password, confirmPassword
+}
+
 struct LoginView: View {
     init() {
         passwordManager.requireLowerCase()
@@ -34,6 +38,8 @@ struct LoginView: View {
     
     @State private var toast:               Toast?      =   nil
     @State private var menuOption:          MenuOptions =   .create
+    @FocusState private var focus:          FocusField?
+    @State private var profilePic:          UIImage?    =   nil
     
     @State private var width:               CGFloat     =   100
     @State private var height:              CGFloat     =   100
@@ -48,8 +54,6 @@ struct LoginView: View {
     @State private var isPasswordEqual:     Bool        =   true
     @State private var showImagePicker:     Bool        =   false
     
-    @State private var profilePic:          UIImage?    =   nil
-    
     var body: some View {
         GeometryReader {geometry in
             NavigationStack{
@@ -61,11 +65,14 @@ struct LoginView: View {
                                 .font(.subheadline)
                         }
                     }
+                    .onChange(of: menuOption, {
+                        userPassword = ""
+                    })
                     .pickerStyle(.segmented)
                     
                     
                     if menuOption == .login {
-                        Image(systemName: "lock.fill")
+                        Image(systemName: isLoginSuccess ? "lock.open.fill" : "lock.fill")
                             .padding()
                             .font(.system(size: width * 0.2))
                             .overlay {
@@ -122,25 +129,65 @@ struct LoginView: View {
                             .onChange(of: menuOption) {
                                 userEmail = ""
                             }
-                        
-                        PasswordField(prompt: "Password", width: width, height: height * 0.02,  userPassword: $userPassword)
-                            .padding()
-                            .background(.ultraThickMaterial)
-                            .clipShape(.rect(cornerRadius: width * 0.03))
-                            .shadow(radius: 3)
-                            .onChange(of: menuOption) {
-                                userPassword = ""
+                            .focused($focus, equals: .email)
+                            .onDisappear {
+                                focus = nil
                             }
                         
+                        if menuOption == .login {
+                            PasswordField(prompt: "Password", width: width, height: height * 0.02,  userPassword: $userPassword)
+                                .padding()
+                                .background(.ultraThickMaterial)
+                                .clipShape(.rect(cornerRadius: width * 0.03))
+                                .shadow(radius: 3)
+                                .focused($focus, equals: .password)
+                                .onDisappear {
+                                    focus = nil
+                                }
+                            
+                            HStack {
+                                Button {
+                                    isForgetPassword = true
+                                } label: {
+                                    Text("Forgot Password")
+                                    
+                                }
+                                Spacer()
+                                Button {
+                                    isRememberMe.toggle()
+                                } label: {
+                                    Text("Remember me")
+                                    Image(systemName: isRememberMe ? "checkmark.square" : "square")
+                                    
+                                }
+                                
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(.foreground)
+                            .padding()
+                                
+                        }
                         if menuOption == .create {
+                            PasswordField(prompt: "Password", width: width, height: height * 0.02,  userPassword: $userPassword)
+                                .padding()
+                                .background(.ultraThickMaterial)
+                                .clipShape(.rect(cornerRadius: width * 0.03))
+                                .shadow(radius: 3)
+                                .focused($focus, equals: .password)
+                                .onDisappear {
+                                    focus = nil
+                                }
+                                
+                            
                             PasswordField(prompt: "Confirm Password", disableHide: true, width: width, height: height * 0.02, userPassword: $confirmPassword)
                                 .padding()
+                                .focused($focus, equals: .confirmPassword)
                                 .background(.ultraThickMaterial)
                                 .clipShape(.rect(cornerRadius: width * 0.03))
                                 .shadow(radius: 3)
                                 .onDisappear() {
                                     confirmPassword = ""
-                                    
+                                    focus = nil
                                 }
                             
                             HStack{
@@ -148,7 +195,7 @@ struct LoginView: View {
                                     Text("Password must contain:")
                                     ForEach(passwordManager.policies) {
                                         policy in
-                                        Text("•\(policy.message)")
+                                        Text("•  \(policy.message)")
                                             .font(.body)
                                             .foregroundStyle(policy.passed ? Color.primary : .red)
                                     }
@@ -159,32 +206,7 @@ struct LoginView: View {
                             }
                             .padding()
                             
-                            
                         }
-                    }
-                    .foregroundStyle(.foreground)
-                    
-                    if menuOption == .login {
-                        HStack {
-                            Button {
-                                isForgetPassword = true
-                            } label: {
-                                Text("Forgot Password")
-                                
-                            }
-                            Spacer()
-                            Button {
-                                isRememberMe.toggle()
-                            } label: {
-                                Text("Remember me")
-                                Image(systemName: isRememberMe ? "checkmark.square" : "square")
-                                
-                            }
-                            
-                        }
-                        .font(.subheadline)
-                        .foregroundStyle(.foreground)
-                        .padding()
                     }
                     
                     Spacer()
@@ -242,14 +264,17 @@ struct LoginView: View {
         FirebaseManager.shared.auth.signIn(withEmail: userEmail, password: userPassword) { result, err in
             if let err = err {
                 toast = Toast(style: .error, message: err.localizedDescription)
+                isLoginSuccess = false
                 return
             }
             if let result = result {
                 toast = Toast(style: .success, message: LoginMessages.loginSuccessful.rawValue)
                 print(result.user.uid)
+                isLoginSuccess = true
             }
             else  {
                 toast = Toast(style: .error, message: LoginMessages.loginCredentialsInvalid.rawValue)
+                isLoginSuccess = false
             }
         }
     }
@@ -259,7 +284,6 @@ struct LoginView: View {
             toast = Toast(style: .error, message: LoginMessages.createPasswordInvalid.rawValue)
             return
         }
-        
         if userPassword != confirmPassword {
             toast = Toast(style: .error, message: LoginMessages.confirmPasswordNotMatch.rawValue)
             return

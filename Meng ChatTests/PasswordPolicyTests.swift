@@ -12,6 +12,10 @@ import SwiftUI
 final class PasswordPolicyTests: XCTestCase {
     var passwordManager: PasswordManager = PasswordManager()
     
+    override func setUp() {
+        passwordManager = PasswordManager()
+    }
+    
     func testNoPolicyPass() {
         let testPassword = "wef"
         
@@ -29,7 +33,7 @@ final class PasswordPolicyTests: XCTestCase {
     }
     
     func testPolicyRequireMinimumSizeFail() {
-        let testPassword = "gwydts5173"
+        let testPassword = "gwydts517"
         let minimumSize = 12
         
         passwordManager.requireMinimumSize(of: minimumSize)
