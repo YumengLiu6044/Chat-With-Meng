@@ -114,6 +114,7 @@ struct LoginView: View {
                             }
                         }
                         
+                        
                     }
                     
                     VStack {
@@ -171,6 +172,7 @@ struct LoginView: View {
                             PasswordField(prompt: "Password", width: width, height: height * 0.02,  userPassword: $userPassword)
                                 .padding()
                                 .background(.ultraThickMaterial)
+                                
                                 .clipShape(.rect(cornerRadius: width * 0.03))
                                 .shadow(radius: 3)
                                 .focused($focus, equals: .password)
@@ -241,7 +243,8 @@ struct LoginView: View {
                 .contentTransition(.symbolEffect(.replace))
                 .padding()
                 .background(Color(.init(white: 0, alpha: 0.1))
-                    .ignoresSafeArea())
+                    .ignoresSafeArea()
+                )
                 .sheet(isPresented: $isForgetPassword) {
                     PasswordResetView(isForgetPassword: $isForgetPassword, width: width, height: height)
                 }
@@ -309,15 +312,46 @@ struct LoginView: View {
             }
             else {
                 toast = Toast(style: .error, message: LoginMessages.createUserError.rawValue)
+                return
             }
-            
-            
         }
         
-        
-        
-        
-        
+        uploadProfilePic()
+        return
+    }
+    
+    private func uploadProfilePic() {
+        print("Uploading profile pic")
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
+        guard let imageData = profilePic?.jpegData(compressionQuality: 0.5) else {return}
+        ref.putData(imageData) {
+            metadata, error in
+            
+            if let error = error {
+                toast = Toast(style: .error, message: error.localizedDescription)
+                print(error.localizedDescription)
+                return
+            }
+            
+            ref.downloadURL {
+                imgURL, err in
+                if let error = err {
+                    toast = Toast(style: .error, message: error.localizedDescription)
+                    print(error.localizedDescription)
+                    return
+                }
+                if let imgURL = imgURL {
+                    print("Added profile pic for \(userEmail) at \(imgURL.absoluteString)")
+                }
+                else {
+                    toast = Toast(style: .error, message: "Unknown error encountered when uploading profile Picture")
+                    print("Unknown error occured")
+                    return
+                }
+                
+            }
+        }
     }
 }
 
