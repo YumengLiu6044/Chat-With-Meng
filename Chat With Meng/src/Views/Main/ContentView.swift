@@ -16,17 +16,15 @@ struct ContentView: View {
         case .login:
             LoginView()
                 .environmentObject(appViewModel)
-                .onAppear {
-                    appViewModel.switchTo(view: .chat, animationLength: 1)
-                }
+                .transition(.asymmetric(insertion: .move(edge: .top), removal: .move(edge: .bottom)))
 
         case .chat:
             ChatView()
-                .transition(.move(edge: .bottom))
-                
-
+                .environmentObject(appViewModel)
+                .transition(.move(edge: .top))
         }
     }
+        
 }
 
 #Preview {

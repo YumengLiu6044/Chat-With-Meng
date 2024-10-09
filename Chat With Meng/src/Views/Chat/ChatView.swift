@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ChatView: View {
     
+    @EnvironmentObject var appViewModel: AppViewModel
+    
     @State private var width:               CGFloat     =   100
     @State private var height:              CGFloat     =   100
     
@@ -23,7 +25,7 @@ struct ChatView: View {
                 }
                 .toolbar {
                     Button {
-                        
+                        appViewModel.switchTo(view: .login)
                     } label: {
                         Image(systemName: "plus")
                             .font(.title2)
@@ -50,4 +52,6 @@ struct ChatView: View {
 
 #Preview {
     ChatView()
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
 }

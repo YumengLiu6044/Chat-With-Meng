@@ -7,20 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E23554742C405632008C71DE /* Chat_With_MengApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554732C405632008C71DE /* Chat_With_MengApp.swift */; };
 		E23554782C405634008C71DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E23554772C405634008C71DE /* Assets.xcassets */; };
 		E235547B2C405634008C71DE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E235547A2C405634008C71DE /* Preview Assets.xcassets */; };
-		E23554842C405648008C71DE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554832C405648008C71DE /* LoginView.swift */; };
-		E23554862C40C1F5008C71DE /* PasswordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554852C40C1F5008C71DE /* PasswordField.swift */; };
-		E23648B02C4C36EA003775B8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E23648AF2C4C36EA003775B8 /* FirebaseAuth */; };
-		E23648B22C4C36EA003775B8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E23648B12C4C36EA003775B8 /* FirebaseStorage */; };
-		E23648B62C4C3B19003775B8 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23648B52C4C3B19003775B8 /* ToastView.swift */; };
-		E23648B82C4C3B53003775B8 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23648B72C4C3B53003775B8 /* ToastModifier.swift */; };
-		E26052922CB459EE00F1CE63 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26052912CB459EE00F1CE63 /* ImagePicker.swift */; };
+		E292F96B2CB7026000B59C96 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E292F96A2CB7026000B59C96 /* FirebaseAuth */; };
+		E292F96D2CB7026000B59C96 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E292F96C2CB7026000B59C96 /* FirebaseFirestore */; };
+		E292F96F2CB7026000B59C96 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E292F96E2CB7026000B59C96 /* FirebaseStorage */; };
 		E2B785552C4DF1AF0015BECA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2B785542C4DF1AF0015BECA /* GoogleService-Info.plist */; };
-		E2B785582C4ED9890015BECA /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B785572C4ED9890015BECA /* FirebaseManager.swift */; };
-		E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB08512C42E9400094740E /* PasswordResetView.swift */; };
-		E2BB085B2C42F64D0094740E /* PasswordManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB085A2C42F64C0094740E /* PasswordManager.swift */; };
 		E2BB08632C432A970094740E /* Meng_ChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB08622C432A970094740E /* Meng_ChatTests.swift */; };
 		E2BB086A2C432AF70094740E /* PasswordPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BB08692C432AF70094740E /* PasswordPolicyTests.swift */; };
 /* End PBXBuildFile section */
@@ -37,45 +29,27 @@
 
 /* Begin PBXFileReference section */
 		E23554702C405632008C71DE /* Meng Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Meng Chat.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E23554732C405632008C71DE /* Chat_With_MengApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat_With_MengApp.swift; sourceTree = "<group>"; };
 		E23554772C405634008C71DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E235547A2C405634008C71DE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		E23554832C405648008C71DE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		E23554852C40C1F5008C71DE /* PasswordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordField.swift; sourceTree = "<group>"; };
-		E23648B52C4C3B19003775B8 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
-		E23648B72C4C3B53003775B8 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
-		E26052912CB459EE00F1CE63 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		E2B785542C4DF1AF0015BECA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		E2B785572C4ED9890015BECA /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
-		E2BB08512C42E9400094740E /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
-		E2BB085A2C42F64C0094740E /* PasswordManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordManager.swift; sourceTree = "<group>"; };
 		E2BB08602C432A970094740E /* Meng ChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Meng ChatTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2BB08622C432A970094740E /* Meng_ChatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meng_ChatTests.swift; sourceTree = "<group>"; };
 		E2BB08692C432AF70094740E /* PasswordPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPolicyTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E2F07E3A2CB61BB50046655A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		E292F9942CB703F700B59C96 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppViewModel.swift,
-			);
-			target = E2BB085F2C432A970094740E /* Meng ChatTests */;
-		};
-		E2F07E3F2CB621820046655A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ErrorView.swift,
+				"Components/View Models/AppViewModel.swift",
+				Views/Error/ErrorView.swift,
 			);
 			target = E2BB085F2C432A970094740E /* Meng ChatTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E27E1C5A2CB1B838009E2D3E /* Chat */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Chat; sourceTree = "<group>"; };
-		E2B5C9262CB625760014A5E9 /* Main */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Main; sourceTree = "<group>"; };
-		E2F07E362CB61B900046655A /* View Models */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E2F07E3A2CB61BB50046655A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "View Models"; sourceTree = "<group>"; };
-		E2F07E3B2CB621740046655A /* Error */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E2F07E3F2CB621820046655A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Error; sourceTree = "<group>"; };
+		E292F9702CB703E800B59C96 /* src */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E292F9942CB703F700B59C96 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = src; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,8 +57,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E23648B02C4C36EA003775B8 /* FirebaseAuth in Frameworks */,
-				E23648B22C4C36EA003775B8 /* FirebaseStorage in Frameworks */,
+				E292F96B2CB7026000B59C96 /* FirebaseAuth in Frameworks */,
+				E292F96D2CB7026000B59C96 /* FirebaseFirestore in Frameworks */,
+				E292F96F2CB7026000B59C96 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,12 +94,8 @@
 		E23554722C405632008C71DE /* Chat With Meng */ = {
 			isa = PBXGroup;
 			children = (
-				E2F07E362CB61B900046655A /* View Models */,
-				E2B785562C4ED97F0015BECA /* Managers */,
+				E292F9702CB703E800B59C96 /* src */,
 				E2B785542C4DF1AF0015BECA /* GoogleService-Info.plist */,
-				E23648B32C4C3AEA003775B8 /* Components */,
-				E23554812C40563A008C71DE /* Views */,
-				E23554732C405632008C71DE /* Chat_With_MengApp.swift */,
 				E23554772C405634008C71DE /* Assets.xcassets */,
 				E23554792C405634008C71DE /* Preview Content */,
 			);
@@ -137,54 +108,6 @@
 				E235547A2C405634008C71DE /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		E23554812C40563A008C71DE /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				E2B5C9262CB625760014A5E9 /* Main */,
-				E2F07E3B2CB621740046655A /* Error */,
-				E27E1C5A2CB1B838009E2D3E /* Chat */,
-				E23554822C40563E008C71DE /* Login */,
-				E23648B42C4C3AF6003775B8 /* Toast */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		E23554822C40563E008C71DE /* Login */ = {
-			isa = PBXGroup;
-			children = (
-				E23554832C405648008C71DE /* LoginView.swift */,
-				E23554852C40C1F5008C71DE /* PasswordField.swift */,
-				E2BB08512C42E9400094740E /* PasswordResetView.swift */,
-				E2BB085A2C42F64C0094740E /* PasswordManager.swift */,
-			);
-			path = Login;
-			sourceTree = "<group>";
-		};
-		E23648B32C4C3AEA003775B8 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				E26052912CB459EE00F1CE63 /* ImagePicker.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		E23648B42C4C3AF6003775B8 /* Toast */ = {
-			isa = PBXGroup;
-			children = (
-				E23648B52C4C3B19003775B8 /* ToastView.swift */,
-				E23648B72C4C3B53003775B8 /* ToastModifier.swift */,
-			);
-			path = Toast;
-			sourceTree = "<group>";
-		};
-		E2B785562C4ED97F0015BECA /* Managers */ = {
-			isa = PBXGroup;
-			children = (
-				E2B785572C4ED9890015BECA /* FirebaseManager.swift */,
-			);
-			path = Managers;
 			sourceTree = "<group>";
 		};
 		E2BB08612C432A970094740E /* Meng ChatTests */ = {
@@ -212,15 +135,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				E27E1C5A2CB1B838009E2D3E /* Chat */,
-				E2B5C9262CB625760014A5E9 /* Main */,
-				E2F07E362CB61B900046655A /* View Models */,
-				E2F07E3B2CB621740046655A /* Error */,
+				E292F9702CB703E800B59C96 /* src */,
 			);
 			name = "Chat With Meng";
 			packageProductDependencies = (
-				E23648AF2C4C36EA003775B8 /* FirebaseAuth */,
-				E23648B12C4C36EA003775B8 /* FirebaseStorage */,
+				E292F96A2CB7026000B59C96 /* FirebaseAuth */,
+				E292F96C2CB7026000B59C96 /* FirebaseFirestore */,
+				E292F96E2CB7026000B59C96 /* FirebaseStorage */,
 			);
 			productName = "Chat With Meng";
 			productReference = E23554702C405632008C71DE /* Meng Chat.app */;
@@ -273,7 +194,7 @@
 			);
 			mainGroup = E23554672C405632008C71DE;
 			packageReferences = (
-				E23648AE2C4C36EA003775B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				E292F9692CB7026000B59C96 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = E23554712C405632008C71DE /* Products */;
 			projectDirPath = "";
@@ -310,15 +231,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E23648B82C4C3B53003775B8 /* ToastModifier.swift in Sources */,
-				E23554842C405648008C71DE /* LoginView.swift in Sources */,
-				E23648B62C4C3B19003775B8 /* ToastView.swift in Sources */,
-				E2B785582C4ED9890015BECA /* FirebaseManager.swift in Sources */,
-				E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */,
-				E2BB085B2C42F64D0094740E /* PasswordManager.swift in Sources */,
-				E26052922CB459EE00F1CE63 /* ImagePicker.swift in Sources */,
-				E23554742C405632008C71DE /* Chat_With_MengApp.swift in Sources */,
-				E23554862C40C1F5008C71DE /* PasswordField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,25 +498,30 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E23648AE2C4C36EA003775B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		E292F9692CB7026000B59C96 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 10.29.0;
+				minimumVersion = 11.3.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E23648AF2C4C36EA003775B8 /* FirebaseAuth */ = {
+		E292F96A2CB7026000B59C96 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E23648AE2C4C36EA003775B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = E292F9692CB7026000B59C96 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-		E23648B12C4C36EA003775B8 /* FirebaseStorage */ = {
+		E292F96C2CB7026000B59C96 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E23648AE2C4C36EA003775B8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = E292F9692CB7026000B59C96 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		E292F96E2CB7026000B59C96 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E292F9692CB7026000B59C96 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
