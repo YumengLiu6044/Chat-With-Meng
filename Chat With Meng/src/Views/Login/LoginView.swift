@@ -37,6 +37,7 @@ struct LoginView: View {
         passwordManager.requireMinimumSize(of: 10)
         passwordManager.requireSpecialSymbolFromSet(
             of: "!@#$%^&*()-_=+\\|[]{};:/?.<>~`\"\'")
+        
     }
 
     @EnvironmentObject private var appViewModel: AppViewModel
@@ -44,9 +45,13 @@ struct LoginView: View {
     @ObservedObject var passwordManager = PasswordManager()
 
     @State private var toast: Toast? = nil
-    @State private var menuOption: MenuOptions = .create
+    @State private var menuOption: MenuOptions = .login
     @FocusState private var focus: FocusField?
     @State private var profilePic: UIImage? = nil
+    
+    @AppStorage("saved_email") private var savedEmail: String = ""
+    @AppStorage("saved_password") private var savedPassword: String = ""
+    @AppStorage("saved_profil_pic_url") private var savedProfilePicURL: String = ""
 
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
@@ -296,6 +301,9 @@ struct LoginView: View {
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height
+                
+                retrieveLoginInfo()
+                
             }
         }
     }
@@ -317,6 +325,14 @@ struct LoginView: View {
             }
             if let _ = result {
                 toast = Toast(style: .success, message: LoginMessages.loginSuccessful.rawValue)
+                
+                if isRememberMe {
+                    saveLoginInfo()
+                }
+                else {
+                    clearSavedLoginInfo()
+                }
+                
                 appViewModel.switchTo(view: .chat, animationLength: 1)
             }
             else  {
@@ -325,7 +341,27 @@ struct LoginView: View {
             }
         }
     }
-
+    
+    private func saveLoginInfo() {
+        savedEmail = userEmail
+        savedPassword = userPassword
+    }
+    
+    private func clearSavedLoginInfo() {
+        savedEmail = ""
+        savedPassword = ""
+    }
+    
+    private func retrieveLoginInfo() {
+        userEmail = savedEmail
+        userPassword = savedPassword
+        
+        if (!(userEmail.isEmpty || userPassword.isEmpty)) {
+            print("Trying to log in")
+            handleLogin()
+        }
+    }
+    
     private func handleAccountCreation() {
         if !passwordManager.passwordIsValid(for: userPassword) {
             toast = Toast(

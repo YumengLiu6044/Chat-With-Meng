@@ -14,6 +14,8 @@ struct ChatView: View {
     @State private var width:               CGFloat     =   100
     @State private var height:              CGFloat     =   100
     
+    @AppStorage("saved_password") var savedPassword : String = ""
+    
    
     var body: some View {
         GeometryReader {
@@ -25,6 +27,7 @@ struct ChatView: View {
                 }
                 .toolbar {
                     Button {
+                        signOut()
                         appViewModel.switchTo(view: .login)
                     } label: {
                         Image(systemName: "plus")
@@ -36,8 +39,6 @@ struct ChatView: View {
                 }
                 .navigationTitle(
                     Text("Chat")
-                        .font(.caption)
-                        .fontWeight(.bold)
                 )
                 
             }
@@ -47,6 +48,17 @@ struct ChatView: View {
             }
         }
         
+    }
+    
+    private func signOut() {
+        do {
+            try FirebaseManager.shared.auth.signOut()
+            savedPassword = ""
+            
+        }
+        catch {
+            print("Failed to sign out")
+        }
     }
 }
 
