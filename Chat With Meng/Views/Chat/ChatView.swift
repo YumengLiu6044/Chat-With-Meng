@@ -8,8 +8,43 @@
 import SwiftUI
 
 struct ChatView: View {
+    
+    @State private var width:               CGFloat     =   100
+    @State private var height:              CGFloat     =   100
+    
+   
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        GeometryReader {
+            geometry in
+            
+            NavigationStack {
+                VStack {
+                    
+                }
+                .toolbar {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .padding()
+                    }
+                    
+                }
+                .navigationTitle(
+                    Text("Chat")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                )
+                
+            }
+            .onAppear {
+                width = geometry.size.width
+                height = geometry.size.height
+            }
+        }
+        
     }
 }
 

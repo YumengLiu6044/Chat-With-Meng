@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		E23554742C405632008C71DE /* Chat_With_MengApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554732C405632008C71DE /* Chat_With_MengApp.swift */; };
-		E23554762C405632008C71DE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554752C405632008C71DE /* ContentView.swift */; };
 		E23554782C405634008C71DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E23554772C405634008C71DE /* Assets.xcassets */; };
 		E235547B2C405634008C71DE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E235547A2C405634008C71DE /* Preview Assets.xcassets */; };
 		E23554842C405648008C71DE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23554832C405648008C71DE /* LoginView.swift */; };
@@ -39,7 +38,6 @@
 /* Begin PBXFileReference section */
 		E23554702C405632008C71DE /* Meng Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Meng Chat.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E23554732C405632008C71DE /* Chat_With_MengApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat_With_MengApp.swift; sourceTree = "<group>"; };
-		E23554752C405632008C71DE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E23554772C405634008C71DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E235547A2C405634008C71DE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E23554832C405648008C71DE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -56,8 +54,28 @@
 		E2BB08692C432AF70094740E /* PasswordPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPolicyTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E2F07E3A2CB61BB50046655A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppViewModel.swift,
+			);
+			target = E2BB085F2C432A970094740E /* Meng ChatTests */;
+		};
+		E2F07E3F2CB621820046655A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ErrorView.swift,
+			);
+			target = E2BB085F2C432A970094740E /* Meng ChatTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E27E1C5A2CB1B838009E2D3E /* Chat */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Chat; sourceTree = "<group>"; };
+		E2B5C9262CB625760014A5E9 /* Main */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Main; sourceTree = "<group>"; };
+		E2F07E362CB61B900046655A /* View Models */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E2F07E3A2CB61BB50046655A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "View Models"; sourceTree = "<group>"; };
+		E2F07E3B2CB621740046655A /* Error */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (E2F07E3F2CB621820046655A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Error; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,12 +119,12 @@
 		E23554722C405632008C71DE /* Chat With Meng */ = {
 			isa = PBXGroup;
 			children = (
+				E2F07E362CB61B900046655A /* View Models */,
 				E2B785562C4ED97F0015BECA /* Managers */,
 				E2B785542C4DF1AF0015BECA /* GoogleService-Info.plist */,
 				E23648B32C4C3AEA003775B8 /* Components */,
 				E23554812C40563A008C71DE /* Views */,
 				E23554732C405632008C71DE /* Chat_With_MengApp.swift */,
-				E23554752C405632008C71DE /* ContentView.swift */,
 				E23554772C405634008C71DE /* Assets.xcassets */,
 				E23554792C405634008C71DE /* Preview Content */,
 			);
@@ -124,8 +142,11 @@
 		E23554812C40563A008C71DE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				E2B5C9262CB625760014A5E9 /* Main */,
+				E2F07E3B2CB621740046655A /* Error */,
 				E27E1C5A2CB1B838009E2D3E /* Chat */,
 				E23554822C40563E008C71DE /* Login */,
+				E23648B42C4C3AF6003775B8 /* Toast */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -145,7 +166,6 @@
 			isa = PBXGroup;
 			children = (
 				E26052912CB459EE00F1CE63 /* ImagePicker.swift */,
-				E23648B42C4C3AF6003775B8 /* Toast */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -193,6 +213,9 @@
 			);
 			fileSystemSynchronizedGroups = (
 				E27E1C5A2CB1B838009E2D3E /* Chat */,
+				E2B5C9262CB625760014A5E9 /* Main */,
+				E2F07E362CB61B900046655A /* View Models */,
+				E2F07E3B2CB621740046655A /* Error */,
 			);
 			name = "Chat With Meng";
 			packageProductDependencies = (
@@ -294,7 +317,6 @@
 				E2BB08522C42E9400094740E /* PasswordResetView.swift in Sources */,
 				E2BB085B2C42F64D0094740E /* PasswordManager.swift in Sources */,
 				E26052922CB459EE00F1CE63 /* ImagePicker.swift in Sources */,
-				E23554762C405632008C71DE /* ContentView.swift in Sources */,
 				E23554742C405632008C71DE /* Chat_With_MengApp.swift in Sources */,
 				E23554862C40C1F5008C71DE /* PasswordField.swift in Sources */,
 			);

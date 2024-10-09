@@ -34,6 +34,8 @@ struct LoginView: View {
         passwordManager.requireSpecialSymbolFromSet(of: "!@#$%^&*()-_=+\\|[]{};:/?.<>~`\"\'")
     }
     
+    @EnvironmentObject private var appViewModel: AppViewModel
+    
     @ObservedObject var passwordManager = PasswordManager()
     
     @State private var toast:               Toast?      =   nil
@@ -48,7 +50,6 @@ struct LoginView: View {
     @State private var userPassword:        String      =   ""
     @State private var confirmPassword:     String      =   ""
     
-    @State private var isLoginSuccess:      Bool        =   false
     @State private var isForgetPassword:    Bool        =   false
     @State private var isRememberMe:        Bool        =   false
     @State private var isPasswordEqual:     Bool        =   true
@@ -72,7 +73,7 @@ struct LoginView: View {
                     
                     
                     if menuOption == .login {
-                        Image(systemName: isLoginSuccess ? "lock.open.fill" : "lock.fill")
+                        Image(systemName: "lock.fill")
                             .padding()
                             .font(.system(size: width * 0.2))
                             .overlay {
@@ -270,17 +271,15 @@ struct LoginView: View {
         FirebaseManager.shared.auth.signIn(withEmail: userEmail, password: userPassword) { result, err in
             if let err = err {
                 toast = Toast(style: .error, message: err.localizedDescription)
-                isLoginSuccess = false
                 return
             }
-            if let result = result {
+            if let _ = result {
                 toast = Toast(style: .success, message: LoginMessages.loginSuccessful.rawValue)
-                print(result.user.uid)
-                isLoginSuccess = true
+                appViewModel.switchTo(view: .chat, animationLength: 2)
             }
             else  {
                 toast = Toast(style: .error, message: LoginMessages.loginCredentialsInvalid.rawValue)
-                isLoginSuccess = false
+                
             }
         }
     }
@@ -316,12 +315,19 @@ struct LoginView: View {
             }
         }
         
-        uploadProfilePic()
+        uploadProfilePic {
+            success in
+            if success {
+                appViewModel.switchTo(view: .chat, animationLength: 2)
+            }
+        }
+        
+        
+        
         return
     }
     
-    private func uploadProfilePic() {
-        print("Uploading profile pic")
+    private func uploadProfilePic( completion: @escaping (Bool) -> Void) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         let ref = FirebaseManager.shared.storage.reference(withPath: uid)
         guard let imageData = profilePic?.jpegData(compressionQuality: 0.5) else {return}
@@ -331,7 +337,7 @@ struct LoginView: View {
             if let error = error {
                 toast = Toast(style: .error, message: error.localizedDescription)
                 print(error.localizedDescription)
-                return
+                return completion(false)
             }
             
             ref.downloadURL {
@@ -339,25 +345,29 @@ struct LoginView: View {
                 if let error = err {
                     toast = Toast(style: .error, message: error.localizedDescription)
                     print(error.localizedDescription)
-                    return
+                    return completion(false)
                 }
                 if let imgURL = imgURL {
                     print("Added profile pic for \(userEmail) at \(imgURL.absoluteString)")
+                    return completion(true)
                 }
                 else {
                     toast = Toast(style: .error, message: "Unknown error encountered when uploading profile Picture")
                     print("Unknown error occured")
-                    return
+                    
+                    return completion(false)
                 }
                 
             }
         }
     }
+    
 }
 
 
 #Preview {
     LoginView()
+        .environmentObject(AppViewModel())
         .preferredColorScheme(.dark)
     
 }
