@@ -16,7 +16,7 @@ struct ContentView: View {
         case .login:
             LoginView()
                 .environmentObject(appViewModel)
-                .transition(.asymmetric(insertion: .move(edge: .top), removal: .move(edge: .bottom)))
+                .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
 
         case .chat:
             ChatView()
