@@ -68,8 +68,15 @@ struct LoginView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            NavigationStack {
-                VStack {
+            VStack {
+                HStack {
+                    Text(menuOption.rawValue)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding()
+                    
+                    Spacer()
+                }
                     Picker(selection: $menuOption, label: Text("Login")) {
                         ForEach(MenuOptions.allCases, id: \.self) {
                             option in
@@ -288,7 +295,6 @@ struct LoginView: View {
                 }
                 .ignoresSafeArea(.keyboard)
                 .font(.title3)
-                .navigationTitle(menuOption.rawValue)
                 .contentTransition(.symbolEffect(.replace))
                 .padding()
                 .background(
@@ -305,15 +311,12 @@ struct LoginView: View {
                     ImagePicker(image: $profilePic)
                 }
                 .toastView(toast: $toast)
-
-            }
-            .onAppear {
-                width = geometry.size.width
-                height = geometry.size.height
-                print("Appear")
-                retrieveLoginInfo()
-                
-            }
+                .onAppear {
+                    width = geometry.size.width
+                    height = geometry.size.height
+                    retrieveLoginInfo()
+                    
+                }
         }
     }
 
