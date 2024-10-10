@@ -91,8 +91,7 @@ struct LoginView: View {
                             .font(.system(size: width * 0.2))
                             .overlay {
                                 Circle()
-                                    .stroke(lineWidth: 4)
-                                
+                                    .stroke(lineWidth: 5)
                                     .frame(width: width * 0.4, height: height * 0.4)
                             }
                             .frame(width: width * 0.25, height: height * 0.25)
@@ -111,27 +110,28 @@ struct LoginView: View {
                                     .clipShape(Circle())
                                     .overlay {
                                         Circle()
-                                            .stroke(lineWidth: 4)
+                                            .stroke(lineWidth: 5)
                                     }
                                     .tint(Color.primary)
                                     .padding()
 
                             } else {
-                                Image(systemName: "person.fill")
-                                    .font(.system(size: width * 0.2))
-                                    .overlay {
-                                        Circle()
-                                            .stroke(lineWidth: 4)
+                                Image(systemName: "person.badge.plus")
+                                        .font(.system(size: width * 0.2))
+                                        .overlay {
+                                            Circle()
+                                                .stroke(lineWidth: 5)
 
-                                            .frame(
-                                                width: width * 0.4,
-                                                height: height * 0.4)
-                                    }
-                                    .frame(
-                                        width: width * 0.25,
-                                        height: height * 0.25
-                                    )
-                                    .tint(Color.primary)
+                                                .frame(
+                                                    width: width * 0.4,
+                                                    height: height * 0.4)
+                                        }
+                                        .frame(
+                                            width: width * 0.25,
+                                            height: height * 0.25
+                                        )
+                                        .tint(Color.primary)
+                                
                             }
                         }
 
@@ -455,8 +455,9 @@ struct LoginView: View {
     
     private func uploadToCloud(profilePicURL: URL) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        guard let emailOnFile = FirebaseManager.shared.auth.currentUser?.email else {return}
         let userData = [
-            "email": self.userEmail,
+            "email": emailOnFile,
             "uid": uid,
             "profilePic": profilePicURL.absoluteString,
         ]
