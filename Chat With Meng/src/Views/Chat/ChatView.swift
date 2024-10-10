@@ -14,6 +14,7 @@ struct ChatView: View {
     @State private var width:               CGFloat     =   100
     @State private var height:              CGFloat     =   100
     
+    @AppStorage("saved_email") var savedEmail : String = ""
     @AppStorage("saved_password") var savedPassword : String = ""
     
    
@@ -54,6 +55,7 @@ struct ChatView: View {
         do {
             try FirebaseManager.shared.auth.signOut()
             savedPassword = ""
+            savedEmail    = ""
             
         }
         catch {

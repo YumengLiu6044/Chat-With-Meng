@@ -64,6 +64,7 @@ struct LoginView: View {
     @State private var isRememberMe: Bool = false
     @State private var isPasswordEqual: Bool = true
     @State private var showImagePicker: Bool = false
+    @State private var isLoading:       Bool = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -262,13 +263,21 @@ struct LoginView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Text(
-                                menuOption == .login
-                                    ? "Login" : "Register Account"
-                            )
-                            .font(.title2)
-                            .animation(.easeIn, value: menuOption)
+                            if isLoading {
+                                ProgressView()
+                            }
+                            else {
+                                Text(
+                                    menuOption == .login
+                                        ? "Login" : "Register Account"
+                                )
+                                .font(.title2)
+                                .animation(.easeIn, value: menuOption)
+                            }
+                            
                             Spacer()
+                            
+                            
                         }
 
                     }
@@ -301,7 +310,7 @@ struct LoginView: View {
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height
-                
+                print("Appear")
                 retrieveLoginInfo()
                 
             }
@@ -315,7 +324,8 @@ struct LoginView: View {
                 message: LoginMessages.loginCredentialsInvalid.rawValue)
             return
         }
-
+        
+        isLoading = true
         FirebaseManager.shared.auth.signIn(
             withEmail: userEmail, password: userPassword
         ) { result, err in
@@ -332,7 +342,7 @@ struct LoginView: View {
                 else {
                     clearSavedLoginInfo()
                 }
-                
+                isLoading = false
                 appViewModel.switchTo(view: .chat, animationLength: 1)
             }
             else  {
@@ -356,10 +366,6 @@ struct LoginView: View {
         userEmail = savedEmail
         userPassword = savedPassword
         
-        if (!(userEmail.isEmpty || userPassword.isEmpty)) {
-            print("Trying to log in")
-            handleLogin()
-        }
     }
     
     private func handleAccountCreation() {
@@ -386,7 +392,9 @@ struct LoginView: View {
             toast = Toast(style: .error, message: "Please upload a profile pic")
             return
         }
-
+        
+        isLoading = true
+        
         FirebaseManager.shared.auth.createUser (
             withEmail: userEmail, password: userPassword
         ) { result, err in
@@ -460,6 +468,9 @@ struct LoginView: View {
                     style: .error, message: error.localizedDescription)
                 print(error.localizedDescription)
                 return
+            }
+            else {
+                isLoading = false
             }
         }
     }
