@@ -29,9 +29,14 @@ struct ProfilePicView: View {
                     .overlay {
                         Circle()
                             .stroke(lineWidth: width * 0.05)
-                            .frame(width: width * 1.12, height: width * 1.12)
+                            .frame(width: width * 1.1, height: width * 1.1)
                             .foregroundStyle(.linearGradient(Gradient(colors: [isOnline ? .pink : .gray, isOnline ? .orange : .secondary]), startPoint: .topLeading, endPoint: .bottomTrailing))
                             
+                    }
+                    .background {
+                        Circle()
+                            .frame(width: width * 1.3, height: width * 1.3)
+                            .foregroundStyle(.background)
                     }
                 
             case .failure:

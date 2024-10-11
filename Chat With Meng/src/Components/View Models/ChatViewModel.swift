@@ -14,6 +14,7 @@ enum ChatViewSelection : Hashable {
 
 class ChatViewModel: ObservableObject {
     @Published var chatViewSelection: ChatViewSelection = .messages
+    @Published var showMenu: Bool = true
     
     public func switchTo(view toView: ChatViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {

@@ -15,9 +15,7 @@ struct ChatViewMain: View {
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
 
-    @AppStorage("saved_email") var savedEmail: String = ""
-    @AppStorage("saved_password") var savedPassword: String = ""
-
+    
     var body: some View {
         GeometryReader {
             geometry in
@@ -26,10 +24,13 @@ struct ChatViewMain: View {
                 switch chatViewModel.chatViewSelection {
                 case .messages:
                     ChatView()
+                        .transition(.move(edge: .leading))
                 case .friends:
                     FriendsView()
+                        
                 case .settings:
                     SettingsView()
+                        .transition(.move(edge: .trailing))
                 }
                 
                 
@@ -40,6 +41,10 @@ struct ChatViewMain: View {
                         
                 }
             }
+            .background(
+                Color(.init(white: 0, alpha: 0.1))
+                    .ignoresSafeArea()
+            )
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height
@@ -48,16 +53,7 @@ struct ChatViewMain: View {
 
     }
 
-    private func signOut() {
-        do {
-            try FirebaseManager.shared.auth.signOut()
-            savedPassword = ""
-            savedEmail = ""
-
-        } catch {
-            print("Failed to sign out")
-        }
-    }
+    
 }
 
 #Preview {
