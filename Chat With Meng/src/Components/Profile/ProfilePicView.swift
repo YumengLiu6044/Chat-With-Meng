@@ -28,10 +28,8 @@ struct ProfilePicView: View {
                     .frame(width: width, height: width)
                     .overlay {
                         Circle()
-                            .stroke(lineWidth: width * 0.05)
+                            .stroke(isOnline ? (image.asUIImage().averageColor ??  .myPurple) : .gray, lineWidth: width * 0.05)
                             .frame(width: width * 1.1, height: width * 1.1)
-                            .foregroundStyle(.linearGradient(Gradient(colors: [isOnline ? .pink : .gray, isOnline ? .orange : .secondary]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                            
                     }
                     .background {
                         Circle()
@@ -68,8 +66,56 @@ struct ProfilePicView: View {
             }}
     }
 }
+extension View {
+// This function changes our View to UIView, then calls another function
+// to convert the newly-made UIView to a UIImage.
+    public func asUIImage() -> UIImage {
+        let controller = UIHostingController(rootView: self)
+        
+ // Set the background to be transparent incase the image is a PNG, WebP or (Static) GIF
+        controller.view.backgroundColor = .clear
+        
+        controller.view.frame = CGRect(x: 0, y: CGFloat(Int.max), width: 1, height: 1)
+        UIApplication.shared.windows.first!.rootViewController?.view.addSubview(controller.view)
+        
+        let size = controller.sizeThatFits(in: UIScreen.main.bounds.size)
+        controller.view.bounds = CGRect(origin: .zero, size: size)
+        controller.view.sizeToFit()
+        
+// here is the call to the function that converts UIView to UIImage: `.asUIImage()`
+        let image = controller.view.asUIImage()
+        controller.view.removeFromSuperview()
+        return image
+    }
+}
+
+extension UIView {
+// This is the function to convert UIView to UIImage
+    public func asUIImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
+    }
+}
+
+extension UIImage {
+       var averageColor: Color? {
+           guard let inputImage = CIImage(image: self) else { return nil }
+           let extentVector = CIVector(x: inputImage.extent.origin.x, y: inputImage.extent.origin.y, z: inputImage.extent.size.width, w: inputImage.extent.size.height)
+
+           guard let filter = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: inputImage, kCIInputExtentKey: extentVector]) else { return nil }
+           guard let outputImage = filter.outputImage else { return nil }
+
+           var bitmap = [UInt8](repeating: 0, count: 4)
+           let context = CIContext(options: [.workingColorSpace: kCFNull!])
+           context.render(outputImage, toBitmap: &bitmap, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: .RGBA8, colorSpace: nil)
+
+           return Color(.init(red: CGFloat(bitmap[0]) / 255, green: CGFloat(bitmap[1]) / 255, blue: CGFloat(bitmap[2]) / 255, alpha: CGFloat(bitmap[3]) / 255))
+       }
+}
 
 #Preview {
-    ProfilePicView(imageURL: "https://img.decrypt.co/insecure/rs:fit:3840:0:0:0/plain/https://cdn.decrypt.co/wp-content/uploads/2024/05/doge-dogecoin-meme-kabosu-gID_7.jpg@webp", width: 100, height: 100, isOnline: .constant(true), isLoading: .constant(true))
-        .preferredColorScheme(.dark)
+    ProfilePicView(imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTenTVwBIhhGirjghoRBko0CgRmfXiapbz1Q&s", width: 100, height: 100, isOnline: .constant(true), isLoading: .constant(true))
+        .preferredColorScheme(.light)
 }

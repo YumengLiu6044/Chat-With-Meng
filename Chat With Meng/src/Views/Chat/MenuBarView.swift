@@ -24,7 +24,7 @@ struct MenuBarView: View {
     
     var body: some View {
         HStack {
-            IconView(iconName: "message") {
+            IconView(iconName: "message.fill", count: 5) {
                 chatViewModel.switchTo(view: .messages)
             }
             .background {
@@ -34,9 +34,10 @@ struct MenuBarView: View {
             }
             Spacer()
             
-            IconView(iconName: "person") {
+            IconView(iconName: "person.fill", count: 2) {
                 chatViewModel.switchTo(view: .friends)
             }
+
             .background {
                 if (chatViewModel.chatViewSelection == .friends) {
                     selection()
@@ -59,6 +60,7 @@ struct MenuBarView: View {
                 .foregroundStyle(.ultraThickMaterial)
                 .frame(width: width, height: height)
                 .shadow(radius: height * 0.1)
+            
         }
         .frame(width: width, height: height)
         

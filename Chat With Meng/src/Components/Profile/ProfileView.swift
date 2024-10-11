@@ -20,7 +20,7 @@ struct ProfileView: View {
                         .frame(width: width, height: height * 0.2)
                         .foregroundStyle(
                             .linearGradient(
-                                Gradient(colors: [.pink, .blue]),
+                                Gradient(colors: [.myPurple, .myBlue]),
                                 startPoint: .leading, endPoint: .trailing)
                         )
                         .ignoresSafeArea()
@@ -37,7 +37,7 @@ struct ProfileView: View {
                             isOnline: .constant(true),
                             isLoading: .constant(true)
                         )
-                        .preferredColorScheme(.dark)
+                        
                         .padding([.top, .leading], width * 0.1)
                         Spacer()
                         VStack(alignment: .trailing) {
@@ -56,19 +56,7 @@ struct ProfileView: View {
                     }
         
                     List {
-                        Section(header: Text("Account")) {
-                            Text("Hello")
-                            Text("Hello")
-                            Text("Hello")
-                            Text("Hello")
-                        }
-
-                        Section(header: Text("Notifications")) {
-                            Text("Hello")
-                            Text("Hello")
-                            Text("Hello")
-
-                        }
+                        
                     }
                     .padding([.top], height * 0.05)
                     
@@ -76,6 +64,10 @@ struct ProfileView: View {
 
                 }
             }
+            .background(
+                Color(.init(white: 0, alpha: 0.1))
+                    .ignoresSafeArea()
+            )
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height

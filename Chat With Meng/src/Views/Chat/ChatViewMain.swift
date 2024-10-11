@@ -60,5 +60,5 @@ struct ChatViewMain: View {
 #Preview {
     ChatViewMain()
         .environmentObject(AppViewModel())
-        .preferredColorScheme(.light)
+        .preferredColorScheme(.dark)
 }

@@ -24,7 +24,7 @@ struct FriendsView: View {
                     
                     Spacer()
                     
-                    IconView(iconName: "person.2") {
+                    IconView(iconName: "person.2", count: 2) {
                         print("Sent")
                     }
                     

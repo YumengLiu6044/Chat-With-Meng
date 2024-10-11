@@ -16,19 +16,21 @@ struct SettingsView: View {
     @AppStorage("saved_email") var savedEmail: String = ""
     @AppStorage("saved_password") var savedPassword: String = ""
     
+    @State private var isForgotPassword: Bool = false
+    
     var body: some View {
         GeometryReader {
             geometry in
-            NavigationView {
-                ZStack {
+            ZStack {
                     VStack {
                         Rectangle()
                             .frame(width: width, height: height * 0.2)
                             .foregroundStyle(
                                 .linearGradient(
-                                    Gradient(colors: [.pink, .blue]),
+                                    Gradient(colors: [.myPurple, .myBlue]),
                                     startPoint: .leading, endPoint: .trailing)
                             )
+                            
                             .ignoresSafeArea()
                         
                         Spacer()
@@ -97,7 +99,12 @@ struct SettingsView: View {
                                         Toggle("", isOn: .constant(true))
                                     }
                                     SettingOptionView(header: "Forgot Password") {
-                                        NavigationLink("", destination: PasswordResetView(isForgetPassword: .constant(true), width: width, height: height))
+                                        Button {
+                                            isForgotPassword.toggle()
+                                        } label: {
+                                            Image(systemName: "chevron.right")
+                                        }
+                                        .tint(.secondary)
                                     }
                                 }
 
@@ -149,11 +156,13 @@ struct SettingsView: View {
                     Color(.init(white: 0, alpha: 0.1))
                         .ignoresSafeArea()
                 )
-            }
+            
             
             
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .fullScreenCover(isPresented: $isForgotPassword, onDismiss: nil) {
+            PasswordResetView(isForgetPassword: $isForgotPassword, width: width, height: height)
+        }
 
     }
 
@@ -172,5 +181,5 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .environmentObject(AppViewModel())
-        .preferredColorScheme(.light)
+        .preferredColorScheme(.dark)
 }
