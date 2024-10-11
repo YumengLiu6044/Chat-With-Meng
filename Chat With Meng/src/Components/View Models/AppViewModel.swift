@@ -15,9 +15,9 @@ enum ViewSelection: Hashable {
 class AppViewModel: ObservableObject {
     @Published var currentView: ViewSelection = .login
     
-    public func switchTo(view toView: ViewSelection, after delay: Int = 0, animationLength length: Int = 1) {
+    public func switchTo(view toView: ViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {
-            withAnimation(.smooth(duration: TimeInterval(length))) {
+            withAnimation(.snappy(duration: TimeInterval(length))) {
                 self.currentView = toView
             }
         })

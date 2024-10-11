@@ -28,6 +28,7 @@ struct ChatViewMain: View {
                 case .friends:
                     FriendsView()
                         
+                        
                 case .settings:
                     SettingsView()
                         .transition(.move(edge: .trailing))
@@ -59,5 +60,5 @@ struct ChatViewMain: View {
 #Preview {
     ChatViewMain()
         .environmentObject(AppViewModel())
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct MainView: View {
 
     @ObservedObject var appViewModel: AppViewModel = AppViewModel()
 
@@ -28,6 +28,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    MainView()
         .preferredColorScheme(.dark)
 }

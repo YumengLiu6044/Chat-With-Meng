@@ -334,6 +334,7 @@ struct LoginView: View {
         ) { result, err in
             if let err = err {
                 toast = Toast(style: .error, message: err.localizedDescription)
+                isLoading = false
                 return
             }
             if let _ = result {
@@ -350,6 +351,7 @@ struct LoginView: View {
             }
             else  {
                 toast = Toast(style: .error, message: LoginMessages.loginCredentialsInvalid.rawValue)
+                isLoading = false
                 
             }
         }

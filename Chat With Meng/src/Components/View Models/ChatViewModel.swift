@@ -18,7 +18,7 @@ class ChatViewModel: ObservableObject {
     
     public func switchTo(view toView: ChatViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {
-            withAnimation(.smooth(duration: TimeInterval(length))) {
+            withAnimation(.snappy(duration: TimeInterval(length))) {
                 self.chatViewSelection = toView
             }
         })

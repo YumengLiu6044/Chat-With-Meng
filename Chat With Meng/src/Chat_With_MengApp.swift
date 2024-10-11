@@ -11,7 +11,7 @@ import SwiftUI
 struct Chat_With_MengApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }
