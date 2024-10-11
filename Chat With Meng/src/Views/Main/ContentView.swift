@@ -19,7 +19,7 @@ struct ContentView: View {
                 .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
 
         case .chat:
-            ChatView()
+            ChatViewMain()
                 .environmentObject(appViewModel)
                 .transition(.move(edge: .top))
         }

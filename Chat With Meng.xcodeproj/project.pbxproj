@@ -42,6 +42,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"Components/View Models/AppViewModel.swift",
+				"Components/View Models/ChatViewModel.swift",
 				Views/Error/ErrorView.swift,
 			);
 			target = E2BB085F2C432A970094740E /* Meng ChatTests */;
