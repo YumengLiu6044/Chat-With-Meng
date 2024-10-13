@@ -413,6 +413,8 @@ struct LoginView: View {
                 menuOption = .login
             }
         }
+        
+        isLoading = false
         return
     }
 
