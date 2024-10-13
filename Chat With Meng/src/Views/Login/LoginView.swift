@@ -57,7 +57,7 @@ struct LoginView: View {
     @State private var confirmPassword: String = ""
 
     @State private var isForgetPassword: Bool = false
-    @State private var isRememberMe: Bool = false
+    @State private var isRememberMe: Bool = true
     @State private var isPasswordEqual: Bool = true
     @State private var showImagePicker: Bool = false
     @State private var isLoading:       Bool = false
@@ -391,6 +391,7 @@ struct LoginView: View {
             if let err = err {
                 print(err.localizedDescription)
                 toast = Toast(style: .error, message: err.localizedDescription)
+                isLoading = false
                 return
             } else {
                 uploadUserData()
@@ -399,17 +400,17 @@ struct LoginView: View {
             }
         }
         
-        isLoading = false
         return
     }
 
     private func uploadProfilePic() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            isLoading = false
             return
         }
         let ref = FirebaseManager.shared.storage.reference(withPath: uid)
         guard let imageData = profilePic?.jpegData(compressionQuality: 0.5)
-        else { return }
+        else { isLoading = false ; return }
 
         ref.putData(imageData) {
             metadata, error in
@@ -418,6 +419,8 @@ struct LoginView: View {
                 toast = Toast(
                     style: .error, message: error.localizedDescription)
                 print(error.localizedDescription)
+                isLoading = false
+                return
             }
             
             ref.downloadURL {
@@ -460,6 +463,7 @@ struct LoginView: View {
                 toast = Toast(
                     style: .error, message: error.localizedDescription)
                 print(error.localizedDescription)
+                isLoading = false
                 return
             }
             else {

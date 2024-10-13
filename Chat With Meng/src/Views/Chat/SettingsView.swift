@@ -148,11 +148,6 @@ struct SettingsView: View {
                         height = geometry.size.height
                     }
                 }
-                .background(
-                    Color(.init(white: 0, alpha: 0.1))
-                        .ignoresSafeArea()
-                )
-            
             
             
         }
