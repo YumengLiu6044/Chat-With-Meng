@@ -12,9 +12,6 @@ struct SettingsView: View {
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
-
-    @AppStorage("saved_email") var savedEmail: String = ""
-    @AppStorage("saved_password") var savedPassword: String = ""
     
     @State private var isForgotPassword: Bool = false
     
@@ -122,9 +119,8 @@ struct SettingsView: View {
                         .padding([.top], height * 0.05)
                         
                         Button {
-                            signOut()
+                            appViewModel.signOut()
                             appViewModel.switchTo(view: .login)
-                            
                         }
                         label: {
                             HStack {
@@ -166,16 +162,7 @@ struct SettingsView: View {
 
     }
 
-    private func signOut() {
-        do {
-            try FirebaseManager.shared.auth.signOut()
-            savedPassword = ""
-            savedEmail = ""
 
-        } catch {
-            print("Failed to sign out")
-        }
-    }
 }
 
 #Preview {

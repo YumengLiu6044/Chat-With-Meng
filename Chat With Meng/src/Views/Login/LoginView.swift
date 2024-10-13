@@ -49,10 +49,6 @@ struct LoginView: View {
     @FocusState private var focus: FocusField?
     @State private var profilePic: UIImage? = nil
     
-    @AppStorage("saved_email") private var savedEmail: String = ""
-    @AppStorage("saved_password") private var savedPassword: String = ""
-    @AppStorage("saved_profil_pic_url") private var savedProfilePicURL: String = ""
-
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
 
@@ -314,8 +310,11 @@ struct LoginView: View {
                 .onAppear {
                     width = geometry.size.width
                     height = geometry.size.height
-                    retrieveLoginInfo()
-                    
+                    (userEmail, userPassword) = appViewModel.retrieveLoginInfo()
+                    if (!userEmail.isEmpty && !userPassword.isEmpty) {
+                        handleLogin()
+                    }
+
                 }
         }
     }
@@ -341,10 +340,10 @@ struct LoginView: View {
                 toast = Toast(style: .success, message: LoginMessages.loginSuccessful.rawValue)
                 
                 if isRememberMe {
-                    saveLoginInfo()
+                    appViewModel.saveLoginInfo(userEmail, userPassword)
                 }
                 else {
-                    clearSavedLoginInfo()
+                    appViewModel.clearSavedLoginInfo()
                 }
                 isLoading = false
                 appViewModel.switchTo(view: .chat, animationLength: 1)
@@ -357,21 +356,7 @@ struct LoginView: View {
         }
     }
     
-    private func saveLoginInfo() {
-        savedEmail = userEmail
-        savedPassword = userPassword
-    }
-    
-    private func clearSavedLoginInfo() {
-        savedEmail = ""
-        savedPassword = ""
-    }
-    
-    private func retrieveLoginInfo() {
-        userEmail = savedEmail
-        userPassword = savedPassword
-        
-    }
+
     
     private func handleAccountCreation() {
         if !passwordManager.passwordIsValid(for: userPassword) {
