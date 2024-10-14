@@ -10,6 +10,10 @@ import SwiftUI
 struct FriendsView: View {
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
+    
+    init() {
+        print("Called")
+    }
 
     
     var body: some View {
@@ -24,9 +28,10 @@ struct FriendsView: View {
                     
                     Spacer()
                     
-                    IconView(iconName: "person.2", count: 2) {
+                    IconView(iconName: "person.badge.plus", count: 2) {
                         print("Sent")
                     }
+                    .padding()
                     
                     
                     

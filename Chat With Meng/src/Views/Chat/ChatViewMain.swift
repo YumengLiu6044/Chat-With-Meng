@@ -14,7 +14,13 @@ struct ChatViewMain: View {
 
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
-
+    
+    @State private var currentUser: User = User()
+    @State private var toast: Toast? = nil
+    
+    init() {
+        initializeCurrentUser()
+    }
     
     var body: some View {
         GeometryReader {
@@ -50,8 +56,33 @@ struct ChatViewMain: View {
                 width = geometry.size.width
                 height = geometry.size.height
             }
+            .toastView(toast: $toast)
         }
 
+    }
+    
+    private func initializeCurrentUser() -> Void {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        
+        FirebaseManager.shared.firestore.collection("users").document(uid).getDocument {
+            document, error in
+            if let error = error {
+                toast = Toast(style: .error, message: error.localizedDescription)
+            }
+            else {
+                if let document = document {
+                    do {
+                        currentUser = try document.data(as: User.self)
+                    } catch {
+                        toast = Toast(style: .error, message: "Error decoding document")
+                    }
+                }
+                else {
+                    toast = Toast(style: .error, message: "Error getting document")
+                }
+            }
+        }
+        
     }
 
     

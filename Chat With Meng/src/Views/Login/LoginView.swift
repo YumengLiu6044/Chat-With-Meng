@@ -8,23 +8,7 @@
 import Firebase
 import SwiftUI
 
-enum MenuOptions: String, CaseIterable {
-    case login = "Login"
-    case create = "Create Account"
-}
 
-enum LoginMessages: String {
-    case createPasswordInvalid = "Invalid password"
-    case createUserError = "User creation failed"
-    case createUserSuccessful = "Successfully created account"
-    case confirmPasswordNotMatch =
-        "Confirm password does not match with password"
-    case loginCredentialsInvalid =
-        "The email or the password provided is incorrect"
-    case loginSuccessful = "Successfully logged in"
-    case uploadUserDataSuccessful = "Successfully uploaded user data"
-    case uploadUserDataFailed = "Failed to upload user data"
-}
 
 enum FocusField: Hashable {
     case email, password, confirmPassword
@@ -43,37 +27,26 @@ struct LoginView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
 
     @ObservedObject var passwordManager = PasswordManager()
+    @ObservedObject var loginViewModel = LoginViewModel()
 
-    @State private var toast: Toast? = nil
-    @State private var menuOption: MenuOptions = .login
     @FocusState private var focus: FocusField?
-    @State private var profilePic: UIImage? = nil
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
 
-    @State private var userEmail: String = ""
-    @State private var userPassword: String = ""
-    @State private var confirmPassword: String = ""
-
-    @State private var isForgetPassword: Bool = false
-    @State private var isRememberMe: Bool = true
-    @State private var isPasswordEqual: Bool = true
-    @State private var showImagePicker: Bool = false
-    @State private var isLoading:       Bool = false
 
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 HStack {
-                    Text(menuOption.rawValue)
+                    Text(loginViewModel.menuOption.rawValue)
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .padding()
                     
                     Spacer()
                 }
-                    Picker(selection: $menuOption, label: Text("Login")) {
+                Picker(selection: $loginViewModel.menuOption, label: Text("Login")) {
                         ForEach(MenuOptions.allCases, id: \.self) {
                             option in
                             Text(option.rawValue)
@@ -81,14 +54,14 @@ struct LoginView: View {
                         }
                     }
                     .onChange(
-                        of: menuOption,
+                        of: loginViewModel.menuOption,
                         {
-                            userPassword = ""
+                            loginViewModel.userPassword = ""
                         }
                     )
                     .pickerStyle(.segmented)
 
-                    if menuOption == .login {
+                if loginViewModel.menuOption == .login {
                         Image(systemName: "person.fill")
                             .padding()
                             .font(.system(size: width * 0.2))
@@ -99,11 +72,11 @@ struct LoginView: View {
                             }
                             .frame(width: width * 0.25, height: height * 0.25)
                     }
-                    else if menuOption == .create {
+                else if loginViewModel.menuOption == .create {
                         Button {
-                            showImagePicker.toggle()
+                            loginViewModel.isShowImagePicker.toggle()
                         } label: {
-                            if let profilePic = profilePic {
+                            if let profilePic = loginViewModel.profilePic {
                                 Image(uiImage: profilePic)
                                     .resizable()
                                     .scaledToFill()
@@ -142,7 +115,7 @@ struct LoginView: View {
 
                     VStack {
                         TextField(
-                            "Email", text: $userEmail,
+                            "Email", text: $loginViewModel.userEmail,
                             prompt: Text("Email").foregroundStyle(.gray)
                         )
                         .frame(height: height * 0.02)
@@ -153,19 +126,19 @@ struct LoginView: View {
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .keyboardType(.asciiCapable)
-                        .onChange(of: menuOption) {
-                            userEmail = ""
+                        .onChange(of: loginViewModel.menuOption) {
+                            loginViewModel.userEmail = ""
                         }
                         .focused($focus, equals: .email)
                         .onDisappear {
                             focus = nil
                         }
 
-                        if menuOption == .login {
+                        if loginViewModel.menuOption == .login {
                             PasswordField(
                                 prompt: "Password", width: width,
                                 height: height * 0.02,
-                                userPassword: $userPassword
+                                userPassword: $loginViewModel.userPassword
                             )
                             .padding()
                             .background(.ultraThickMaterial)
@@ -178,18 +151,18 @@ struct LoginView: View {
 
                             HStack {
                                 Button {
-                                    isForgetPassword = true
+                                    loginViewModel.isForgetPassword = true
                                 } label: {
                                     Text("Forgot Password")
 
                                 }
                                 Spacer()
                                 Button {
-                                    isRememberMe.toggle()
+                                    loginViewModel.isRememberMe.toggle()
                                 } label: {
                                     Text("Remember me")
                                     Image(
-                                        systemName: isRememberMe
+                                        systemName: loginViewModel.isRememberMe
                                             ? "checkmark.square" : "square")
 
                                 }
@@ -200,11 +173,11 @@ struct LoginView: View {
                             .padding()
 
                         }
-                        if menuOption == .create {
+                        if loginViewModel.menuOption == .create {
                             PasswordField(
                                 prompt: "Password", width: width,
                                 height: height * 0.02,
-                                userPassword: $userPassword
+                                userPassword: $loginViewModel.userPassword
                             )
                             .padding()
                             .background(.ultraThickMaterial)
@@ -212,9 +185,9 @@ struct LoginView: View {
                             .clipShape(.rect(cornerRadius: width * 0.03))
                             .shadow(radius: 3)
                             .focused($focus, equals: .password)
-                            .onChange(of: userPassword) {
+                            .onChange(of: loginViewModel.userPassword) {
                                 let _ = passwordManager.passwordIsValid(
-                                    for: userPassword)
+                                    for: loginViewModel.userPassword)
                             }
                             .onDisappear {
                                 focus = nil
@@ -223,7 +196,7 @@ struct LoginView: View {
                             PasswordField(
                                 prompt: "Confirm Password", disableHide: true,
                                 width: width, height: height * 0.02,
-                                userPassword: $confirmPassword
+                                userPassword: $loginViewModel.confirmPassword
                             )
                             .padding()
                             .focused($focus, equals: .confirmPassword)
@@ -231,7 +204,7 @@ struct LoginView: View {
                             .clipShape(.rect(cornerRadius: width * 0.03))
                             .shadow(radius: 3)
                             .onDisappear {
-                                confirmPassword = ""
+                                loginViewModel.confirmPassword = ""
                                 focus = nil
                             }
 
@@ -258,24 +231,38 @@ struct LoginView: View {
 
                     Spacer()
                     Button {
-                        if menuOption == .login {
-                            handleLogin()
+                        if loginViewModel.menuOption == .login {
+                            loginViewModel.handleLogin() {
+                                loginResult in
+                                
+                                if (loginResult == true) {
+                                    if (loginViewModel.isRememberMe) {
+                                        appViewModel.saveLoginInfo(loginViewModel.userEmail, loginViewModel.userPassword)
+                                    }
+                                    else {
+                                        appViewModel.clearSavedLoginInfo()
+                                    }
+                                    appViewModel.switchTo(view: .chat)
+                                }
+                            }
+                            
                         } else {
-                            handleAccountCreation()
+                            loginViewModel.handleAccountCreation()
+                            
                         }
                     } label: {
                         HStack {
                             Spacer()
-                            if isLoading {
+                            if loginViewModel.isLoading {
                                 ProgressView()
                             }
                             else {
                                 Text(
-                                    menuOption == .login
+                                    loginViewModel.menuOption == .login
                                         ? "Login" : "Register Account"
                                 )
                                 .font(.title2)
-                                .animation(.easeIn, value: menuOption)
+                                .animation(.easeIn, value: loginViewModel.menuOption)
                             }
                             
                             Spacer()
@@ -297,180 +284,35 @@ struct LoginView: View {
                     Color(.init(white: 0, alpha: 0.1))
                         .ignoresSafeArea()
                 )
-                .sheet(isPresented: $isForgetPassword) {
+                .sheet(isPresented: $loginViewModel.isForgetPassword) {
                     PasswordResetView(
-                        isForgetPassword: $isForgetPassword, width: width,
+                        isForgetPassword: $loginViewModel.isForgetPassword, width: width,
                         height: height)
                 }
-                .fullScreenCover(isPresented: $showImagePicker, onDismiss: nil)
+                .fullScreenCover(isPresented: $loginViewModel.isShowImagePicker, onDismiss: nil)
                 {
-                    ImagePicker(image: $profilePic)
+                    ImagePicker(image: $loginViewModel.profilePic)
                 }
-                .toastView(toast: $toast)
+                .toastView(toast: $loginViewModel.toast)
                 .onAppear {
                     width = geometry.size.width
                     height = geometry.size.height
-                    (userEmail, userPassword) = appViewModel.retrieveLoginInfo()
-                    if (!userEmail.isEmpty && !userPassword.isEmpty) {
-                        handleLogin()
+                    (loginViewModel.userEmail, loginViewModel.userPassword) = appViewModel.retrieveLoginInfo()
+                    if (!loginViewModel.userEmail.isEmpty && !loginViewModel.userPassword.isEmpty) {
+                        loginViewModel.handleLogin {
+                            loginResult in
+                            if (loginResult == true) {
+                                appViewModel.switchTo(view: .chat)
+                            }
+                        }
+                        
                     }
 
                 }
         }
     }
 
-    private func handleLogin() {
-        if userEmail.isEmpty || userPassword.isEmpty {
-            toast = Toast(
-                style: .error,
-                message: LoginMessages.loginCredentialsInvalid.rawValue)
-            return
-        }
-        
-        isLoading = true
-        FirebaseManager.shared.auth.signIn(
-            withEmail: userEmail, password: userPassword
-        ) { result, err in
-            if let err = err {
-                toast = Toast(style: .error, message: err.localizedDescription)
-                isLoading = false
-                return
-            }
-            if let _ = result {
-                toast = Toast(style: .success, message: LoginMessages.loginSuccessful.rawValue)
-                
-                if isRememberMe {
-                    appViewModel.saveLoginInfo(userEmail, userPassword)
-                }
-                else {
-                    appViewModel.clearSavedLoginInfo()
-                }
-                isLoading = false
-                appViewModel.switchTo(view: .chat, animationLength: 1)
-            }
-            else  {
-                toast = Toast(style: .error, message: LoginMessages.loginCredentialsInvalid.rawValue)
-                isLoading = false
-                
-            }
-        }
-    }
-    
 
-    
-    private func handleAccountCreation() {
-        if !passwordManager.passwordIsValid(for: userPassword) {
-            toast = Toast(
-                style: .error,
-                message: LoginMessages.createPasswordInvalid.rawValue)
-            return
-        }
-        if userPassword != confirmPassword {
-            toast = Toast(
-                style: .error,
-                message: LoginMessages.confirmPasswordNotMatch.rawValue)
-            return
-        }
-
-        if userEmail.isEmpty {
-            toast = Toast(
-                style: .error, message: LoginMessages.createUserError.rawValue)
-            return
-        }
-
-        guard profilePic != nil else {
-            toast = Toast(style: .error, message: "Please upload a profile pic")
-            return
-        }
-        
-        isLoading = true
-        
-        FirebaseManager.shared.auth.createUser (
-            withEmail: userEmail, password: userPassword
-        ) { result, err in
-            if let err = err {
-                print(err.localizedDescription)
-                toast = Toast(style: .error, message: err.localizedDescription)
-                isLoading = false
-                return
-            } else {
-                uploadUserData()
-                toast = Toast(style: .success, message: LoginMessages.createUserSuccessful.rawValue)
-                menuOption = .login
-            }
-        }
-        
-        return
-    }
-
-    private func uploadProfilePic() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            isLoading = false
-            return
-        }
-        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
-        guard let imageData = profilePic?.jpegData(compressionQuality: 0.5)
-        else { isLoading = false ; return }
-
-        ref.putData(imageData) {
-            metadata, error in
-
-            if let error = error {
-                toast = Toast(
-                    style: .error, message: error.localizedDescription)
-                print(error.localizedDescription)
-                isLoading = false
-                return
-            }
-            
-            ref.downloadURL {
-                imgURL, err in
-                if let error = err {
-                    toast = Toast(
-                        style: .error, message: error.localizedDescription)
-                }
-                if let imgURL = imgURL {
-                    uploadToCloud(profilePicURL: imgURL)
-                    
-                } else {
-                    toast = Toast(
-                        style: .error,
-                        message:
-                            "Unknown error encountered when uploading profile Picture"
-                    )
-                }
-            }
-        }
-        
-    }
-    
-    private func uploadUserData() {
-        return uploadProfilePic()
-    }
-    
-    private func uploadToCloud(profilePicURL: URL) {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
-        guard let emailOnFile = FirebaseManager.shared.auth.currentUser?.email else {return}
-        let userData = [
-            "email": emailOnFile,
-            "uid": uid,
-            "profilePic": profilePicURL.absoluteString,
-        ]
-        FirebaseManager.shared.firestore.collection("users").document(uid).setData(userData) {
-            error in
-            if let error = error {
-                
-                toast = Toast(
-                    style: .error, message: error.localizedDescription)
-                print(error.localizedDescription)
-                isLoading = false
-                return
-            }
-            else {
-                isLoading = false
-            }
-        }
-    }
 
 }
 

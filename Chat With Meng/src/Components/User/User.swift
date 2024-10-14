@@ -10,25 +10,16 @@ import FirebaseAuth
 import FirebaseFirestore
 import SwiftUI
 
-class User {
-    private var email: String
-    private var uid: String
-    private var profilePicURL: URL
+struct User: Codable {
+    var email: String = ""
+    var uid: String = ""
+    var profilePicURL: URL = URL(fileURLWithPath: "default")
+    var userName: String = ""
 
-    init(_ email: String, _ uid: String, _ profilePic: URL) {
-
-        self.email = email
-        self.uid = uid
-        self.profilePicURL = profilePic
-
-    }
-
-    func getInfo() -> [String: Any] {
-        return [
-            "email": email,
-            "uid": uid,
-            "profileURL": profilePicURL,
-        ]
-    }
+    var friends: [Friend] = []
+    var friendRequests: [String] = []
+    
+    var humanNotifications: Bool = true
+    var AiNotifications: Bool = false
 
 }
