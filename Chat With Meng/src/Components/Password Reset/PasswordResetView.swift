@@ -14,8 +14,10 @@ struct PasswordResetView: View {
     var width:    CGFloat
     var height:   CGFloat
     
-    @State private var email:       String      =   ""
-    @State private var toast:       Toast?      =   nil
+    @State private var email:       String          =   ""
+    @State private var toast:       Toast?          =   nil
+    
+    @FocusState private var focus:    FocusField?
     
     var body: some View {
         VStack(alignment: .leading, spacing: height * 0.02) {
@@ -45,6 +47,14 @@ struct PasswordResetView: View {
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .keyboardType(.asciiCapable)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: width * 0.03)
+                            .stroke(.blue.opacity(0.8), lineWidth: (focus == .email) ? 2 : 0)
+                    }
+                    .focused($focus, equals: .email)
+                    .onDisappear {
+                        focus = nil
+                    }
                 
                 Button {
                     sendResetEmail()

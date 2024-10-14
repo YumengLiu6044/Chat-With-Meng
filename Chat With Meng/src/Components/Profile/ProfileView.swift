@@ -33,6 +33,7 @@ struct ProfileView: View {
                         ProfilePicView(
                             imageURL:
                                 "https://img.decrypt.co/insecure/rs:fit:3840:0:0:0/plain/https://cdn.decrypt.co/wp-content/uploads/2024/05/doge-dogecoin-meme-kabosu-gID_7.jpg@webp",
+                            imageOverlayData: [30, 30, 30],
                             width: width * 0.3, height: width * 0.3,
                             isOnline: .constant(true),
                             isLoading: .constant(true)

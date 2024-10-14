@@ -21,5 +21,7 @@ struct User: Codable {
     
     var humanNotifications: Bool = true
     var AiNotifications: Bool = false
+    
+    var profileOverlayData: [CGFloat] = []
 
 }

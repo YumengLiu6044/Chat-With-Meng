@@ -38,6 +38,7 @@ class ChatViewModel: ObservableObject {
                 if let document = document {
                     do {
                         self.currentUser = try document.data(as: User.self)
+                        print(self.currentUser)
                     } catch {
                         self.toast = Toast(style: .error, message: "Error decoding document")
                     }

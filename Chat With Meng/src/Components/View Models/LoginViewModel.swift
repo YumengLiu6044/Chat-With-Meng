@@ -126,7 +126,7 @@ class LoginViewModel: ObservableObject {
             return
         }
         let ref = FirebaseManager.shared.storage.reference(withPath: uid)
-        guard let imageData = profilePic?.jpegData(compressionQuality: 0.5)
+        guard let imageData = profilePic?.jpegData(compressionQuality: 0.1)
         else { return }
 
         ref.putData(imageData) {
@@ -170,12 +170,14 @@ class LoginViewModel: ObservableObject {
     private func uploadToCloud(profilePicURL: URL) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         guard let emailOnFile = FirebaseManager.shared.auth.currentUser?.email else {return}
+        guard let profilePic = profilePic else {return}
         
         var userData = User()
         userData.email = emailOnFile
         userData.userName = String(userData.email[..<emailOnFile.firstIndex(of: "@")!])
         userData.profilePicURL = profilePicURL
         userData.uid = uid
+        userData.profileOverlayData = profilePic.averageColor
         
         do {
             try FirebaseManager.shared.firestore.collection("users").document(uid).setData(from: userData) {

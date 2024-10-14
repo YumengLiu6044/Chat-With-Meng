@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+    @EnvironmentObject var chatViewModel: ChatViewModel
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
@@ -42,7 +43,8 @@ struct SettingsView: View {
                                 ZStack {
                                     ProfilePicView(
                                         imageURL:
-                                            "https://img.decrypt.co/insecure/rs:fit:3840:0:0:0/plain/https://cdn.decrypt.co/wp-content/uploads/2024/05/doge-dogecoin-meme-kabosu-gID_7.jpg@webp",
+                                            chatViewModel.currentUser.profilePicURL.absoluteString,
+                                        imageOverlayData: chatViewModel.currentUser.profileOverlayData,
                                         width: width * 0.3, height: width * 0.3,
                                         isOnline: .constant(true),
                                         isLoading: .constant(true)
@@ -73,12 +75,12 @@ struct SettingsView: View {
                             Spacer()
 
                             VStack(alignment: .trailing) {
-                                Text("Yumeng")
+                                Text(chatViewModel.currentUser.userName)
                                     .font(.system(size: width * 0.12))
                                     .fontWeight(.bold)
                                     .padding([.bottom, .trailing], height * 0.01)
 
-                                Text("yumel13@uci.edu")
+                                Text(chatViewModel.currentUser.email)
                                     .font(.system(size: width * 0.05))
                                     .tint(.primary)
                                     .padding([.top, .trailing], height * 0.01)
@@ -90,10 +92,7 @@ struct SettingsView: View {
                         List {
                                 Section(header: Text("Account")) {
                                     SettingOptionView(header: "User name") {
-                                        Text("Yumeng")
-                                    }
-                                    SettingOptionView(header: "Online Status") {
-                                        Toggle("", isOn: .constant(true))
+                                        Text(chatViewModel.currentUser.userName)
                                     }
                                     SettingOptionView(header: "Forgot Password") {
                                         Button {
@@ -107,10 +106,10 @@ struct SettingsView: View {
 
                                 Section(header: Text("Notifications")) {
                                     SettingOptionView(header: "Human") {
-                                        Toggle("", isOn: .constant(true))
+                                        Toggle("", isOn: $chatViewModel.currentUser.humanNotifications)
                                     }
                                     SettingOptionView(header: "AI") {
-                                        Toggle("", isOn: .constant(true))
+                                        Toggle("", isOn: $chatViewModel.currentUser.AiNotifications)
                                     }
 
                                 }
@@ -154,14 +153,12 @@ struct SettingsView: View {
         .fullScreenCover(isPresented: $isForgotPassword, onDismiss: nil) {
             PasswordResetView(isForgetPassword: $isForgotPassword, width: width, height: height)
         }
-
     }
-
-
 }
 
 #Preview {
     SettingsView()
         .environmentObject(AppViewModel())
+        .environmentObject(ChatViewModel())
         .preferredColorScheme(.dark)
 }

@@ -36,6 +36,8 @@ struct ChatViewMain: View {
                         
                 case .settings:
                     SettingsView()
+                        .environmentObject(appViewModel)
+                        .environmentObject(chatViewModel)
                         .transition(.move(edge: .trailing))
                 }
                 

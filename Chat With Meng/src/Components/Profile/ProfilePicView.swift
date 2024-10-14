@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ProfilePicView: View {
     var imageURL: String
+    var imageOverlayData: [CGFloat]
     
     var width: CGFloat
     var height: CGFloat
@@ -28,7 +29,7 @@ struct ProfilePicView: View {
                     .frame(width: width, height: width)
                     .overlay {
                         Circle()
-                            .stroke(isOnline ? (image.asUIImage().averageColor ??  .myPurple) : .gray, lineWidth: width * 0.05)
+                            .stroke(isOnline ? Color(.init(red: imageOverlayData[0], green: imageOverlayData[1], blue: imageOverlayData[2], alpha: 1)) : .gray, lineWidth: width * 0.05)
                             .frame(width: width * 1.1, height: width * 1.1)
                     }
                     .background {
@@ -100,22 +101,22 @@ extension UIView {
 }
 
 extension UIImage {
-       var averageColor: Color? {
-           guard let inputImage = CIImage(image: self) else { return nil }
+    var averageColor: [CGFloat] {
+           guard let inputImage = CIImage(image: self) else { return [] }
            let extentVector = CIVector(x: inputImage.extent.origin.x, y: inputImage.extent.origin.y, z: inputImage.extent.size.width, w: inputImage.extent.size.height)
 
-           guard let filter = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: inputImage, kCIInputExtentKey: extentVector]) else { return nil }
-           guard let outputImage = filter.outputImage else { return nil }
+           guard let filter = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: inputImage, kCIInputExtentKey: extentVector]) else { return [] }
+           guard let outputImage = filter.outputImage else { return [] }
 
            var bitmap = [UInt8](repeating: 0, count: 4)
            let context = CIContext(options: [.workingColorSpace: kCFNull!])
            context.render(outputImage, toBitmap: &bitmap, rowBytes: 4, bounds: CGRect(x: 0, y: 0, width: 1, height: 1), format: .RGBA8, colorSpace: nil)
 
-           return Color(.init(red: CGFloat(bitmap[0]) / 255, green: CGFloat(bitmap[1]) / 255, blue: CGFloat(bitmap[2]) / 255, alpha: CGFloat(bitmap[3]) / 255))
+           return [CGFloat(bitmap[0]) / 255, CGFloat(bitmap[1]) / 255, CGFloat(bitmap[2]) / 255]
        }
 }
 
 #Preview {
-    ProfilePicView(imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTenTVwBIhhGirjghoRBko0CgRmfXiapbz1Q&s", width: 100, height: 100, isOnline: .constant(true), isLoading: .constant(true))
+    ProfilePicView(imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTenTVwBIhhGirjghoRBko0CgRmfXiapbz1Q&s", imageOverlayData: [50, 50, 50], width: 100, height: 100, isOnline: .constant(true), isLoading: .constant(true))
         .preferredColorScheme(.light)
 }

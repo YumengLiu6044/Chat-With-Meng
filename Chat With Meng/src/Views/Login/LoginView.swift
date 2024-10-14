@@ -9,11 +9,6 @@ import Firebase
 import SwiftUI
 
 
-
-enum FocusField: Hashable {
-    case email, password, confirmPassword
-}
-
 struct LoginView: View {
     init() {
         passwordManager.requireLowerCase()
@@ -327,8 +322,6 @@ struct LoginView: View {
                 }
         }
     }
-
-
 
 }
 
