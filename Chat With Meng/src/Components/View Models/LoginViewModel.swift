@@ -170,23 +170,30 @@ class LoginViewModel: ObservableObject {
     private func uploadToCloud(profilePicURL: URL) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         guard let emailOnFile = FirebaseManager.shared.auth.currentUser?.email else {return}
-        let userData = [
-            "email": emailOnFile,
-            "uid": uid,
-            "profilePic": profilePicURL.absoluteString,
-        ]
-        FirebaseManager.shared.firestore.collection("users").document(uid).setData(userData) {
-            error in
-            if let error = error {
-                self.toast = Toast(
-                    style: .error, message: error.localizedDescription)
-                print(error.localizedDescription)
-                self.isLoading = false
-                return
+        
+        var userData = User()
+        userData.email = emailOnFile
+        userData.userName = String(userData.email[..<emailOnFile.firstIndex(of: "@")!])
+        userData.profilePicURL = profilePicURL
+        userData.uid = uid
+        
+        do {
+            try FirebaseManager.shared.firestore.collection("users").document(uid).setData(from: userData) {
+                error in
+                if let error = error {
+                    self.toast = Toast(
+                        style: .error, message: error.localizedDescription)
+                    print(error.localizedDescription)
+                    self.isLoading = false
+                    return
+                }
+                else {
+                    self.isLoading = false
+                }
             }
-            else {
-                self.isLoading = false
-            }
+        } catch {
+            self.toast = Toast(
+                style: .error, message: "Error while uploading data")
         }
     }
 }

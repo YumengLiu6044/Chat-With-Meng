@@ -12,7 +12,7 @@ import SwiftUI
 
 struct User: Codable {
     var email: String = ""
-    var uid: String = ""
+    @DocumentID var uid: String? = nil
     var profilePicURL: URL = URL(fileURLWithPath: "default")
     var userName: String = ""
 
