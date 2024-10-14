@@ -129,6 +129,10 @@ struct LoginView: View {
                         .onChange(of: loginViewModel.menuOption) {
                             loginViewModel.userEmail = ""
                         }
+                        .overlay {
+                            RoundedRectangle(cornerRadius: width * 0.03)
+                                .stroke(.blue.opacity(0.8), lineWidth: (focus == .email) ? 2 : 0)
+                        }
                         .focused($focus, equals: .email)
                         .onDisappear {
                             focus = nil
@@ -144,6 +148,10 @@ struct LoginView: View {
                             .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
                             .shadow(radius: 3)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: width * 0.03)
+                                    .stroke(.blue.opacity(0.8), lineWidth: (focus == .password) ? 2 : 0)
+                            }
                             .focused($focus, equals: .password)
                             .onDisappear {
                                 focus = nil
@@ -184,6 +192,10 @@ struct LoginView: View {
 
                             .clipShape(.rect(cornerRadius: width * 0.03))
                             .shadow(radius: 3)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: width * 0.03)
+                                    .stroke(.blue.opacity(0.8), lineWidth: (focus == .password) ? 2 : 0)
+                            }
                             .focused($focus, equals: .password)
                             .onChange(of: loginViewModel.userPassword) {
                                 let _ = passwordManager.passwordIsValid(
@@ -202,6 +214,10 @@ struct LoginView: View {
                             .focused($focus, equals: .confirmPassword)
                             .background(.ultraThickMaterial)
                             .clipShape(.rect(cornerRadius: width * 0.03))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: width * 0.03)
+                                    .stroke(.blue.opacity(0.8), lineWidth: (focus == .confirmPassword) ? 2 : 0)
+                            }
                             .shadow(radius: 3)
                             .onDisappear {
                                 loginViewModel.confirmPassword = ""
