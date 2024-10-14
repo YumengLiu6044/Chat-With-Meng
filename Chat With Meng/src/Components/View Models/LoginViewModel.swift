@@ -72,7 +72,7 @@ class LoginViewModel: ObservableObject {
             else  {
                 self.toast = Toast(style: .error, message: LoginMessages.loginCredentialsInvalid.rawValue)
                 self.isLoading = false
-                completion(true)
+                completion(false)
             }
         }
     }
