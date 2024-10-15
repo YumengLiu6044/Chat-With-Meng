@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CachedAsyncImage
 
 
 struct ProfilePicView: View {
@@ -18,8 +19,9 @@ struct ProfilePicView: View {
     @Binding var isOnline: Bool
     @Binding var isLoading: Bool
     
+    
     var body: some View {
-        AsyncImage(url: URL(string: imageURL), transaction: Transaction(animation: .spring(response: 1, dampingFraction: 0.6, blendDuration: 0.5))) { phase in
+        CachedAsyncImage(url: URL(string: imageURL), urlCache: .imageCache, transaction: Transaction(animation: .spring(response: 1, dampingFraction: 0.6, blendDuration: 0.5))) { phase in
             switch phase {
             case .success(let image):
                 image.resizable()
@@ -68,6 +70,10 @@ struct ProfilePicView: View {
     }
 }
 
+extension URLCache {
+    
+    static let imageCache = URLCache(memoryCapacity: 512_000_000, diskCapacity: 10_000_000_000)
+}
 
 extension UIImage {
     var averageColor: [CGFloat] {
