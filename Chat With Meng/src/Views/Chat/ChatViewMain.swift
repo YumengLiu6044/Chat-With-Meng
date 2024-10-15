@@ -28,7 +28,7 @@ struct ChatViewMain: View {
                         .transition(.move(edge: .leading))
                 case .friends:
                     FriendsView()
-                        
+                        .environmentObject(chatViewModel)
                         
                 case .settings:
                     SettingsView()

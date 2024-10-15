@@ -10,9 +10,9 @@ import FirebaseAuth
 import FirebaseFirestore
 import SwiftUI
 
-struct User: Codable, Hashable {
+struct User: Codable, Hashable, Identifiable {
     var email: String = ""
-    @DocumentID var uid: String? = nil
+    @DocumentID var id: String? = nil
     var profilePicURL: URL = URL(fileURLWithPath: "default")
     var userName: String = ""
 
@@ -23,5 +23,17 @@ struct User: Codable, Hashable {
     var AiNotifications: Bool = false
     
     var profileOverlayData: [CGFloat] = []
+    
+    enum CoodingKey: String, CodingKey {
+        case email
+        case uid
+        case profilePicURL
+        case userName
+        case friends
+        case friendRequests
+        case humanNotifications
+        case AiNotifications
+        case profileOverlayData
+    }
 
 }

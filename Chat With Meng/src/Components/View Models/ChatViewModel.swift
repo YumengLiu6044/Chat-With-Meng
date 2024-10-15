@@ -13,6 +13,7 @@ enum ChatViewSelection : Hashable {
     case messages, friends, settings
 }
 
+@MainActor
 class ChatViewModel: ObservableObject {
     @Published var chatViewSelection: ChatViewSelection = .messages
     
@@ -24,6 +25,8 @@ class ChatViewModel: ObservableObject {
     @Published var showMenu:        Bool = true
     
     @Published var currentUserListener: ListenerRegistration? = nil
+    
+    @Published var userSearchResult: [User] = []
     
     private var userDocRef: DocumentReference?
     
@@ -79,8 +82,6 @@ class ChatViewModel: ObservableObject {
     }
     
     public func updateCurrentUser() {
-        guard let uid = currentUser.uid else {return}
-        
         do {
             try self.userDocRef?.setData(from: self.currentUser) {
                 error in
@@ -91,6 +92,12 @@ class ChatViewModel: ObservableObject {
             self.toast = Toast(style: .error, message: "Failed to update current user")
         }
     }
+    
+    public func updateCurrentUserByKeyVal(key: User.CoodingKey, val: Any) {
+        self.userDocRef?.updateData([key: val])
+    }
+    
+    
     
     public func updateProfilePic() -> Void {
         FirebaseManager.uploadProfilePic(profilePic: self.profilePic!) {
@@ -119,6 +126,32 @@ class ChatViewModel: ObservableObject {
             self.currentUser.userName = newUserName
             self.updateCurrentUser()
             return completion(nil)
+        }
+    }
+    
+    public func searchUsers(from searchKey: String) async {
+        
+        self.userSearchResult = []
+        if searchKey.isEmpty {
+            return
+        }
+        do {
+            let queryDocs = try await FirebaseManager.shared.firestore.collection("users")
+                .whereField("userName", isGreaterThanOrEqualTo: searchKey)
+                .whereField("userName", isLessThanOrEqualTo: searchKey + "~")
+                .getDocuments()
+            
+            for document in queryDocs.documents {
+                let data = try document.data(as: User.self)
+                if data.userName == self.currentUser.userName {
+                    continue
+                }
+                self.userSearchResult.append(data)
+            }
+        }
+        catch {
+            print(error.localizedDescription)
+            
         }
     }
 }

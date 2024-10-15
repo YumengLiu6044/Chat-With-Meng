@@ -28,6 +28,7 @@ struct IconView: View {
                 if count > 0 {
                     Text(String(min(count, 99)))
                         .font(.system(size: size * 0.6))
+                        .foregroundStyle(.white)
                         .background {
                             Circle()
                                 .fill(.red)
