@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import FirebaseFirestore
 
 enum ChatViewSelection : Hashable {
     case messages, friends, settings
@@ -22,6 +23,10 @@ class ChatViewModel: ObservableObject {
     @Published var showImagePicker: Bool = false
     @Published var showMenu:        Bool = true
     
+    @Published var currentUserListener: ListenerRegistration? = nil
+    
+    private var userDocRef: DocumentReference?
+    
     public func switchTo(view toView: ChatViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {
             withAnimation(.snappy(duration: TimeInterval(length))) {
@@ -30,40 +35,60 @@ class ChatViewModel: ObservableObject {
         })
     }
     
-    public func initializeCurrentUser() -> Void {
+    public func deinitializeCurrentUser() {
+        self.currentUserListener?.remove()
+    }
+    
+    public func initializeCurrentUser(completion: @escaping (_ user: User) -> Void) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         
-        FirebaseManager.shared.firestore.collection("users").document(uid).getDocument {
-            document, error in
+        self.userDocRef = FirebaseManager.shared.firestore.collection("users").document(uid)
+        
+//        FirebaseManager.shared.firestore.collection("users").document(uid).getDocument {
+//            document, error in
+//            if let error = error {
+//                self.toast = Toast(style: .error, message: error.localizedDescription)
+//            }
+//            else {
+//                if let document = document {
+//                    do {
+//                        self.currentUser = try document.data(as: User.self)
+//                        print(self.currentUser)
+//                    } catch {
+//                        self.toast = Toast(style: .error, message: "Error decoding document")
+//                    }
+//                }
+//                else {
+//                    self.toast = Toast(style: .error, message: "Error getting document")
+//                }
+//            }
+//        }
+        let listener = self.userDocRef?.addSnapshotListener(includeMetadataChanges: true) { [weak self] querySnapshot, error in
             if let error = error {
-                self.toast = Toast(style: .error, message: error.localizedDescription)
+                self?.toast = Toast(style: .error, message: error.localizedDescription)
+                return
             }
-            else {
-                if let document = document {
-                    do {
-                        self.currentUser = try document.data(as: User.self)
-                        print(self.currentUser)
-                    } catch {
-                        self.toast = Toast(style: .error, message: "Error decoding document")
-                    }
-                }
-                else {
-                    self.toast = Toast(style: .error, message: "Error getting document")
-                }
-            }
+            
+            guard let document = try? querySnapshot?.data(as: User.self) else {return}
+            completion(document)
+            
         }
+        
+        self.currentUserListener = listener
         
     }
     
     public func updateCurrentUser() {
         guard let uid = currentUser.uid else {return}
+        
         do {
-            try FirebaseManager.shared.firestore.collection("users").document(uid).setData(from: currentUser) {
-                _ in
+            try self.userDocRef?.setData(from: self.currentUser) {
+                error in
+                print(error?.localizedDescription ?? "")
             }
         }
         catch {
-            self.toast = Toast(style: .error, message: "Error updating current user info")
+            self.toast = Toast(style: .error, message: "Failed to update current user")
         }
     }
     
@@ -74,6 +99,7 @@ class ChatViewModel: ObservableObject {
             if let imgURL = imgURL, let colorData = colorData {
                 self.currentUser.profilePicURL = imgURL
                 self.currentUser.profileOverlayData = colorData
+                self.updateCurrentUser()
             }
         }
     }

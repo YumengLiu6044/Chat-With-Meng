@@ -115,7 +115,7 @@ struct SettingsView: View {
                                     SettingOptionView(header: "Forgot Password") {
                                         Button {
                                             isForgotPassword.toggle()
-                                            chatViewModel.updateCurrentUser()
+                                            
                                         } label: {
                                             Image(systemName: "chevron.right")
                                         }
@@ -126,10 +126,12 @@ struct SettingsView: View {
                                 Section(header: Text("Notifications")) {
                                     SettingOptionView(header: "Human") {
                                         Toggle("", isOn: $chatViewModel.currentUser.humanNotifications)
+                                            
                                         
                                     }
                                     SettingOptionView(header: "AI") {
                                         Toggle("", isOn: $chatViewModel.currentUser.AiNotifications)
+                                            
                                     }
                                 }
                                 .onChange(of: chatViewModel.currentUser) {
@@ -143,6 +145,7 @@ struct SettingsView: View {
                             appViewModel.signOut {
                                 success in
                                 if success {
+                                    self.chatViewModel.deinitializeCurrentUser()
                                     self.appViewModel.switchTo(view: .login)
                                 }
                                 else {
@@ -175,6 +178,7 @@ struct SettingsView: View {
                     }
                     .onChange(of: chatViewModel.profilePic) {
                         chatViewModel.updateProfilePic()
+                        
                     }
                     .onAppear {
                         width = geometry.size.width

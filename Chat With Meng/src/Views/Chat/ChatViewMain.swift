@@ -15,11 +15,7 @@ struct ChatViewMain: View {
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
     
-    
-    
-    init() {
-        chatViewModel.initializeCurrentUser()
-    }
+    @State private var didAppear: Bool = false
     
     var body: some View {
         GeometryReader {
@@ -57,6 +53,19 @@ struct ChatViewMain: View {
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height
+                
+                if (!didAppear) {
+                    self.chatViewModel.initializeCurrentUser {
+                        user in
+                        print("User updated")
+                        self.chatViewModel.currentUser = user
+                    }
+                    
+                    didAppear = true
+                }
+            }
+            .onDisappear {
+                self.chatViewModel.deinitializeCurrentUser()
             }
             .toastView(toast: $chatViewModel.toast)
         }

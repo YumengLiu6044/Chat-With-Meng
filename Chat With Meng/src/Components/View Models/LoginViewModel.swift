@@ -76,7 +76,7 @@ class LoginViewModel: ObservableObject {
         }
     }
     
-    public func handleAccountCreation() {
+    public func handleAccountCreation(completion: @escaping (Bool) -> Void) {
         if !passwordManager.passwordIsValid(for: userPassword) {
             toast = Toast(
                 style: .error,
@@ -115,7 +115,8 @@ class LoginViewModel: ObservableObject {
                     success in
                     if (success) {
                         self.toast = Toast(style: .success, message: LoginMessages.createUserSuccessful.rawValue)
-                        self.menuOption = .login
+                        self.handleLogin(completion: completion)
+                        self.isLoading = false
                     }
                     self.isLoading = false
                 }

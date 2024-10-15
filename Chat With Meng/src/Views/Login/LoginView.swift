@@ -258,7 +258,16 @@ struct LoginView: View {
                             }
                             
                         } else {
-                            loginViewModel.handleAccountCreation()
+                            loginViewModel.handleAccountCreation() {
+                                result in
+                                if (loginViewModel.isRememberMe) {
+                                    appViewModel.saveLoginInfo(loginViewModel.userEmail, loginViewModel.userPassword)
+                                }
+                                else {
+                                    appViewModel.clearSavedLoginInfo()
+                                }
+                                appViewModel.switchTo(view: .chat)
+                            }
                             
                         }
                     } label: {
