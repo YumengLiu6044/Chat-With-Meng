@@ -23,7 +23,7 @@ class FirebaseManager: NSObject {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
             return
         }
-        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
+        let ref = FirebaseManager.shared.storage.reference(withPath: uid + "/profilePic/")
         guard let imageData = profilePic.jpegData(compressionQuality: 0.1)
         else { return }
 

@@ -77,6 +77,8 @@ struct SettingsView: View {
                             VStack(alignment: .trailing) {
                                 Text(chatViewModel.currentUser.userName)
                                     .font(.system(size: width * 0.12))
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.6)
                                     .fontWeight(.bold)
                                     .padding([.bottom, .trailing], height * 0.01)
 
@@ -93,6 +95,7 @@ struct SettingsView: View {
                                 Section(header: Text("Account")) {
                                     SettingOptionView(header: "User name") {
                                         Text(chatViewModel.currentUser.userName)
+                                            
                                     }
                                     SettingOptionView(header: "Forgot Password") {
                                         Button {
