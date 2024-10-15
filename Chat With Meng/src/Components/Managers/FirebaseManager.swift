@@ -18,4 +18,32 @@ class FirebaseManager: NSObject {
         self.firestore = Firebase.Firestore.firestore()
         super.init()
     }
+    
+    static public func uploadProfilePic(profilePic: UIImage, completion: @escaping (URL?, [CGFloat]?) -> Void) {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            return
+        }
+        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
+        guard let imageData = profilePic.jpegData(compressionQuality: 0.1)
+        else { return }
+
+        ref.putData(imageData) {
+            metadata, error in
+
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            ref.downloadURL {
+                imgURL, err in
+                if let error = err {
+                    print(error.localizedDescription)
+                    return
+                }
+                if let imgURL = imgURL {
+                    return completion(imgURL, profilePic.averageColor)
+                }
+            }
+        }
+    }
 }

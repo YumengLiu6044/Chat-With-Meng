@@ -10,7 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import SwiftUI
 
-struct User: Codable {
+struct User: Codable, Hashable {
     var email: String = ""
     @DocumentID var uid: String? = nil
     var profilePicURL: URL = URL(fileURLWithPath: "default")

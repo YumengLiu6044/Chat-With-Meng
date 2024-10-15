@@ -108,66 +108,38 @@ class LoginViewModel: ObservableObject {
             withEmail: userEmail, password: userPassword
         ) { result, err in
             if let err = err {
-                print(err.localizedDescription)
                 self.toast = Toast(style: .error, message: err.localizedDescription)
                 self.isLoading = false
                 return
             } else {
-                self.uploadUserData()
-                self.toast = Toast(style: .success, message: LoginMessages.createUserSuccessful.rawValue)
-                self.menuOption = .login
+                self.uploadUserData {
+                    success in
+                    if (success) {
+                        self.toast = Toast(style: .success, message: LoginMessages.createUserSuccessful.rawValue)
+                        self.menuOption = .login
+                    }
+                    self.isLoading = false
+                }
             }
         }
         return
     }
-
-    private func uploadProfilePic() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
-            return
-        }
-        let ref = FirebaseManager.shared.storage.reference(withPath: uid)
-        guard let imageData = profilePic?.jpegData(compressionQuality: 0.1)
-        else { return }
-
-        ref.putData(imageData) {
-            metadata, error in
-
-            if let error = error {
-                self.toast = Toast(
-                    style: .error, message: error.localizedDescription)
-                print(error.localizedDescription)
-                self.isLoading = false
-                return
+    
+    private func uploadUserData(completion: @escaping (Bool) -> Void) {
+        guard let profilePic = profilePic else {return completion(false)}
+        FirebaseManager.uploadProfilePic(profilePic: profilePic) {
+            url, colorData in
+            if let url = url, let colorData = colorData {
+                self.uploadToCloud(profilePicURL: url, colorData: colorData, completion: completion)
             }
-            
-            ref.downloadURL {
-                imgURL, err in
-                if let error = err {
-                    self.toast = Toast(
-                        style: .error, message: error.localizedDescription)
-                    self.isLoading = false
-                }
-                if let imgURL = imgURL {
-                    self.uploadToCloud(profilePicURL: imgURL)
-                    
-                } else {
-                    self.toast = Toast(
-                        style: .error,
-                        message:
-                            "Unknown error encountered when uploading profile Picture"
-                    )
-                    self.isLoading = false
-                }
+            else {
+                self.toast = Toast(style: .error, message: "Error uploading profile picture")
+                completion(false)
             }
         }
-        
     }
     
-    private func uploadUserData() {
-        return uploadProfilePic()
-    }
-    
-    private func uploadToCloud(profilePicURL: URL) {
+    private func uploadToCloud(profilePicURL: URL, colorData: [CGFloat], completion: @escaping (Bool) -> Void) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         guard let emailOnFile = FirebaseManager.shared.auth.currentUser?.email else {return}
         guard let profilePic = profilePic else {return}
@@ -177,25 +149,21 @@ class LoginViewModel: ObservableObject {
         userData.userName = String(userData.email[..<emailOnFile.firstIndex(of: "@")!])
         userData.profilePicURL = profilePicURL
         userData.uid = uid
-        userData.profileOverlayData = profilePic.averageColor
+        userData.profileOverlayData = colorData
         
         do {
             try FirebaseManager.shared.firestore.collection("users").document(uid).setData(from: userData) {
                 error in
                 if let error = error {
-                    self.toast = Toast(
-                        style: .error, message: error.localizedDescription)
                     print(error.localizedDescription)
-                    self.isLoading = false
-                    return
+                    return completion(false)
                 }
                 else {
-                    self.isLoading = false
+                    return completion(true)
                 }
             }
         } catch {
-            self.toast = Toast(
-                style: .error, message: "Error while uploading data")
+            return completion(false)
         }
     }
 }

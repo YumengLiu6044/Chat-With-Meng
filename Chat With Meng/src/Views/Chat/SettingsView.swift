@@ -38,7 +38,7 @@ struct SettingsView: View {
                     VStack {
                         HStack {
                             Button {
-                                print("Changing profile pic")
+                                chatViewModel.showImagePicker.toggle()
                             } label: {
                                 ZStack {
                                     ProfilePicView(
@@ -142,6 +142,20 @@ struct SettingsView: View {
                         Spacer()
 
                     }
+                    .onChange(of: chatViewModel.currentUser) {
+                        chatViewModel.updateCurrentUser()
+                        print("Updated")
+                    }
+                    .onChange(of: chatViewModel.profilePic) {
+                        FirebaseManager.uploadProfilePic(profilePic: chatViewModel.profilePic!) {
+                            imgURL, colorData in
+                            
+                            if let imgURL = imgURL, let colorData = colorData {
+                                chatViewModel.currentUser.profilePicURL = imgURL
+                                chatViewModel.currentUser.profileOverlayData = colorData
+                            }
+                        }
+                    }
                     .onAppear {
                         width = geometry.size.width
                         height = geometry.size.height
@@ -152,6 +166,9 @@ struct SettingsView: View {
         }
         .fullScreenCover(isPresented: $isForgotPassword, onDismiss: nil) {
             PasswordResetView(isForgetPassword: $isForgotPassword, width: width, height: height)
+        }
+        .fullScreenCover(isPresented: $chatViewModel.showImagePicker, onDismiss: nil) {
+            ImagePicker(image: $chatViewModel.profilePic)
         }
     }
 }
