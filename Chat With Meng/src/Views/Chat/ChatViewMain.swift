@@ -48,6 +48,7 @@ struct ChatViewMain: View {
                         .environmentObject(chatViewModel)
                         
                 }
+                .ignoresSafeArea(.keyboard)
             }
             .background(
                 Color(.init(white: 0, alpha: 0.1))

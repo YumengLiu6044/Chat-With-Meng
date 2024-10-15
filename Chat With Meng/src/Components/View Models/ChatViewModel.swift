@@ -66,5 +66,33 @@ class ChatViewModel: ObservableObject {
             self.toast = Toast(style: .error, message: "Error updating current user info")
         }
     }
-
+    
+    public func updateProfilePic() -> Void {
+        FirebaseManager.uploadProfilePic(profilePic: self.profilePic!) {
+            imgURL, colorData in
+            
+            if let imgURL = imgURL, let colorData = colorData {
+                self.currentUser.profilePicURL = imgURL
+                self.currentUser.profileOverlayData = colorData
+            }
+        }
+    }
+    
+    public func updateUserName(to newUserName: String, completion: @escaping (Error?) -> Void) {
+        if (newUserName.isEmpty) {
+            return completion(SettingError.userNameEmpty)
+        }
+        
+        if (!newUserName.allSatisfy {$0.isLetter || $0.isNumber || $0.isWhitespace}) {
+            return completion(SettingError.userNameInvalidCharacter)
+        }
+        if (newUserName.count > 30) {
+            return completion(SettingError.userNameTooLong)
+        }
+        else {
+            self.currentUser.userName = newUserName
+            self.updateCurrentUser()
+            return completion(nil)
+        }
+    }
 }

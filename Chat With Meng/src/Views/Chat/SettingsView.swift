@@ -15,6 +15,7 @@ struct SettingsView: View {
     @State private var height: CGFloat = 100
     
     @State private var isForgotPassword: Bool = false
+    @State private var userName: String = ""
     
     var body: some View {
         GeometryReader {
@@ -94,12 +95,27 @@ struct SettingsView: View {
                         List {
                                 Section(header: Text("Account")) {
                                     SettingOptionView(header: "User name") {
-                                        Text(chatViewModel.currentUser.userName)
+                                        TextField("", text: self.$userName)
+                                            .multilineTextAlignment(.trailing)
+                                            .onSubmit {
+                                                chatViewModel.updateUserName(to: self.userName) {
+                                                    error in
+                                                    if let error = error {
+                                                        self.chatViewModel.toast = Toast(style: .error, message: error.localizedDescription)
+                                                        self.userName = self.chatViewModel.currentUser.userName
+                                                    }
+                                                    else {
+                                                        self.chatViewModel.toast = Toast(style: .success, message: "User name changed")
+                                                    }
+                                                }
+                                            }
+                                        
                                             
                                     }
                                     SettingOptionView(header: "Forgot Password") {
                                         Button {
                                             isForgotPassword.toggle()
+                                            chatViewModel.updateCurrentUser()
                                         } label: {
                                             Image(systemName: "chevron.right")
                                         }
@@ -110,19 +126,31 @@ struct SettingsView: View {
                                 Section(header: Text("Notifications")) {
                                     SettingOptionView(header: "Human") {
                                         Toggle("", isOn: $chatViewModel.currentUser.humanNotifications)
+                                        
                                     }
                                     SettingOptionView(header: "AI") {
                                         Toggle("", isOn: $chatViewModel.currentUser.AiNotifications)
                                     }
-
+                                }
+                                .onChange(of: chatViewModel.currentUser) {
+                                    chatViewModel.updateCurrentUser()
                                 }
                         }
                         .scrollContentBackground(.hidden)
                         .padding([.top], height * 0.05)
                         
                         Button {
-                            appViewModel.signOut()
-                            appViewModel.switchTo(view: .login)
+                            appViewModel.signOut {
+                                success in
+                                if success {
+                                    self.appViewModel.switchTo(view: .login)
+                                }
+                                else {
+                                    self.chatViewModel.toast = Toast(style: .error, message: "Failed to sign out")
+                                }
+                                
+                            }
+                            
                         }
                         label: {
                             HStack {
@@ -145,28 +173,20 @@ struct SettingsView: View {
                         Spacer()
 
                     }
-                    .onChange(of: chatViewModel.currentUser) {
-                        chatViewModel.updateCurrentUser()
-                        print("Updated")
-                    }
                     .onChange(of: chatViewModel.profilePic) {
-                        FirebaseManager.uploadProfilePic(profilePic: chatViewModel.profilePic!) {
-                            imgURL, colorData in
-                            
-                            if let imgURL = imgURL, let colorData = colorData {
-                                chatViewModel.currentUser.profilePicURL = imgURL
-                                chatViewModel.currentUser.profileOverlayData = colorData
-                            }
-                        }
+                        chatViewModel.updateProfilePic()
                     }
                     .onAppear {
                         width = geometry.size.width
                         height = geometry.size.height
+                        
+                        self.userName = chatViewModel.currentUser.userName
                     }
                 }
-            
+            .ignoresSafeArea(.keyboard)
             
         }
+        
         .fullScreenCover(isPresented: $isForgotPassword, onDismiss: nil) {
             PasswordResetView(isForgetPassword: $isForgotPassword, width: width, height: height)
         }

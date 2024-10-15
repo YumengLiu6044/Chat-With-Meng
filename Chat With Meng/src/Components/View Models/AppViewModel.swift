@@ -17,7 +17,7 @@ class AppViewModel: ObservableObject {
     @AppStorage("saved_profil_pic_url") private var savedProfilePicURL: String = ""
     
     
-    public func switchTo(view toView: AppViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
+    public func switchTo(view toView: AppViewSelection, after delay: Int = 0, animationLength length: CGFloat = 1.0) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {
             withAnimation(.snappy(duration: TimeInterval(length))) {
                 self.currentView = toView
@@ -40,14 +40,15 @@ class AppViewModel: ObservableObject {
         
     }
     
-    public func signOut() {
+    public func signOut(completion: @escaping (Bool) -> Void) {
         do {
             try FirebaseManager.shared.auth.signOut()
             savedPassword = ""
             savedEmail = ""
+            return completion(true)
 
         } catch {
-            print("Failed to sign out")
+            return completion(false)
         }
     }
     

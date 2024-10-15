@@ -44,7 +44,6 @@ class LoginViewModel: ObservableObject {
     private var passwordManager: PasswordManager = PasswordManager()
     
     
-    
     public func handleLogin(completion: @escaping (Bool) -> Void) {
         if userEmail.isEmpty || userPassword.isEmpty {
             toast = Toast(
