@@ -42,7 +42,10 @@ struct SearchBar: UIViewRepresentable {
         }
         
         func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+            searchBar.endEditing(true)
+            searchBar.showsCancelButton = false
             self.onSearchAction?()
+            
         }
         
     }
