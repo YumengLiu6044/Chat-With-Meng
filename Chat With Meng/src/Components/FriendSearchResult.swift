@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct FriendSearchResult: View {
-    var user: User
+    @EnvironmentObject var chatViewModel: ChatViewModel
+    
+    var friend: User
     
     var width: CGFloat  = 300
     var height: CGFloat = 80
@@ -16,10 +18,10 @@ struct FriendSearchResult: View {
     @State var isLoading: Bool = true
     var body: some View {
         HStack {
-            ProfilePicView(imageURL: user.profilePicURL.absoluteString, imageOverlayData: user.profileOverlayData, width: width * 0.15, height: width * 0.15, isOnline: .constant(true), isLoading: $isLoading)
+            ProfilePicView(imageURL: friend.profilePicURL.absoluteString, imageOverlayData: friend.profileOverlayData, width: width * 0.15, height: width * 0.15, isOnline: .constant(true), isLoading: $isLoading)
                 .padding()
             
-            Text(user.userName)
+            Text(friend.userName)
                 .font(.system(size: height * 0.4))
                 .fontWeight(.semibold)
                 .lineLimit(1)
@@ -29,15 +31,16 @@ struct FriendSearchResult: View {
             Spacer()
             
             IconView(iconName: "plus") {
-                print("Add friend")
+                Task {
+                    chatViewModel.sendFriendRequenst(to: friend.id)
+                }
             }
             .buttonStyle(PlainButtonStyle())
-            
-            
         }
     }
 }
 
 #Preview {
-    FriendSearchResult(user: User())
+    FriendSearchResult(friend: User())
+        .environmentObject(ChatViewModel())
 }

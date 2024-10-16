@@ -154,4 +154,23 @@ class ChatViewModel: ObservableObject {
             
         }
     }
+    
+    public func sendFriendRequenst(to userID: String?) {
+        guard let userID = userID else { return }
+        if userID == self.currentUser.id {
+            return
+        }
+        guard let currentUserID: String = self.currentUser.id else {return }
+        
+        FirebaseManager.shared.firestore.collection("users").document(userID).updateData([User.CoodingKey.friendRequests.rawValue : FieldValue.arrayUnion([currentUserID])]) {
+            error in
+            if let error = error {
+                self.toast = Toast(style: .error, message: "Error sending friend requests")
+                return
+            }
+            
+            self.toast = Toast(style: .success, message: "Friend request sent")
+            
+        }
+    }
 }

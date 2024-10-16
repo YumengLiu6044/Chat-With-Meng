@@ -49,7 +49,8 @@ struct FriendsView: View {
                     List {
                         ForEach(chatViewModel.userSearchResult) {
                             user in
-                            FriendSearchResult(user: user, width: width * 1.0, height: height * 0.1)
+                            FriendSearchResult(friend: user, width: width * 1.0, height: height * 0.1)
+                                .environmentObject(self.chatViewModel)
                         }
                     }
                     .scrollContentBackground(.hidden)
