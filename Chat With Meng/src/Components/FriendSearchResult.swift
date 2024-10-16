@@ -31,6 +31,7 @@ struct FriendSearchResult: View {
             IconView(iconName: "plus") {
                 print("Add friend")
             }
+            .buttonStyle(PlainButtonStyle())
             
             
         }
