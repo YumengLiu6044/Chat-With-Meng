@@ -15,6 +15,7 @@ struct FriendsView: View {
     @State private var height: CGFloat = 100
 
     @State private var searchKey: String = ""
+    
 
     var body: some View {
         GeometryReader {
@@ -36,20 +37,26 @@ struct FriendsView: View {
                 }
                 .padding([.top, .leading, .trailing])
                 
-                SearchBar(text: $searchKey)
-                    .padding([.leading, .trailing], width * 0.02)
-                    .padding([.top], height * -0.04)
-                .onChange(of: searchKey) {
+                SearchBar(text: $searchKey, onCancelAction: {
+                    self.searchKey = ""
+                }, onSearchAction: {
                     Task {
                         await self.chatViewModel.searchUsers(from: searchKey)
                     }
+                    
+                })
+                .onChange(of: self.searchKey) {
+                    self.chatViewModel.friendSearchResult = []
                 }
+                    .padding([.leading, .trailing], width * 0.02)
+                    .padding([.top], height * -0.04)
+                    
                 
                 if (!searchKey.isEmpty) {
                     List {
-                        ForEach(chatViewModel.userSearchResult) {
-                            user in
-                            FriendSearchResult(friend: user, width: width * 1.0, height: height * 0.1)
+                        ForEach(chatViewModel.friendSearchResult) {
+                            friend in
+                            FriendSearchResult(friend: friend, width: width * 1.0, height: height * 0.1)
                                 .environmentObject(self.chatViewModel)
                         }
                     }

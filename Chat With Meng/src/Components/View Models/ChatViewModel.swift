@@ -26,9 +26,13 @@ class ChatViewModel: ObservableObject {
     
     @Published var currentUserListener: ListenerRegistration? = nil
     
-    @Published var userSearchResult: [User] = []
+    @Published var friendSearchResult: [Friend] = []
     
     private var userDocRef: DocumentReference?
+    
+    private var isSearchingForUsers: Bool = false
+    
+    
     
     public func switchTo(view toView: ChatViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {
@@ -47,25 +51,6 @@ class ChatViewModel: ObservableObject {
         
         self.userDocRef = FirebaseManager.shared.firestore.collection("users").document(uid)
         
-//        FirebaseManager.shared.firestore.collection("users").document(uid).getDocument {
-//            document, error in
-//            if let error = error {
-//                self.toast = Toast(style: .error, message: error.localizedDescription)
-//            }
-//            else {
-//                if let document = document {
-//                    do {
-//                        self.currentUser = try document.data(as: User.self)
-//                        print(self.currentUser)
-//                    } catch {
-//                        self.toast = Toast(style: .error, message: "Error decoding document")
-//                    }
-//                }
-//                else {
-//                    self.toast = Toast(style: .error, message: "Error getting document")
-//                }
-//            }
-//        }
         let listener = self.userDocRef?.addSnapshotListener(includeMetadataChanges: true) { [weak self] querySnapshot, error in
             if let error = error {
                 self?.toast = Toast(style: .error, message: error.localizedDescription)
@@ -129,12 +114,54 @@ class ChatViewModel: ObservableObject {
         }
     }
     
-    public func searchUsers(from searchKey: String) async {
+    public func makeFriend(from id: String?, completion: @escaping (Friend?) -> Void) {
+        guard let id = id else {return completion(nil)}
         
-        self.userSearchResult = []
+        FirebaseManager.shared.firestore.collection("users").document(id).getDocument {
+            document, error in
+            if let error = error {
+                self.toast = Toast(style: .error, message: error.localizedDescription)
+            }
+            else {
+                if let document = document {
+                    do {
+                        let data = try document.data(as: User.self)
+                        
+                        let dataAsFriend = Friend(
+                            email: data.email,
+                            id: data.id,
+                            profilePicURL: data.profilePicURL,
+                            userName: data.userName,
+                            notifications: true,
+                            profileOverlayData: data.profileOverlayData
+                        )
+                        return completion(dataAsFriend)
+                        
+                    } catch {
+                        self.toast = Toast(style: .error, message: "Error decoding document")
+                    }
+                }
+                else {
+                    self.toast = Toast(style: .error, message: "Error getting document")
+                }
+            }
+        }
+        return completion(nil)
+    }
+    public func searchUsers(from searchKey: String) async {
+        self.friendSearchResult = []
         if searchKey.isEmpty {
+            isSearchingForUsers = false
             return
         }
+        
+        if isSearchingForUsers {
+            return
+        }
+        else {
+            isSearchingForUsers = true
+        }
+        
         do {
             let queryDocs = try await FirebaseManager.shared.firestore.collection("users")
                 .whereField("userName", isGreaterThanOrEqualTo: searchKey)
@@ -146,13 +173,17 @@ class ChatViewModel: ObservableObject {
                 if data.userName == self.currentUser.userName {
                     continue
                 }
-                self.userSearchResult.append(data)
+                self.makeFriend(from: data.id) { friend in
+                    guard let friend = friend else {return}
+                    self.friendSearchResult.append(friend)
+                }
             }
         }
         catch {
             print(error.localizedDescription)
             
         }
+        isSearchingForUsers = false
     }
     
     public func sendFriendRequenst(to userID: String?) {
@@ -165,7 +196,7 @@ class ChatViewModel: ObservableObject {
         FirebaseManager.shared.firestore.collection("users").document(userID).updateData([User.CoodingKey.friendRequests.rawValue : FieldValue.arrayUnion([currentUserID])]) {
             error in
             if let error = error {
-                self.toast = Toast(style: .error, message: "Error sending friend requests")
+                self.toast = Toast(style: .error, message: error.localizedDescription)
                 return
             }
             
