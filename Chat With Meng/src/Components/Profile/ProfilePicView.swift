@@ -31,14 +31,10 @@ struct ProfilePicView: View {
                     .frame(width: width, height: width)
                     .overlay {
                         Circle()
-                            .stroke(isOnline ? Color(.init(red: imageOverlayData[0], green: imageOverlayData[1], blue: imageOverlayData[2], alpha: 1)) : .gray, lineWidth: width * 0.05)
+                            .stroke(isOnline ? Color(.init(red: imageOverlayData[0], green: imageOverlayData[1], blue: imageOverlayData[2], alpha: 1)) : .gray, lineWidth: width * 0.04)
                             .frame(width: width * 1.1, height: width * 1.1)
                     }
-                    .background {
-                        Circle()
-                            .frame(width: width * 1.3, height: width * 1.3)
-                            .foregroundStyle(.background)
-                    }
+                    
                 
             case .failure:
                 Image(systemName: "person.fill")
