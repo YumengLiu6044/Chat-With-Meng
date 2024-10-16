@@ -44,7 +44,7 @@ struct SettingsView: View {
                                 ZStack {
                                     ProfilePicView(
                                         imageURL:
-                                            chatViewModel.currentUser.profilePicURL.absoluteString,
+                                            chatViewModel.currentUser.profilePicURL,
                                         imageOverlayData: chatViewModel.currentUser.profileOverlayData,
                                         width: width * 0.3, height: width * 0.3,
                                         isOnline: .constant(true),
@@ -126,16 +126,21 @@ struct SettingsView: View {
                                 Section(header: Text("Notifications")) {
                                     SettingOptionView(header: "Human") {
                                         Toggle("", isOn: $chatViewModel.currentUser.humanNotifications)
+                                            .onTapGesture {
+                                                chatViewModel.currentUser.humanNotifications.toggle()
+                                                self.chatViewModel.updateCurrentUserByKeyVal(key: User.CoodingKey.humanNotifications, val: self.chatViewModel.currentUser.humanNotifications)
+                                            }
                                             
                                         
                                     }
                                     SettingOptionView(header: "AI") {
                                         Toggle("", isOn: $chatViewModel.currentUser.AiNotifications)
+                                            .onTapGesture {
+                                                chatViewModel.currentUser.AiNotifications.toggle()
+                                                self.chatViewModel.updateCurrentUserByKeyVal(key: User.CoodingKey.AiNotifications, val: self.chatViewModel.currentUser.AiNotifications)
+                                            }
                                             
                                     }
-                                }
-                                .onChange(of: chatViewModel.currentUser) {
-                                    chatViewModel.updateCurrentUser()
                                 }
                         }
                         .scrollContentBackground(.hidden)

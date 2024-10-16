@@ -26,7 +26,7 @@ struct FriendSearchResult: View {
     }
     var body: some View {
         HStack {
-            ProfilePicView(imageURL: friend.profilePicURL.absoluteString, imageOverlayData: friend.profileOverlayData, width: width * 0.15, height: width * 0.15, isOnline: .constant(true), isLoading: $isLoading)
+            ProfilePicView(imageURL: friend.profilePicURL, imageOverlayData: friend.profileOverlayData, width: width * 0.15, height: width * 0.15, isOnline: .constant(true), isLoading: $isLoading)
                 .padding()
             
             Text(friend.userName)

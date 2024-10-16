@@ -11,6 +11,7 @@ struct IconView: View {
     var iconName: String = "person"
     var count: Int = 0
     var size: CGFloat = 30
+    var color: Color = .primary
     
     
     var action: (() -> Void)?
@@ -35,11 +36,15 @@ struct IconView: View {
                                 .frame(width: size * 0.7)
                             
                         }
-                        .offset(x: size * 0.8, y: size * -0.8)
+                        
+                        .padding([.leading, .bottom], size * 1.65)
+                    
                 }
             }
         }
-        .tint(.primary)
+        .tint(self.color)
+        .buttonStyle(.borderless)
+        
     }
 }
 

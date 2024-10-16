@@ -10,10 +10,10 @@ import FirebaseAuth
 import FirebaseFirestore
 import SwiftUI
 
-struct User: Codable, Hashable, Identifiable {
+struct User: Codable, Hashable, Identifiable, Equatable {
     var email: String = ""
     @DocumentID var id: String? = nil
-    var profilePicURL: URL = URL(fileURLWithPath: "default")
+    var profilePicURL: String = ""
     var userName: String = ""
 
     var friends: [Friend] = []

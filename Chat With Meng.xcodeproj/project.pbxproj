@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E21B61CD2CBEC57B00D950EB /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = E21B61CC2CBEC57B00D950EB /* CachedAsyncImage */; };
 		E23554782C405634008C71DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E23554772C405634008C71DE /* Assets.xcassets */; };
 		E235547B2C405634008C71DE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E235547A2C405634008C71DE /* Preview Assets.xcassets */; };
+		E2523B022CC05AC40033A91A /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = E2523B012CC05AC40033A91A /* CachedAsyncImage */; };
 		E28F86CB2CBD9FA1000967EF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E28F86CA2CBD9FA1000967EF /* FirebaseAuth */; };
 		E28F86CD2CBD9FA1000967EF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E28F86CC2CBD9FA1000967EF /* FirebaseFirestore */; };
 		E28F86CF2CBD9FA1000967EF /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E28F86CE2CBD9FA1000967EF /* FirebaseStorage */; };
@@ -61,7 +61,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E28F86CB2CBD9FA1000967EF /* FirebaseAuth in Frameworks */,
-				E21B61CD2CBEC57B00D950EB /* CachedAsyncImage in Frameworks */,
+				E2523B022CC05AC40033A91A /* CachedAsyncImage in Frameworks */,
 				E28F86CD2CBD9FA1000967EF /* FirebaseFirestore in Frameworks */,
 				E28F86CF2CBD9FA1000967EF /* FirebaseStorage in Frameworks */,
 			);
@@ -146,7 +146,7 @@
 				E28F86CA2CBD9FA1000967EF /* FirebaseAuth */,
 				E28F86CC2CBD9FA1000967EF /* FirebaseFirestore */,
 				E28F86CE2CBD9FA1000967EF /* FirebaseStorage */,
-				E21B61CC2CBEC57B00D950EB /* CachedAsyncImage */,
+				E2523B012CC05AC40033A91A /* CachedAsyncImage */,
 			);
 			productName = "Chat With Meng";
 			productReference = E23554702C405632008C71DE /* Meng Chat.app */;
@@ -200,7 +200,7 @@
 			mainGroup = E23554672C405632008C71DE;
 			packageReferences = (
 				E28F86C92CBD9FA1000967EF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				E21B61CB2CBEC57B00D950EB /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
+				E2523B002CC05AC40033A91A /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 			);
 			productRefGroup = E23554712C405632008C71DE /* Products */;
 			projectDirPath = "";
@@ -504,9 +504,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E21B61CB2CBEC57B00D950EB /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
+		E2523B002CC05AC40033A91A /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image.git";
+			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.1.1;
@@ -523,9 +523,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E21B61CC2CBEC57B00D950EB /* CachedAsyncImage */ = {
+		E2523B012CC05AC40033A91A /* CachedAsyncImage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E21B61CB2CBEC57B00D950EB /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
+			package = E2523B002CC05AC40033A91A /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
 			productName = CachedAsyncImage;
 		};
 		E28F86CA2CBD9FA1000967EF /* FirebaseAuth */ = {

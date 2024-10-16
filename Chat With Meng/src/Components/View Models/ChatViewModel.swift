@@ -27,6 +27,7 @@ class ChatViewModel: ObservableObject {
     @Published var currentUserListener: ListenerRegistration? = nil
     
     @Published var friendSearchResult: [Friend] = []
+    @Published var friendRequests:     [Friend] = []
     
     private var userDocRef: DocumentReference?
     
@@ -66,20 +67,8 @@ class ChatViewModel: ObservableObject {
         
     }
     
-    public func updateCurrentUser() {
-        do {
-            try self.userDocRef?.setData(from: self.currentUser) {
-                error in
-                print(error?.localizedDescription ?? "")
-            }
-        }
-        catch {
-            self.toast = Toast(style: .error, message: "Failed to update current user")
-        }
-    }
-    
     public func updateCurrentUserByKeyVal(key: User.CoodingKey, val: Any) {
-        self.userDocRef?.updateData([key: val])
+        self.userDocRef?.updateData([key.rawValue: val])
     }
     
     
@@ -89,9 +78,11 @@ class ChatViewModel: ObservableObject {
             imgURL, colorData in
             
             if let imgURL = imgURL, let colorData = colorData {
-                self.currentUser.profilePicURL = imgURL
+                self.currentUser.profilePicURL = imgURL.absoluteString
                 self.currentUser.profileOverlayData = colorData
-                self.updateCurrentUser()
+                self.updateCurrentUserByKeyVal(key: User.CoodingKey.profilePicURL, val: imgURL.absoluteString)
+                self.updateCurrentUserByKeyVal(key: User.CoodingKey.profileOverlayData, val: colorData)
+                
             }
         }
     }
@@ -109,7 +100,7 @@ class ChatViewModel: ObservableObject {
         }
         else {
             self.currentUser.userName = newUserName
-            self.updateCurrentUser()
+            self.updateCurrentUserByKeyVal(key: User.CoodingKey.userName, val: newUserName)
             return completion(nil)
         }
     }
@@ -148,6 +139,7 @@ class ChatViewModel: ObservableObject {
         }
         return completion(nil)
     }
+    
     public func searchUsers(from searchKey: String) async {
         self.friendSearchResult = []
         if searchKey.isEmpty {
@@ -173,10 +165,21 @@ class ChatViewModel: ObservableObject {
                 if data.userName == self.currentUser.userName {
                     continue
                 }
+                
+                var included: Bool = false
+                for request in self.friendRequests {
+                    if (request.id == data.id) {
+                        included = true
+                    }
+                }
+                if included {
+                    continue
+                }
+                
                 self.makeFriend(from: data.id) { friend in
                     guard let friend = friend else {return}
                     if self.friendSearchResult.count < 10 {
-                        withAnimation(.easeInOut) {
+                        withAnimation(.smooth) {
                             self.friendSearchResult.append(friend)
                         }
                     }
@@ -190,6 +193,10 @@ class ChatViewModel: ObservableObject {
             print(error.localizedDescription)
             
         }
+        
+        // Filter existing friend requests
+        
+        self.friendSearchResult = self.friendSearchResult.filter{!self.currentUser.friendRequests.contains($0.id ?? "")}
         isSearchingForUsers = false
     }
     
@@ -209,6 +216,19 @@ class ChatViewModel: ObservableObject {
             
             self.toast = Toast(style: .success, message: "Friend request sent")
             
+        }
+    }
+    
+    public func loadFriendRequests() {
+        self.friendRequests = []
+        
+        for request in self.currentUser.friendRequests {
+            self.makeFriend(from: request) { friend in
+                guard let friend = friend else {return}
+                withAnimation(.smooth){
+                    self.friendRequests.append(friend)
+                }
+            }
         }
     }
 }
