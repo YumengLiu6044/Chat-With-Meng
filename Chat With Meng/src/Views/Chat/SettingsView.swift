@@ -85,6 +85,8 @@ struct SettingsView: View {
                                 Text(chatViewModel.currentUser.email)
                                     .font(.system(size: width * 0.05))
                                     .tint(.primary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.6)
                                     .padding([.top, .trailing], height * 0.01)
                             }
                             .padding()
