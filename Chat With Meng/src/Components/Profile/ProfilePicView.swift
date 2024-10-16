@@ -16,8 +16,8 @@ struct ProfilePicView: View {
     var width: CGFloat
     var height: CGFloat
     
-    @Binding var isOnline: Bool
-    @Binding var isLoading: Bool
+    @State private var isOnline: Bool = true
+    @State private var isLoading: Bool = false
     
     
     var body: some View {
@@ -88,6 +88,6 @@ extension UIImage {
 }
 
 #Preview {
-    ProfilePicView(imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTenTVwBIhhGirjghoRBko0CgRmfXiapbz1Q&s", imageOverlayData: [50, 50, 50], width: 100, height: 100, isOnline: .constant(true), isLoading: .constant(true))
+    ProfilePicView(imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTenTVwBIhhGirjghoRBko0CgRmfXiapbz1Q&s", imageOverlayData: [50, 50, 50], width: 100, height: 100)
         .preferredColorScheme(.light)
 }

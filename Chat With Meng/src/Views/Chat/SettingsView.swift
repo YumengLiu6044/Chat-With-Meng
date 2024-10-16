@@ -46,9 +46,8 @@ struct SettingsView: View {
                                         imageURL:
                                             chatViewModel.currentUser.profilePicURL,
                                         imageOverlayData: chatViewModel.currentUser.profileOverlayData,
-                                        width: width * 0.3, height: width * 0.3,
-                                        isOnline: .constant(true),
-                                        isLoading: .constant(true)
+                                        width: width * 0.3, height: width * 0.3
+                                        
                                     )
                                     .shadow(radius: 5)
                                     .padding([.top, .leading], width * 0.1)

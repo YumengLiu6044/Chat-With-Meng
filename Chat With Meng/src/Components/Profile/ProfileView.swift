@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject var chatViewModel: ChatViewModel
+    
+    var friend: Friend
+    
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
 
@@ -32,22 +36,23 @@ struct ProfileView: View {
                     HStack {
                         ProfilePicView(
                             imageURL:
-                                "https://img.decrypt.co/insecure/rs:fit:3840:0:0:0/plain/https://cdn.decrypt.co/wp-content/uploads/2024/05/doge-dogecoin-meme-kabosu-gID_7.jpg@webp",
-                            imageOverlayData: [30, 30, 30],
-                            width: width * 0.3, height: width * 0.3,
-                            isOnline: .constant(true),
-                            isLoading: .constant(true)
+                                friend.profilePicURL,
+                            imageOverlayData: friend.profileOverlayData,
+                            width: width * 0.3,
+                            height: width * 0.3
                         )
                         
-                        .padding([.top, .leading], width * 0.1)
+                        .padding([.leading], width * 0.1)
                         Spacer()
                         VStack(alignment: .trailing) {
-                            Text("Friend")
+                            Text(friend.userName)
                                 .font(.system(size: width * 0.12))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.6)
                                 .fontWeight(.bold)
                                 .padding([.bottom, .trailing], height * 0.01)
 
-                            Text("friend@uci.edu")
+                            Text(friend.email)
                                 .font(.system(size: width * 0.05))
                                 .tint(.primary)
                                 .padding([.top, .trailing], height * 0.01)
@@ -72,6 +77,15 @@ struct ProfileView: View {
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height
+                
+                withAnimation {
+                    self.chatViewModel.showMenu = false
+                }
+            }
+            .onDisappear {
+                withAnimation {
+                    self.chatViewModel.showMenu = true
+                }
             }
 
         }
@@ -79,5 +93,6 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(friend: Friend())
+        .environmentObject(ChatViewModel())
 }

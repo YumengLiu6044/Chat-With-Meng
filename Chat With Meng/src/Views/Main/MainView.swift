@@ -16,7 +16,7 @@ struct MainView: View {
         case .login:
             LoginView()
                 .environmentObject(appViewModel)
-                .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+                .transition(.move(edge: .bottom))
 
         case .chat:
             ChatViewMain()

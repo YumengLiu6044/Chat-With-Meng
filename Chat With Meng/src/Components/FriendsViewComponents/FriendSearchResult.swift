@@ -26,8 +26,16 @@ struct FriendSearchResult: View {
     }
     var body: some View {
         HStack {
-            ProfilePicView(imageURL: friend.profilePicURL, imageOverlayData: friend.profileOverlayData, width: width * 0.15, height: width * 0.15, isOnline: .constant(true), isLoading: $isLoading)
+            NavigationLink(destination: ProfileView(friend: self.friend).environmentObject(self.chatViewModel)) {
+                ProfilePicView(
+                    imageURL: friend.profilePicURL,
+                    imageOverlayData: friend.profileOverlayData,
+                    width: width * 0.15,
+                    height: width * 0.15
+                )
                 .padding()
+            }
+            .tint(.none)
             
             Text(friend.userName)
                 .font(.system(size: height * 0.4))

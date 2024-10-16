@@ -63,6 +63,7 @@ struct MenuBarView: View {
             
         }
         .frame(width: width, height: height)
+        .transition(.opacity)
         
     }
 }
