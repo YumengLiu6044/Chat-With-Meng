@@ -183,9 +183,7 @@ class ChatViewModel: ObservableObject {
                             self.friendSearchResult.append(friend)
                         }
                     }
-                    else {
-                        self.friendSearchResult.append(friend)
-                    }
+                    
                 }
             }
         }
@@ -193,10 +191,8 @@ class ChatViewModel: ObservableObject {
             print(error.localizedDescription)
             
         }
+    
         
-        // Filter existing friend requests
-        
-        self.friendSearchResult = self.friendSearchResult.filter{!self.currentUser.friendRequests.contains($0.id ?? "")}
         isSearchingForUsers = false
     }
     

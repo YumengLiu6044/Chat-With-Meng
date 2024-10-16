@@ -92,13 +92,17 @@ struct FriendsView: View {
                             self.chatViewModel.loadFriendRequests()
                         }
                     }
-                    
                     .listRowSpacing(height * 0.02)
                     .scrollIndicators(.hidden)
                     
                     Spacer()
 
                 }
+                .scrollContentBackground(.hidden)
+                .background(
+                    Color(.init(white: 0, alpha: 0.1))
+                        .ignoresSafeArea()
+                )
                 .onAppear {
                     width = geometry.size.width
                     height = geometry.size.height

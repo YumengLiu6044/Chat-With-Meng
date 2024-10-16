@@ -41,7 +41,7 @@ struct ProfileView: View {
                             width: width * 0.3,
                             height: width * 0.3
                         )
-                        
+                        .shadow(radius: 5)
                         .padding([.leading], width * 0.1)
                         Spacer()
                         VStack(alignment: .trailing) {
@@ -64,6 +64,7 @@ struct ProfileView: View {
                     List {
                         
                     }
+                    .scrollContentBackground(.hidden)
                     .padding([.top], height * 0.05)
                     
                     Spacer()
