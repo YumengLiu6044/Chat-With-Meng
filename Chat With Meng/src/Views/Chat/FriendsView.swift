@@ -56,7 +56,8 @@ struct FriendsView: View {
                     List {
                         ForEach(chatViewModel.friendSearchResult) {
                             friend in
-                            FriendSearchResult(friend: friend, width: width * 1.0, height: height * 0.1)
+                            FriendSearchResult(friend: friend, width: width, height: height * 0.1)
+                                
                                 .environmentObject(self.chatViewModel)
                         }
                     }

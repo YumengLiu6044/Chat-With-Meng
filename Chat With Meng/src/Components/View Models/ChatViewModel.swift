@@ -175,7 +175,14 @@ class ChatViewModel: ObservableObject {
                 }
                 self.makeFriend(from: data.id) { friend in
                     guard let friend = friend else {return}
-                    self.friendSearchResult.append(friend)
+                    if self.friendSearchResult.count < 10 {
+                        withAnimation(.spring) {
+                            self.friendSearchResult.append(friend)
+                        }
+                    }
+                    else {
+                        self.friendSearchResult.append(friend)
+                    }
                 }
             }
         }

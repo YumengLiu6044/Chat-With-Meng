@@ -28,6 +28,7 @@ struct SearchBar: UIViewRepresentable {
         
         func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
             searchBar.showsCancelButton = true
+            
         }
         
         func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -55,6 +56,7 @@ struct SearchBar: UIViewRepresentable {
         searchBar.delegate = context.coordinator
         searchBar.searchBarStyle = .minimal
         searchBar.autocapitalizationType = .none
+        
         return searchBar
     }
     
