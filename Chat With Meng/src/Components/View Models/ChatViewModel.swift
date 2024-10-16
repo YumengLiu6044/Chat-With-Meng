@@ -156,8 +156,10 @@ class ChatViewModel: ObservableObject {
         
         do {
             let queryDocs = try await FirebaseManager.shared.firestore.collection("users")
-                .whereField("userName", isGreaterThanOrEqualTo: searchKey)
-                .whereField("userName", isLessThanOrEqualTo: searchKey + "~")
+                .whereField(User.CoodingKey.userName.rawValue, isGreaterThanOrEqualTo: searchKey)
+                .whereField(User.CoodingKey.userName.rawValue, isLessThanOrEqualTo: searchKey + "~")
+                .order(by: User.CoodingKey.userName.rawValue)
+                .limit(to: 10)
                 .getDocuments()
             
             for document in queryDocs.documents {
@@ -178,12 +180,9 @@ class ChatViewModel: ObservableObject {
                 
                 self.makeFriend(from: data.id) { friend in
                     guard let friend = friend else {return}
-                    if self.friendSearchResult.count < 10 {
-                        withAnimation(.smooth) {
+                    withAnimation(.smooth) {
                             self.friendSearchResult.append(friend)
-                        }
                     }
-                    
                 }
             }
         }
