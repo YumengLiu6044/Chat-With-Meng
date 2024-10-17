@@ -16,6 +16,7 @@ struct FriendsView: View {
     @State private var height: CGFloat = 100
 
     @State private var searchKey: String = ""
+    @State var showRequests: Bool = true
 
     var body: some View {
         GeometryReader {
@@ -64,7 +65,7 @@ struct FriendsView: View {
 
                                 .environmentObject(self.chatViewModel)
                                 
-                                if (friend.id != chatViewModel.friendSearchResult.last?.id || !self.chatViewModel.friendSearchResult.isEmpty) {
+                                if (friend.id != chatViewModel.friendSearchResult.last?.id) {
                                     Divider()
                                         .padding([.leading, .trailing])
                                     
@@ -72,24 +73,47 @@ struct FriendsView: View {
                             }
 
                         }
-                        ForEach (
-                            chatViewModel.friendRequests, id: \.self
-                        ) {
-                            request in
-                            FriendRequestView(
-                                friend: request,
-                                width: width,
-                                height: height * 0.1
-                            )
-                            .padding([.leading, .trailing])
-                            
-                            if (request.id != chatViewModel.friendRequests.last?.id) {
-                                Divider()
-                                    .padding([.leading, .trailing])
+                        if !self.chatViewModel.friendRequests.isEmpty {
+                            Section( content: {
+                                if self.showRequests {
+                                    ForEach (
+                                        chatViewModel.friendRequests, id: \.self
+                                    ) {
+                                        request in
+                                        FriendRequestView(
+                                            friend: request,
+                                            width: width,
+                                            height: height * 0.1
+                                        )
+                                        .padding([.leading, .trailing])
+                                        
+                                        if (request.id != chatViewModel.friendRequests.last?.id) {
+                                            Divider()
+                                                .padding([.leading, .trailing])
+                                        }
+                                    }
+                                }
+                            }, header: {
+                                HStack {
+                                    Text("Requests")
+                                        .font(.body)
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(.primary)
+                                    
+                                    Spacer()
+                                    
+                                    IconView(iconName: self.showRequests ? "chevron.down" : "chevron.forward", size: height * 0.02, color: .secondary) {
+                                        withAnimation(.smooth) {
+                                            self.showRequests.toggle()
+                                        }
+                                    }
+                                        .contentTransition(.symbolEffect(.replace))
+                                }
+                                .padding([.leading, .trailing], width * 0.07)
+                            })
+                            .onChange(of: chatViewModel.currentUser.friendRequests) {
+                                self.chatViewModel.loadFriendRequests()
                             }
-                        }
-                        .onChange(of: chatViewModel.currentUser.friendRequests) {
-                            self.chatViewModel.loadFriendRequests()
                         }
                     }
                     .listRowSpacing(height * 0.02)
