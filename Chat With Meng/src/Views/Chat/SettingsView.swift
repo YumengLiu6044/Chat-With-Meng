@@ -94,7 +94,8 @@ struct SettingsView: View {
                         }
 
                         List {
-                                Section(header: Text("Account")) {
+                            Section(
+                                    content: {
                                     SettingOptionView(header: "User name") {
                                         TextField("", text: self.$userName)
                                             .multilineTextAlignment(.trailing)
@@ -110,39 +111,58 @@ struct SettingsView: View {
                                                     }
                                                 }
                                             }
-                                        
                                             
-                                    }
-                                    SettingOptionView(header: "Forgot Password") {
-                                        Button {
-                                            isForgotPassword.toggle()
-                                            
-                                        } label: {
-                                            Image(systemName: "chevron.right")
+                                                
                                         }
-                                        .tint(.secondary)
-                                    }
-                                }
-
-                                Section(header: Text("Notifications")) {
-                                    SettingOptionView(header: "Human") {
-                                        Toggle("", isOn: $chatViewModel.currentUser.humanNotifications)
-                                            .onTapGesture {
-                                                chatViewModel.currentUser.humanNotifications.toggle()
-                                                self.chatViewModel.updateCurrentUserByKeyVal(key: User.CoodingKey.humanNotifications, val: self.chatViewModel.currentUser.humanNotifications)
+                                        SettingOptionView(header: "Forgot Password") {
+                                            Button {
+                                                isForgotPassword.toggle()
+                                                
+                                            } label: {
+                                                Image(systemName: "chevron.right")
                                             }
+                                            .tint(.secondary)
+                                        }
+                                    },
+                                    header: {
+                                        HStack {
+                                            IconView(iconName: "person.fill", size: height * 0.025, color: .secondary)
+                                                
+                                            Text("Account")
+                                                .fontWeight(.medium)
+                                                
+                                        }
+                                    })
+                                
+                                Section(
+                                    content: {
+                                        SettingOptionView(header: "Human") {
+                                            Toggle("", isOn: $chatViewModel.currentUser.humanNotifications)
+                                                .onTapGesture {
+                                                    chatViewModel.currentUser.humanNotifications.toggle()
+                                                    self.chatViewModel.updateCurrentUserByKeyVal(key: User.CoodingKey.humanNotifications, val: self.chatViewModel.currentUser.humanNotifications)
+                                                }
+                                                
                                             
-                                        
-                                    }
-                                    SettingOptionView(header: "AI") {
-                                        Toggle("", isOn: $chatViewModel.currentUser.AiNotifications)
-                                            .onTapGesture {
-                                                chatViewModel.currentUser.AiNotifications.toggle()
-                                                self.chatViewModel.updateCurrentUserByKeyVal(key: User.CoodingKey.AiNotifications, val: self.chatViewModel.currentUser.AiNotifications)
-                                            }
-                                            
-                                    }
-                                }
+                                        }
+                                        SettingOptionView(header: "AI") {
+                                            Toggle("", isOn: $chatViewModel.currentUser.AiNotifications)
+                                                .onTapGesture {
+                                                    chatViewModel.currentUser.AiNotifications.toggle()
+                                                    self.chatViewModel.updateCurrentUserByKeyVal(key: User.CoodingKey.AiNotifications, val: self.chatViewModel.currentUser.AiNotifications)
+                                                }
+                                                
+                                        }
+                                    },
+                                    header: {
+                                        HStack {
+                                            IconView(iconName: "bell.fill", size: height * 0.025, color: .secondary)
+                                                
+                                            Text("Notifications")
+                                                .fontWeight(.medium)
+                                                
+                                        }
+                                    })
                         }
                         .scrollContentBackground(.hidden)
                         .padding([.top], height * 0.05)
