@@ -28,6 +28,7 @@ class ChatViewModel: ObservableObject {
     
     @Published var friendSearchResult: [Friend] = []
     @Published var friendRequests:     [Friend] = []
+    @Published var friends:            [Friend] = []
     
     private var userDocRef: DocumentReference?
     
@@ -234,7 +235,7 @@ class ChatViewModel: ObservableObject {
         }
     }
     
-    public func rejectFriendRequest(at id: String) {
+    public func removeFriendRequest(at id: String) {
         guard let uid = self.currentUser.id else { return }
         withAnimation(.smooth) {
             self.friendRequests.removeAll{$0.id == id}
@@ -246,7 +247,49 @@ class ChatViewModel: ObservableObject {
             ])
     }
     
-    public func addFriendFromRequest(of uid: String, completion: @escaping (Bool) -> Void) async {
+    private func addFriendToCloud(for uid: String?, friend friendObj: Friend?) {
+        guard let uid = uid, let friendObj = friendObj else {return}
+        
+        do {
+            let friendData = try JSONEncoder().encode(friendObj)
+            let friendDict = try JSONSerialization.jsonObject(with: friendData, options: []) as? [String: Any]
+            guard let friendDict = friendDict else {
+                return
+            }
+            FirebaseManager.shared.firestore.collection("user").document(uid)
+                .updateData([User.CoodingKey.friends.rawValue : FieldValue.arrayUnion([friendDict])]) {
+                    error in
+                    print(error?.localizedDescription ?? "")
+                }
+        }
+        catch {
+            return
+        }
+        
+    }
+    
+    public func addFriendFromRequest(of uid: String) {
+        guard let local_uid = self.currentUser.id else {return}
+        
+        // Remove request from request list
+        self.removeFriendRequest(at: uid)
+        
+        // Make friend for local user
+        self.makeFriend(from: uid) { friend in
+            guard let friend = friend else {return}
+            self.friends.append(friend)
+            self.addFriendToCloud(for: local_uid, friend: friend)
+            
+            // Make friend for other user
+            self.makeFriend(from: local_uid) {
+                thisFriend in
+                self.addFriendToCloud(for: uid, friend: thisFriend)
+            }
+        }
+        
+    }
+    
+    public func loadFriends() {
         
     }
 }

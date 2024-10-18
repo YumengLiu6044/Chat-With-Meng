@@ -218,7 +218,7 @@ struct SettingsView: View {
         }
         
         .fullScreenCover(isPresented: $isForgotPassword, onDismiss: nil) {
-            PasswordResetView(isForgetPassword: $isForgotPassword, width: width, height: height)
+            PasswordResetView(isForgetPassword: $isForgotPassword, width: width, height: height, isSelf: true)
         }
         .fullScreenCover(isPresented: $chatViewModel.showImagePicker, onDismiss: nil) {
             ImagePicker(image: $chatViewModel.profilePic)

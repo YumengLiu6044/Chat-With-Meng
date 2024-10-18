@@ -16,13 +16,12 @@ struct FriendRequestView: View {
     var height: CGFloat = 80
     
     var onRejectAction: (() -> Void)?
+    var onAcceptAction: (() -> Void)?
     
-    init(friend: Friend, width: CGFloat = 300, height: CGFloat = 80, onReject: (() -> Void)?) {
+    init(friend: Friend, width: CGFloat = 300, height: CGFloat = 80) {
         self.friend = friend
         self.width = width
         self.height = height
-        self.onRejectAction = onReject
-        
     }
     var body: some View {
         HStack {
@@ -47,10 +46,12 @@ struct FriendRequestView: View {
             Spacer()
             
             IconView(iconName: "checkmark", color: .blue) {
-                print("Accept")
+                self.onAcceptAction?()
             }
             
-            IconView(iconName: "xmark", color: .red, action: self.onRejectAction)
+            IconView(iconName: "xmark", color: .red) {
+                self.onRejectAction?()
+            }
             .padding([.trailing])
             
         }
@@ -58,7 +59,21 @@ struct FriendRequestView: View {
     }
 }
 
+extension FriendRequestView {
+    func onAccept(_ action: @escaping () -> Void) -> FriendRequestView {
+        var view = self
+        view.onAcceptAction = action
+        return view
+    }
+    
+    func onReject(_ action: @escaping () -> Void) -> FriendRequestView {
+        var view = self
+        view.onRejectAction = action
+        return view
+    }
+}
+
 #Preview {
-    FriendRequestView(friend: Friend(), onReject: {})
+    FriendRequestView(friend: Friend())
         .environmentObject(ChatViewModel())
 }

@@ -14,8 +14,11 @@ struct PasswordResetView: View {
     var width:    CGFloat
     var height:   CGFloat
     
-    @State private var email:       String          =   ""
-    @State private var toast:       Toast?          =   nil
+    var isSelf:   Bool = false
+    
+    @State private var email:       String      =   ""
+    @State private var toast:       Toast?      =   nil
+    
     
     @FocusState private var focus:    FocusField?
     
@@ -34,7 +37,7 @@ struct PasswordResetView: View {
                 }
                 .padding()
             
-                Text("Type your email below, if it exists, a reset link will be sent to it")
+            Text(isSelf ? "Confirm your email below" : "Type your email below, if it exists, a reset link will be sent to it")
                     .font(.body)
                     .fontWeight(.semibold)
                     .padding()
@@ -90,6 +93,17 @@ struct PasswordResetView: View {
             return
         }
         
+        if isSelf {
+            guard let currentUserEmail = FirebaseManager.shared.auth.currentUser?.email else {
+                toast = Toast(style: .error, message: "Failed to retrieve current user email")
+                return
+            }
+            guard email == currentUserEmail else {
+                toast = Toast(style: .error, message: "The email provided is not the same as your email")
+                return
+            }
+        }
+        
         FirebaseManager.shared.auth.sendPasswordReset(withEmail: email) {error in
             if let error = error {
                 toast = Toast(style: .error, message: error.localizedDescription)
@@ -101,6 +115,10 @@ struct PasswordResetView: View {
             
         }
     }
+}
+
+extension PasswordResetView {
+    
 }
 
 #Preview {

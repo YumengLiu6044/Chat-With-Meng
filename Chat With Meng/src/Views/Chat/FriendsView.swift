@@ -82,15 +82,22 @@ struct FriendsView: View {
                                         FriendRequestView(
                                             friend: request,
                                             width: width,
-                                            height: height * 0.1,
-                                            onReject:  {
-                                                guard let reject_id = request.id else {
-                                                    return
-                                                }
-                                                
-                                                self.chatViewModel.rejectFriendRequest(at: reject_id)
-                                            }
+                                            height: height * 0.1
                                         )
+                                        .onReject {
+                                            guard let reject_id = request.id else {
+                                                return
+                                            }
+                                            
+                                            self.chatViewModel.removeFriendRequest(at: reject_id)
+                                        }
+                                        
+                                        .onAccept {
+                                            guard let requestID = request.id else {
+                                                return
+                                            }
+                                            self.chatViewModel.addFriendFromRequest(of: requestID)
+                                        }
                                         .padding([.leading, .trailing])
                                         
                                         if (request.id != chatViewModel.friendRequests.last?.id) {
