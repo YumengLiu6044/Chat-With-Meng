@@ -17,9 +17,7 @@ struct IconView: View {
     var action: (() -> Void)?
     var body: some View {
         Button {
-            if let action = action {
-                action()
-            }
+            self.action?()
         } label: {
             ZStack {
                 Image(systemName: iconName)

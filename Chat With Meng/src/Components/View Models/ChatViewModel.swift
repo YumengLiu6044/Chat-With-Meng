@@ -215,9 +215,16 @@ class ChatViewModel: ObservableObject {
     }
     
     public func loadFriendRequests() {
-        self.friendRequests = []
-        
         for request in self.currentUser.friendRequests {
+            var shouldSkip = false
+            for existing in self.friendRequests {
+                if existing.id == request {
+                    shouldSkip = true
+                }
+            }
+            if shouldSkip {
+                continue
+            }
             self.makeFriend(from: request) { friend in
                 guard let friend = friend else {return}
                 withAnimation(.smooth){
@@ -225,5 +232,21 @@ class ChatViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    public func rejectFriendRequest(at id: String) {
+        guard let uid = self.currentUser.id else { return }
+        withAnimation(.smooth) {
+            self.friendRequests.removeAll{$0.id == id}
+        }
+        FirebaseManager.shared.firestore.collection("users").document(uid)
+            .updateData([
+                User.CoodingKey.friendRequests.rawValue :
+                    FieldValue.arrayRemove([id])
+            ])
+    }
+    
+    public func addFriendFromRequest(of uid: String, completion: @escaping (Bool) -> Void) async {
+        
     }
 }

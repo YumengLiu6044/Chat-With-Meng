@@ -15,19 +15,17 @@ struct FriendRequestView: View {
     var width: CGFloat  = 300
     var height: CGFloat = 80
     
-    @State var isLoading: Bool = true
+    var onRejectAction: (() -> Void)?
     
-    init(friend: Friend, width: CGFloat = 300, height: CGFloat = 80) {
+    init(friend: Friend, width: CGFloat = 300, height: CGFloat = 80, onReject: (() -> Void)?) {
         self.friend = friend
         self.width = width
         self.height = height
+        self.onRejectAction = onReject
         
     }
     var body: some View {
         HStack {
-//            ProfilePicView(imageURL: friend.profilePicURL, imageOverlayData: friend.profileOverlayData, width: width * 0.15, height: width * 0.15, isOnline: .constant(true), isLoading: $isLoading)
-//                .padding()
-            
             NavigationLink(destination: ProfileView(friend: self.friend).environmentObject(self.chatViewModel)) {
                 ProfilePicView(
                     imageURL: friend.profilePicURL,
@@ -52,6 +50,8 @@ struct FriendRequestView: View {
                 print("Accept")
             }
             
+            IconView(iconName: "xmark", color: .red, action: self.onRejectAction)
+            .padding([.trailing])
             
         }
         
@@ -59,6 +59,6 @@ struct FriendRequestView: View {
 }
 
 #Preview {
-    FriendRequestView(friend: Friend())
+    FriendRequestView(friend: Friend(), onReject: {})
         .environmentObject(ChatViewModel())
 }

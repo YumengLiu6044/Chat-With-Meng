@@ -126,7 +126,7 @@ struct SettingsView: View {
                                     },
                                     header: {
                                         HStack {
-                                            IconView(iconName: "person.fill", size: height * 0.025, color: .secondary)
+                                            IconView(iconName: "person.fill", size: height * 0.024, color: .secondary)
                                                 
                                             Text("Account")
                                                 .fontWeight(.medium)
@@ -156,7 +156,7 @@ struct SettingsView: View {
                                     },
                                     header: {
                                         HStack {
-                                            IconView(iconName: "bell.fill", size: height * 0.025, color: .secondary)
+                                            IconView(iconName: "bell.fill", size: height * 0.024, color: .secondary)
                                                 
                                             Text("Notifications")
                                                 .fontWeight(.medium)

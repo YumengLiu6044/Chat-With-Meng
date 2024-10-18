@@ -68,7 +68,6 @@ struct FriendsView: View {
                                 if (friend.id != chatViewModel.friendSearchResult.last?.id) {
                                     Divider()
                                         .padding([.leading, .trailing])
-                                    
                                 }
                             }
 
@@ -83,7 +82,14 @@ struct FriendsView: View {
                                         FriendRequestView(
                                             friend: request,
                                             width: width,
-                                            height: height * 0.1
+                                            height: height * 0.1,
+                                            onReject:  {
+                                                guard let reject_id = request.id else {
+                                                    return
+                                                }
+                                                
+                                                self.chatViewModel.rejectFriendRequest(at: reject_id)
+                                            }
                                         )
                                         .padding([.leading, .trailing])
                                         
@@ -107,13 +113,11 @@ struct FriendsView: View {
                                             self.showRequests.toggle()
                                         }
                                     }
-                                        .contentTransition(.symbolEffect(.replace))
+                                    .contentTransition(.symbolEffect(.replace))
                                 }
                                 .padding([.leading, .trailing], width * 0.07)
                             })
-                            .onChange(of: chatViewModel.currentUser.friendRequests) {
-                                self.chatViewModel.loadFriendRequests()
-                            }
+                            
                         }
                     }
                     .listRowSpacing(height * 0.02)
@@ -131,6 +135,9 @@ struct FriendsView: View {
                     width = geometry.size.width
                     height = geometry.size.height
                     
+                    self.chatViewModel.loadFriendRequests()
+                }
+                .onChange(of: chatViewModel.currentUser.friendRequests) {
                     self.chatViewModel.loadFriendRequests()
                 }
             }
