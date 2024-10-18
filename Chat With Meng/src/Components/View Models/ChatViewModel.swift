@@ -168,17 +168,6 @@ class ChatViewModel: ObservableObject {
                 if data.userName == self.currentUser.userName {
                     continue
                 }
-                
-                var included: Bool = false
-                for request in self.friendRequests {
-                    if (request.id == data.id) {
-                        included = true
-                    }
-                }
-                if included {
-                    continue
-                }
-                
                 self.makeFriend(from: data.id) { friend in
                     guard let friend = friend else {return}
                     withAnimation(.smooth) {
@@ -239,6 +228,7 @@ class ChatViewModel: ObservableObject {
         guard let uid = self.currentUser.id else { return }
         withAnimation(.smooth) {
             self.friendRequests.removeAll{$0.id == id}
+            self.friendSearchResult.removeAll{$0.id == id}
         }
         FirebaseManager.shared.firestore.collection("users").document(uid)
             .updateData([

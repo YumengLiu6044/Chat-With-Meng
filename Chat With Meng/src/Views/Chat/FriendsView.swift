@@ -65,6 +65,23 @@ struct FriendsView: View {
                                     width: width,
                                     height: height * 0.1
                                 )
+                                .onReject {
+                                    guard let reject_id = friend.id else {
+                                        return
+                                    }
+                                    
+                                    self.chatViewModel.removeFriendRequest(at: reject_id)
+                                }
+                                
+                                .onAccept {
+                                    guard let requestID = friend.id else {
+                                        return
+                                    }
+                                    self.chatViewModel.addFriendFromRequest(of: requestID)
+                                }
+                                .onMessage {
+                                    print("Send message")
+                                }
                                 .padding([.leading, .trailing])
                                 .environmentObject(self.chatViewModel)
                                 
