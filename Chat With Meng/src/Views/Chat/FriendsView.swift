@@ -49,16 +49,20 @@ struct FriendsView: View {
                     )
                     .onChange(of: self.searchKey) {
                         self.chatViewModel.friendSearchResult = []
+                        withAnimation(.smooth) {
+                            self.showRequests = false
+                        }
                     }
                     .padding([.leading, .trailing], width * 0.02)
                     .padding([.top], height * -0.02)
 
                     ScrollView {
-                        if !searchKey.isEmpty {
+                        if !self.searchKey.isEmpty {
                             ForEach(chatViewModel.friendSearchResult) {
                                 friend in
-                                FriendSearchResult(
-                                    friend: friend, width: width,
+                                FriendRowView(
+                                    friend: friend,
+                                    width: width,
                                     height: height * 0.1
                                 )
                                 .padding([.leading, .trailing])
@@ -69,7 +73,6 @@ struct FriendsView: View {
                                         .padding([.leading, .trailing])
                                 }
                             }
-
                         }
                         if !self.chatViewModel.friendRequests.isEmpty {
                             Section( content: {
@@ -78,7 +81,7 @@ struct FriendsView: View {
                                         chatViewModel.friendRequests, id: \.self
                                     ) {
                                         request in
-                                        FriendRequestView(
+                                        FriendRowView(
                                             friend: request,
                                             width: width,
                                             height: height * 0.1
@@ -108,7 +111,7 @@ struct FriendsView: View {
                             }, header: {
                                 HStack {
                                     Text("Requests")
-                                        .font(.body)
+                                        .font(.title2)
                                         .fontWeight(.medium)
                                         .foregroundStyle(.primary)
                                     
