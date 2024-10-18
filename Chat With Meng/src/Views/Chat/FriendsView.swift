@@ -62,7 +62,6 @@ struct FriendsView: View {
                                     height: height * 0.1
                                 )
                                 .padding([.leading, .trailing])
-
                                 .environmentObject(self.chatViewModel)
                                 
                                 if (friend.id != chatViewModel.friendSearchResult.last?.id) {

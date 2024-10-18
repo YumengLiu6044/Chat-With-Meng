@@ -256,7 +256,7 @@ class ChatViewModel: ObservableObject {
             guard let friendDict = friendDict else {
                 return
             }
-            FirebaseManager.shared.firestore.collection("user").document(uid)
+            FirebaseManager.shared.firestore.collection("users").document(uid)
                 .updateData([User.CoodingKey.friends.rawValue : FieldValue.arrayUnion([friendDict])]) {
                     error in
                     print(error?.localizedDescription ?? "")
