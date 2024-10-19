@@ -76,24 +76,28 @@ class ChatViewModel: ObservableObject {
             querySnapshot.documentChanges.forEach {
                 change in
                 do {
-                    let friendData = try change.document.data(as: Friend.self)
+                    let friendRef = try change.document.data(as: FriendRef.self)
                     
-                    switch change.type {
-                    case .added:
-                        withAnimation(.smooth) {
-                            self?.friends.append(friendData)
+                    self?.makeFriend(from: friendRef.id) {
+                        friendData in
+                        guard let friendData = friendData else {return}
+                        switch change.type {
+                        case .added:
+                            withAnimation(.smooth) {
+                                self?.friends.append(friendData)
+                            }
+                            
+                        case .removed:
+                            self?.friends.removeAll {$0.id == friendData.id}
+                            self?.friendSearchResult.removeAll {$0.id == friendData.id}
+                            
+                        case .modified:
+                            let index = change.newIndex
+                            self?.friends[Int(index)] = friendData
+                            
+                        default:
+                            return
                         }
-                        
-                    case .removed:
-                        self?.friends.removeAll {$0.id == friendData.id}
-                        self?.friendSearchResult.removeAll {$0.id == friendData.id}
-                        
-                    case .modified:
-                        let index = change.newIndex
-                        self?.friends[Int(index)] = friendData
-                        
-                    default:
-                        return
                     }
                 }
                 catch {
@@ -124,34 +128,38 @@ class ChatViewModel: ObservableObject {
                 change in
                 print("Change detected")
                 do {
-                    let friendData = try change.document.data(as: Friend.self)
-                    print("New friend request: \(friendData.id ?? "")")
-                    switch change.type {
-                        case .added:
-                            print("Added")
-                            withAnimation(.smooth) {
-                                self?.friendRequests.append(friendData)
-                            }
-                            return
+                    let friendRefData = try change.document.data(as: FriendRef.self)
+                    print("New friend request: \(friendRefData.id)")
+                    self?.makeFriend(from: friendRefData.id) {
+                        friendData in
+                        guard let friendData = friendData else {return}
+                        switch change.type {
+                            case .added:
+                                print("Added")
+                                withAnimation(.smooth) {
+                                    self?.friendRequests.append(friendData)
+                                }
+                                return
+                                
+                            case .removed:
+                                print("Removed")
+                                withAnimation(.smooth) {
+                                    self?.friendRequests.removeAll {$0 == friendData}
+                                    self?.friendSearchResult.removeAll {$0 == friendData}
+                                }
+                                return
+                                
+                            case .modified:
+                                print("Modified")
+                                let index = change.newIndex
+                                self?.friendRequests[Int(index)] = friendData
+                                return
+                                
+                            default:
+                                print("defaulted")
+                                return
                             
-                        case .removed:
-                            print("Removed")
-                            withAnimation(.smooth) {
-                                self?.friendRequests.removeAll {$0 == friendData}
-                                self?.friendSearchResult.removeAll {$0 == friendData}
-                            }
-                            return
-                            
-                        case .modified:
-                            print("Modified")
-                            let index = change.newIndex
-                            self?.friendRequests[Int(index)] = friendData
-                            return
-                            
-                        default:
-                            print("defaulted")
-                            return
-                        
+                        }
                     }
                 }
                 catch {
@@ -184,7 +192,7 @@ class ChatViewModel: ObservableObject {
             }
             
         }
-        self.listenToFriends()
+        // self.listenToFriends()
         self.listenToRequests()
         
     }
@@ -228,7 +236,7 @@ class ChatViewModel: ObservableObject {
         }
     }
     
-    public func makeFriend(from id: String?, completion: @escaping (Friend?) -> Void) {
+    private func makeFriend(from id: String?, completion: @escaping (Friend?) -> Void) {
         guard let id = id else {return completion(nil)}
         
         FirebaseManager.shared.firestore
@@ -265,6 +273,11 @@ class ChatViewModel: ObservableObject {
             }
         }
         return completion(nil)
+    }
+    
+    private func makeFriendRef(from friendID: String) -> FriendRef {
+        let friendRef = FriendRef(id: friendID, notifications: true)
+        return friendRef
     }
     
     public func searchUsers(from searchKey: String) async {
@@ -322,23 +335,20 @@ class ChatViewModel: ObservableObject {
             .collection(FirebaseConstants.friendRequests)
             .document(currentUserID)
         
-        self.makeFriend(from: currentUserID) {
-            friendObj in
-            guard let friendObj = friendObj else {return}
-            do {
-                try friendRequestRef.setData(from: friendObj) {
-                    error in
-                    if let error = error {
-                        self.toast = Toast(style: .error, message: error.localizedDescription)
-                        return
-                    }
-                    self.toast = Toast(style: .success, message: "Friend request sent")
+        let friendObj = self.makeFriendRef(from: currentUserID)
+        do {
+            try friendRequestRef.setData(from: friendObj) {
+                error in
+                if let error = error {
+                    self.toast = Toast(style: .error, message: error.localizedDescription)
+                    return
                 }
+                self.toast = Toast(style: .success, message: "Friend request sent")
             }
-            catch {
-                print("failed to encode current user")
-                return
-            }
+        }
+        catch {
+            print("failed to encode current user")
+            return
         }
     }
     
@@ -360,19 +370,17 @@ class ChatViewModel: ObservableObject {
 
     }
     
-    private func addFriendToCloud(for uid: String?, friend friendObj: Friend?) {
-        guard let uid = uid,
-                let friendObj = friendObj,
-                let friendID = friendObj.id else {return}
+    private func addFriendToCloud(for uid: String?, friend friendRef: FriendRef) {
+        guard let uid = uid else {return}
         
         let friendDoc = FirebaseManager.shared.firestore
             .collection(FirebaseConstants.users)
             .document(uid)
             .collection(FirebaseConstants.friends)
-            .document(friendID)
+            .document(friendRef.id)
         
         do {
-            try friendDoc.setData(from: friendObj) {
+            try friendDoc.setData(from: friendRef) {
                 error in
                 if let error = error {
                     print(error.localizedDescription)
@@ -385,19 +393,18 @@ class ChatViewModel: ObservableObject {
         
     }
     
-    public func addFriend(from friend: Friend) async {
+    public func addFriend(from friendID: String) async {
         guard let local_uid = self.currentUser.id else {return}
-        guard let friendID = friend.id else {return}
+        let friendRef = self.makeFriendRef(from: friendID)
         
         // Remove request from User.friendRequests
-        await self.removeFriendRequest(at: friendID)
+        await self.removeFriendRequest(at: friendRef.id)
         
         // Make friend for local user
-        self.addFriendToCloud(for: local_uid, friend: friend)
+        self.addFriendToCloud(for: local_uid, friend: friendRef)
         
-        self.makeFriend(from: local_uid) { localAsFriend in
-            self.addFriendToCloud(for: friendID, friend: localAsFriend)
-        }
+        let localAsFriend = self.makeFriendRef(from: local_uid)
+        self.addFriendToCloud(for: friendRef.id, friend: localAsFriend)
         
     }
 

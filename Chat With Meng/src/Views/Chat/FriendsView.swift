@@ -73,7 +73,7 @@ struct FriendsView: View {
                                 }
                                 .onAccept {
                                     Task {
-                                        await self.chatViewModel.addFriend(from: friend)
+                                        await self.chatViewModel.addFriend(from: friend.id ?? "")
                                     }
                                 }
                                 .onMessage {
@@ -111,7 +111,7 @@ struct FriendsView: View {
                                         }
                                         .onAccept {
                                             Task {
-                                                await self.chatViewModel.addFriend(from: request)
+                                                await self.chatViewModel.addFriend(from: request.id ?? "")
                                             }
                                         }
                                         .padding([.leading, .trailing])

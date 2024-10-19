@@ -10,6 +10,11 @@ import FirebaseAuth
 import FirebaseFirestore
 import SwiftUI
 
+struct FriendRef: Codable {
+    var id: String
+    var notifications: Bool = true
+}
+
 struct Friend: Codable, Hashable, Identifiable, Equatable {
     var email: String = ""
     var id: String? = nil
