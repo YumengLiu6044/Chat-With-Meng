@@ -75,23 +75,29 @@ class ChatViewModel: ObservableObject {
             // Update local friends
             querySnapshot.documentChanges.forEach {
                 change in
-                let friendData = try! change.document.data(as: Friend.self)
-                
-                switch change.type {
-                case .added:
-                    withAnimation(.smooth) {
-                        self?.friends.append(friendData)
+                do {
+                    let friendData = try change.document.data(as: Friend.self)
+                    
+                    switch change.type {
+                    case .added:
+                        withAnimation(.smooth) {
+                            self?.friends.append(friendData)
+                        }
+                        
+                    case .removed:
+                        self?.friends.removeAll {$0.id == friendData.id}
+                        self?.friendSearchResult.removeAll {$0.id == friendData.id}
+                        
+                    case .modified:
+                        let index = change.newIndex
+                        self?.friends[Int(index)] = friendData
+                        
+                    default:
+                        return
                     }
-                    
-                case .removed:
-                    self?.friends.removeAll {$0.id == friendData.id}
-                    self?.friendSearchResult.removeAll {$0.id == friendData.id}
-                    
-                case .modified:
-                    let index = change.newIndex
-                    self?.friends[Int(index)] = friendData
-                    
-                default:
+                }
+                catch {
+                    print(error.localizedDescription)
                     return
                 }
             }
@@ -355,26 +361,42 @@ class ChatViewModel: ObservableObject {
     }
     
     private func addFriendToCloud(for uid: String?, friend friendObj: Friend?) {
-        guard let uid = uid, let friendObj = friendObj else {return}
+        guard let uid = uid,
+                let friendObj = friendObj,
+                let friendID = friendObj.id else {return}
+        
+        let friendDoc = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(uid)
+            .collection(FirebaseConstants.friends)
+            .document(friendID)
+        
+        do {
+            try friendDoc.setData(from: friendObj) {
+                error in
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+        catch {
+            print(error.localizedDescription)
+        }
         
     }
     
-    public func addFriendFromRequest(of uid: String) async {
+    public func addFriend(from friend: Friend) async {
         guard let local_uid = self.currentUser.id else {return}
+        guard let friendID = friend.id else {return}
         
         // Remove request from User.friendRequests
-        await self.removeFriendRequest(at: uid)
+        await self.removeFriendRequest(at: friendID)
         
         // Make friend for local user
-        self.makeFriend(from: uid) { friend in
-            guard let friend = friend else {return}
-            self.addFriendToCloud(for: local_uid, friend: friend)
-            
-            // Make friend for other user
-            self.makeFriend(from: local_uid) {
-                thisFriend in
-                self.addFriendToCloud(for: uid, friend: thisFriend)
-            }
+        self.addFriendToCloud(for: local_uid, friend: friend)
+        
+        self.makeFriend(from: local_uid) { localAsFriend in
+            self.addFriendToCloud(for: friendID, friend: localAsFriend)
         }
         
     }

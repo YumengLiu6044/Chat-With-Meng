@@ -24,13 +24,11 @@ struct FriendsView: View {
             NavigationStack {
                 VStack {
                     HStack {
-
                         Text("Friends")
                             .font(.largeTitle)
                             .fontWeight(.bold)
 
                         Spacer()
-
                     }
                     .padding([.top, .leading, .trailing])
 
@@ -74,11 +72,8 @@ struct FriendsView: View {
                                     }
                                 }
                                 .onAccept {
-                                    guard let requestID = friend.id else {
-                                        return
-                                    }
                                     Task {
-                                        await self.chatViewModel.addFriendFromRequest(of: requestID)
+                                        await self.chatViewModel.addFriend(from: friend)
                                     }
                                 }
                                 .onMessage {
@@ -114,13 +109,9 @@ struct FriendsView: View {
                                                 await self.chatViewModel.removeFriendRequest(at: reject_id)
                                             }
                                         }
-                                        
                                         .onAccept {
-                                            guard let requestID = request.id else {
-                                                return
-                                            }
                                             Task {
-                                                await self.chatViewModel.addFriendFromRequest(of: requestID)
+                                                await self.chatViewModel.addFriend(from: request)
                                             }
                                         }
                                         .padding([.leading, .trailing])
