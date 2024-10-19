@@ -184,7 +184,7 @@ class ChatViewModel: ObservableObject {
             }
             
         }
-        // self.listenToFriends()
+        self.listenToFriends()
         self.listenToRequests()
         
     }
