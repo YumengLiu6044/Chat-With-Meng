@@ -18,4 +18,5 @@ struct Friend: Codable, Hashable, Identifiable, Equatable {
     var notifications: Bool = true
     var profileOverlayData: [CGFloat] = []
     
+    
 }

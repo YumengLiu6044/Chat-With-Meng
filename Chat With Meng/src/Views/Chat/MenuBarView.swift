@@ -34,7 +34,7 @@ struct MenuBarView: View {
             }
             Spacer()
             
-            IconView(iconName: "person.2", count: self.chatViewModel.currentUser.friendRequests.count) {
+            IconView(iconName: "person.2", count: self.chatViewModel.friendRequests.count) {
                 chatViewModel.switchTo(view: .friends)
             }
 

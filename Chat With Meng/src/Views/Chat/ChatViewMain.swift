@@ -57,12 +57,7 @@ struct ChatViewMain: View {
                 height = geometry.size.height
                 
                 if (!didAppear) {
-                    self.chatViewModel.initializeCurrentUser {
-                        user in
-                        print("User updated")
-                        self.chatViewModel.currentUser = user
-                    }
-                    
+                    self.chatViewModel.initializeCurrentUser()
                     didAppear = true
                 }
             }

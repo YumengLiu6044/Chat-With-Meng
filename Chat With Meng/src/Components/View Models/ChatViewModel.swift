@@ -13,6 +13,13 @@ enum ChatViewSelection : Hashable {
     case messages, friends, settings
 }
 
+struct FirebaseConstants {
+    static let users = "users"
+    static let friends = "friends"
+    static let friendRequests = "friendRequests"
+    
+}
+
 @MainActor
 class ChatViewModel: ObservableObject {
     @Published var chatViewSelection: ChatViewSelection = .messages
@@ -24,13 +31,12 @@ class ChatViewModel: ObservableObject {
     @Published var showImagePicker: Bool = false
     @Published var showMenu:        Bool = true
     
-    @Published var currentUserListener: ListenerRegistration? = nil
+    @Published var currentFriendsListener: ListenerRegistration? = nil
+    @Published var currentFriendRequestListener: ListenerRegistration? = nil
     
     @Published var friendSearchResult: [Friend] = []
     @Published var friendRequests:     [Friend] = []
     @Published var friends:            [Friend] = []
-    
-    private var userDocRef: DocumentReference?
     
     private var isSearchingForUsers: Bool = false
     
@@ -45,34 +51,144 @@ class ChatViewModel: ObservableObject {
     }
     
     public func deinitializeCurrentUser() {
-        self.currentUserListener?.remove()
+        self.currentFriendsListener?.remove()
+        self.currentFriendRequestListener?.remove()
+        
+        self.currentFriendsListener = nil
+        self.currentFriendRequestListener = nil
     }
     
-    public func initializeCurrentUser(completion: @escaping (_ user: User) -> Void) {
+    private func listenToFriends() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        let friendsRef = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(uid)
+            .collection(FirebaseConstants.friends)
         
-        self.userDocRef = FirebaseManager.shared.firestore.collection("users").document(uid)
-        
-        let listener = self.userDocRef?.addSnapshotListener(includeMetadataChanges: true) { [weak self] querySnapshot, error in
+        let listener = friendsRef.addSnapshotListener(includeMetadataChanges: true) { [weak self] querySnapshot, error in
             if let error = error {
                 self?.toast = Toast(style: .error, message: error.localizedDescription)
                 return
             }
+            guard let querySnapshot = querySnapshot else {return}
             
-            guard let document = try? querySnapshot?.data(as: User.self) else {return}
-            completion(document)
+            // Update local friends
+            querySnapshot.documentChanges.forEach {
+                change in
+                let friendData = try! change.document.data(as: Friend.self)
+                
+                switch change.type {
+                case .added:
+                    withAnimation(.smooth) {
+                        self?.friends.append(friendData)
+                    }
+                    
+                case .removed:
+                    self?.friends.removeAll {$0.id == friendData.id}
+                    self?.friendSearchResult.removeAll {$0.id == friendData.id}
+                    
+                case .modified:
+                    let index = change.newIndex
+                    self?.friends[Int(index)] = friendData
+                    
+                default:
+                    return
+                }
+            }
+        }
+        self.currentFriendsListener = listener
+    }
+    
+    private func listenToRequests() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        let friendRequestRef = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(uid)
+            .collection(FirebaseConstants.friendRequests)
+        
+        let listener = friendRequestRef.addSnapshotListener(includeMetadataChanges: true) { [weak self] querySnapshot, error in
+            if let error = error {
+                self?.toast = Toast(style: .error, message: error.localizedDescription)
+                return
+            }
+            guard let querySnapshot = querySnapshot else {return}
+            
+            // Update local friend requests
+            querySnapshot.documentChanges.forEach {
+                change in
+                print("Change detected")
+                do {
+                    let friendData = try change.document.data(as: Friend.self)
+                    print("New friend request: \(friendData.id ?? "")")
+                    switch change.type {
+                        case .added:
+                            print("Added")
+                            withAnimation(.smooth) {
+                                self?.friendRequests.append(friendData)
+                            }
+                            return
+                            
+                        case .removed:
+                            print("Removed")
+                            withAnimation(.smooth) {
+                                self?.friendRequests.removeAll {$0 == friendData}
+                                self?.friendSearchResult.removeAll {$0 == friendData}
+                            }
+                            return
+                            
+                        case .modified:
+                            print("Modified")
+                            let index = change.newIndex
+                            self?.friendRequests[Int(index)] = friendData
+                            return
+                            
+                        default:
+                            print("defaulted")
+                            return
+                        
+                    }
+                }
+                catch {
+                    print("Error while doing stuff")
+                }
+            }
+        }
+        self.currentFriendRequestListener = listener
+    }
+    
+    public func initializeCurrentUser() {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        let userDocRef = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(uid)
+        
+        userDocRef.getDocument {
+            document, error in
+            if let _ = error {
+                print("Error fetching current user")
+                return
+            }
+            if let document = document {
+                do {
+                    self.currentUser = try document.data(as: User.self)
+                }
+                catch {
+                    print("Error decoding user")
+                }
+            }
             
         }
-        
-        self.currentUserListener = listener
+        // self.listenToFriends()
+        self.listenToRequests()
         
     }
     
-    public func updateCurrentUserByKeyVal(key: User.CoodingKey, val: Any) {
-        self.userDocRef?.updateData([key.rawValue: val])
+    public func updateCurrentUserByKeyVal(key: User.keys, val: Any) {
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        let userDocRef = FirebaseManager.shared.firestore.collection(FirebaseConstants.users).document(uid)
+        
+        userDocRef.updateData([key.rawValue: val])
     }
-    
-    
     
     public func updateProfilePic() -> Void {
         FirebaseManager.uploadProfilePic(profilePic: self.profilePic!) {
@@ -81,8 +197,8 @@ class ChatViewModel: ObservableObject {
             if let imgURL = imgURL, let colorData = colorData {
                 self.currentUser.profilePicURL = imgURL.absoluteString
                 self.currentUser.profileOverlayData = colorData
-                self.updateCurrentUserByKeyVal(key: User.CoodingKey.profilePicURL, val: imgURL.absoluteString)
-                self.updateCurrentUserByKeyVal(key: User.CoodingKey.profileOverlayData, val: colorData)
+                self.updateCurrentUserByKeyVal(key: User.keys.profilePicURL, val: imgURL.absoluteString)
+                self.updateCurrentUserByKeyVal(key: User.keys.profileOverlayData, val: colorData)
                 
             }
         }
@@ -101,7 +217,7 @@ class ChatViewModel: ObservableObject {
         }
         else {
             self.currentUser.userName = newUserName
-            self.updateCurrentUserByKeyVal(key: User.CoodingKey.userName, val: newUserName)
+            self.updateCurrentUserByKeyVal(key: User.keys.userName, val: newUserName)
             return completion(nil)
         }
     }
@@ -109,8 +225,12 @@ class ChatViewModel: ObservableObject {
     public func makeFriend(from id: String?, completion: @escaping (Friend?) -> Void) {
         guard let id = id else {return completion(nil)}
         
-        FirebaseManager.shared.firestore.collection("users").document(id).getDocument {
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(id)
+            .getDocument {
             document, error in
+            
             if let error = error {
                 self.toast = Toast(style: .error, message: error.localizedDescription)
             }
@@ -156,10 +276,10 @@ class ChatViewModel: ObservableObject {
         }
         
         do {
-            let queryDocs = try await FirebaseManager.shared.firestore.collection("users")
-                .whereField(User.CoodingKey.userName.rawValue, isGreaterThanOrEqualTo: searchKey)
-                .whereField(User.CoodingKey.userName.rawValue, isLessThanOrEqualTo: searchKey + "~")
-                .order(by: User.CoodingKey.userName.rawValue)
+            let queryDocs = try await FirebaseManager.shared.firestore.collection(FirebaseConstants.users)
+                .whereField(User.keys.userName.rawValue, isGreaterThanOrEqualTo: searchKey)
+                .whereField(User.keys.userName.rawValue, isLessThanOrEqualTo: searchKey + "~")
+                .order(by: User.keys.userName.rawValue)
                 .limit(to: 10)
                 .getDocuments()
             
@@ -171,7 +291,7 @@ class ChatViewModel: ObservableObject {
                 self.makeFriend(from: data.id) { friend in
                     guard let friend = friend else {return}
                     withAnimation(.smooth) {
-                            self.friendSearchResult.append(friend)
+                        self.friendSearchResult.append(friend)
                     }
                 }
             }
@@ -180,94 +300,74 @@ class ChatViewModel: ObservableObject {
             print(error.localizedDescription)
             
         }
-    
-        
         isSearchingForUsers = false
     }
     
-    public func sendFriendRequenst(to userID: String?) {
+    public func sendFriendRequest(to userID: String?) {
         guard let userID = userID else { return }
-        if userID == self.currentUser.id {
+        guard let currentUserID: String = self.currentUser.id else {return }
+        if userID == currentUserID {
             return
         }
-        guard let currentUserID: String = self.currentUser.id else {return }
         
-        FirebaseManager.shared.firestore.collection("users").document(userID).updateData([User.CoodingKey.friendRequests.rawValue : FieldValue.arrayUnion([currentUserID])]) {
-            error in
-            if let error = error {
-                self.toast = Toast(style: .error, message: error.localizedDescription)
+        let friendRequestRef = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(userID)
+            .collection(FirebaseConstants.friendRequests)
+            .document(currentUserID)
+        
+        self.makeFriend(from: currentUserID) {
+            friendObj in
+            guard let friendObj = friendObj else {return}
+            do {
+                try friendRequestRef.setData(from: friendObj) {
+                    error in
+                    if let error = error {
+                        self.toast = Toast(style: .error, message: error.localizedDescription)
+                        return
+                    }
+                    self.toast = Toast(style: .success, message: "Friend request sent")
+                }
+            }
+            catch {
+                print("failed to encode current user")
                 return
             }
-            
-            self.toast = Toast(style: .success, message: "Friend request sent")
-            
         }
     }
     
-    public func loadFriendRequests() {
-        for request in self.currentUser.friendRequests {
-            var shouldSkip = false
-            for existing in self.friendRequests {
-                if existing.id == request {
-                    shouldSkip = true
-                }
-            }
-            if shouldSkip {
-                continue
-            }
-            self.makeFriend(from: request) { friend in
-                guard let friend = friend else {return}
-                withAnimation(.smooth){
-                    self.friendRequests.append(friend)
-                }
-            }
-        }
-    }
-    
-    public func removeFriendRequest(at id: String) {
+    public func removeFriendRequest(at id: String) async {
         guard let uid = self.currentUser.id else { return }
-        withAnimation(.smooth) {
-            self.friendRequests.removeAll{$0.id == id}
-            self.friendSearchResult.removeAll{$0.id == id}
+        let docRef = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(uid)
+            .collection(FirebaseConstants.friendRequests)
+            .document(id)
+        print("Deleting \(uid)'s friend at \(id)")
+        
+        do {
+            try await docRef.delete()
         }
-        FirebaseManager.shared.firestore.collection("users").document(uid)
-            .updateData([
-                User.CoodingKey.friendRequests.rawValue :
-                    FieldValue.arrayRemove([id])
-            ])
+        catch {
+            return
+        }
+
     }
     
     private func addFriendToCloud(for uid: String?, friend friendObj: Friend?) {
         guard let uid = uid, let friendObj = friendObj else {return}
         
-        do {
-            let friendData = try JSONEncoder().encode(friendObj)
-            let friendDict = try JSONSerialization.jsonObject(with: friendData, options: []) as? [String: Any]
-            guard let friendDict = friendDict else {
-                return
-            }
-            FirebaseManager.shared.firestore.collection("users").document(uid)
-                .updateData([User.CoodingKey.friends.rawValue : FieldValue.arrayUnion([friendDict])]) {
-                    error in
-                    print(error?.localizedDescription ?? "")
-                }
-        }
-        catch {
-            return
-        }
-        
     }
     
-    public func addFriendFromRequest(of uid: String) {
+    public func addFriendFromRequest(of uid: String) async {
         guard let local_uid = self.currentUser.id else {return}
         
-        // Remove request from request list
-        self.removeFriendRequest(at: uid)
+        // Remove request from User.friendRequests
+        await self.removeFriendRequest(at: uid)
         
         // Make friend for local user
         self.makeFriend(from: uid) { friend in
             guard let friend = friend else {return}
-            self.friends.append(friend)
             self.addFriendToCloud(for: local_uid, friend: friend)
             
             // Make friend for other user
@@ -278,8 +378,5 @@ class ChatViewModel: ObservableObject {
         }
         
     }
-    
-    public func loadFriends() {
-        
-    }
+
 }

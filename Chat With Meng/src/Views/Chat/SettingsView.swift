@@ -140,7 +140,7 @@ struct SettingsView: View {
                                             Toggle("", isOn: $chatViewModel.currentUser.humanNotifications)
                                                 .onTapGesture {
                                                     chatViewModel.currentUser.humanNotifications.toggle()
-                                                    self.chatViewModel.updateCurrentUserByKeyVal(key: User.CoodingKey.humanNotifications, val: self.chatViewModel.currentUser.humanNotifications)
+                                                    self.chatViewModel.updateCurrentUserByKeyVal(key: User.keys.humanNotifications, val: self.chatViewModel.currentUser.humanNotifications)
                                                 }
                                                 
                                             
@@ -149,7 +149,7 @@ struct SettingsView: View {
                                             Toggle("", isOn: $chatViewModel.currentUser.AiNotifications)
                                                 .onTapGesture {
                                                     chatViewModel.currentUser.AiNotifications.toggle()
-                                                    self.chatViewModel.updateCurrentUserByKeyVal(key: User.CoodingKey.AiNotifications, val: self.chatViewModel.currentUser.AiNotifications)
+                                                    self.chatViewModel.updateCurrentUserByKeyVal(key: User.keys.AiNotifications, val: self.chatViewModel.currentUser.AiNotifications)
                                                 }
                                                 
                                         }

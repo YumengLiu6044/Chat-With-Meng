@@ -72,18 +72,18 @@ struct FriendRowView: View {
             case .searched:
                 IconView(iconName: "plus") {
                     Task {
-                        chatViewModel.sendFriendRequenst(to: friend.id)
+                        chatViewModel.sendFriendRequest(to: friend.id)
                     }
                 }
                 .buttonStyle(PlainButtonStyle())
             }
         }
         .onAppear {
-            if self.chatViewModel.currentUser.friendRequests
-                .contains(self.friend.id ?? "") {
+            if self.chatViewModel.friendRequests
+                .filter({$0.id == self.friend.id}).count > 0 {
                 self.resultState = .requested
             }
-            else if self.chatViewModel.currentUser.friends
+            else if self.chatViewModel.friends
                 .filter({$0.id == self.friend.id }).count > 0 {
                 self.resultState = .friended
             }

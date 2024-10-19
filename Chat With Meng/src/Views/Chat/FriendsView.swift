@@ -44,7 +44,6 @@ struct FriendsView: View {
                                 await self.chatViewModel.searchUsers(
                                     from: searchKey)
                             }
-
                         }
                     )
                     .onChange(of: self.searchKey) {
@@ -70,14 +69,17 @@ struct FriendsView: View {
                                         return
                                     }
                                     
-                                    self.chatViewModel.removeFriendRequest(at: reject_id)
+                                    Task {
+                                        await self.chatViewModel.removeFriendRequest(at: reject_id)
+                                    }
                                 }
-                                
                                 .onAccept {
                                     guard let requestID = friend.id else {
                                         return
                                     }
-                                    self.chatViewModel.addFriendFromRequest(of: requestID)
+                                    Task {
+                                        await self.chatViewModel.addFriendFromRequest(of: requestID)
+                                    }
                                 }
                                 .onMessage {
                                     print("Send message")
@@ -108,14 +110,18 @@ struct FriendsView: View {
                                                 return
                                             }
                                             
-                                            self.chatViewModel.removeFriendRequest(at: reject_id)
+                                            Task {
+                                                await self.chatViewModel.removeFriendRequest(at: reject_id)
+                                            }
                                         }
                                         
                                         .onAccept {
                                             guard let requestID = request.id else {
                                                 return
                                             }
-                                            self.chatViewModel.addFriendFromRequest(of: requestID)
+                                            Task {
+                                                await self.chatViewModel.addFriendFromRequest(of: requestID)
+                                            }
                                         }
                                         .padding([.leading, .trailing])
                                         
@@ -161,11 +167,8 @@ struct FriendsView: View {
                     width = geometry.size.width
                     height = geometry.size.height
                     
-                    self.chatViewModel.loadFriendRequests()
                 }
-                .onChange(of: chatViewModel.currentUser.friendRequests) {
-                    self.chatViewModel.loadFriendRequests()
-                }
+                
             }
 
         }

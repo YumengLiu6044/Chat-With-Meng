@@ -15,22 +15,17 @@ struct User: Codable, Hashable, Identifiable, Equatable {
     @DocumentID var id: String? = nil
     var profilePicURL: String = ""
     var userName: String = ""
-
-    var friends: [Friend] = []
-    var friendRequests: [String] = []
     
     var humanNotifications: Bool = true
     var AiNotifications: Bool = false
     
     var profileOverlayData: [CGFloat] = []
     
-    enum CoodingKey: String, CodingKey {
+    enum keys: String, CodingKey {
         case email
         case uid
         case profilePicURL
         case userName
-        case friends
-        case friendRequests
         case humanNotifications
         case AiNotifications
         case profileOverlayData
