@@ -49,6 +49,7 @@ struct FriendsView: View {
                         self.chatViewModel.friendSearchResult = []
                         withAnimation(.smooth) {
                             self.showRequests = false
+                            self.showFriends  = false
                         }
                     }
                     .padding([.leading, .trailing], width * 0.02)
@@ -64,9 +65,7 @@ struct FriendsView: View {
                                     height: height * 0.1
                                 )
                                 .onReject {
-                                    guard let reject_id = friend.id else {
-                                        return
-                                    }
+                                    let reject_id = friend.id
                                     
                                     Task {
                                         await self.chatViewModel.removeFriendRequest(at: reject_id)
@@ -74,11 +73,14 @@ struct FriendsView: View {
                                 }
                                 .onAccept {
                                     Task {
-                                        await self.chatViewModel.addFriend(from: friend.id ?? "")
+                                        await self.chatViewModel.addFriend(from: friend.id)
                                     }
                                 }
                                 .onMessage {
-                                    print("Send message")
+                                    print("Message")
+                                }
+                                .onBellTap { newValue in
+                                    self.chatViewModel.updateFriendByKeyVal(for: friend.id, FriendRef.keys.notifications, newValue)
                                 }
                                 .padding([.leading, .trailing])
                                 .environmentObject(self.chatViewModel)
@@ -102,9 +104,7 @@ struct FriendsView: View {
                                             height: height * 0.1
                                         )
                                         .onReject {
-                                            guard let reject_id = request.id else {
-                                                return
-                                            }
+                                            let reject_id = request.id
                                             
                                             Task {
                                                 await self.chatViewModel.removeFriendRequest(at: reject_id)
@@ -112,7 +112,7 @@ struct FriendsView: View {
                                         }
                                         .onAccept {
                                             Task {
-                                                await self.chatViewModel.addFriend(from: request.id ?? "")
+                                                await self.chatViewModel.addFriend(from: request.id)
                                             }
                                         }
                                         .padding([.leading, .trailing])
@@ -156,6 +156,9 @@ struct FriendsView: View {
                                         )
                                         .onMessage {
                                             print("Message")
+                                        }
+                                        .onBellTap { newValue in
+                                            self.chatViewModel.updateFriendByKeyVal(for: friend.id, FriendRef.keys.notifications, newValue)
                                         }
                                         .padding([.leading, .trailing])
                                         

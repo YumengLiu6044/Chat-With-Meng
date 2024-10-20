@@ -78,7 +78,7 @@ class ChatViewModel: ObservableObject {
                 do {
                     let friendRef = try change.document.data(as: FriendRef.self)
                     
-                    self?.makeFriend(from: friendRef.id) {
+                    self?.makeFriend(from: friendRef.id, notifications: friendRef.notifications) {
                         friendData in
                         guard let friendData = friendData else {return}
                         switch change.type {
@@ -95,8 +95,21 @@ class ChatViewModel: ObservableObject {
                             }
                             
                         case .modified:
-                            let index = change.newIndex
-                            self?.friends[Int(index)] = friendData
+                            print("Changed")
+                            let changedID = friendData.id
+                            guard let friendIndex = self?.friends.firstIndex(where: { friend in
+                                friend.id == changedID
+                            }) else {return}
+                            withAnimation(.smooth) {
+                                self?.friends[friendIndex] = friendData
+                            }
+                            
+                            guard let friendSearchIndex = self?.friendSearchResult.firstIndex(where: { friend in
+                                friend.id == changedID
+                            }) else {return}
+                            withAnimation(.smooth) {
+                                self?.friendSearchResult[friendSearchIndex] = friendData
+                            }
                             
                         default:
                             return
@@ -153,9 +166,6 @@ class ChatViewModel: ObservableObject {
                                 return
                                 
                             case .modified:
-                                print("Modified")
-                                let index = change.newIndex
-                                self?.friendRequests[Int(index)] = friendData
                                 return
                                 
                             default:
@@ -202,9 +212,22 @@ class ChatViewModel: ObservableObject {
     
     public func updateCurrentUserByKeyVal(key: User.keys, val: Any) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
-        let userDocRef = FirebaseManager.shared.firestore.collection(FirebaseConstants.users).document(uid)
+        let userDocRef = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(uid)
         
         userDocRef.updateData([key.rawValue: val])
+    }
+    
+    public func updateFriendByKeyVal(for friend: String, _ key: FriendRef.keys, _ val: Any) {
+        guard let currentUID = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        let friendRef = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(currentUID)
+            .collection(FirebaseConstants.friends)
+            .document(friend)
+        
+        friendRef.updateData([key.rawValue : val])
     }
     
     public func updateProfilePic() -> Void {
@@ -239,7 +262,7 @@ class ChatViewModel: ObservableObject {
         }
     }
     
-    private func makeFriend(from id: String?, completion: @escaping (Friend?) -> Void) {
+    private func makeFriend(from id: String?, notifications: Bool = true, completion: @escaping (Friend?) -> Void) {
         guard let id = id else {return completion(nil)}
         
         FirebaseManager.shared.firestore
@@ -255,13 +278,13 @@ class ChatViewModel: ObservableObject {
                 if let document = document {
                     do {
                         let data = try document.data(as: User.self)
-                        
+                        guard let friendID = data.id else {return}
                         let dataAsFriend = Friend(
                             email: data.email,
-                            id: data.id,
+                            id: friendID,
                             profilePicURL: data.profilePicURL,
                             userName: data.userName,
-                            notifications: true,
+                            notifications: notifications,
                             profileOverlayData: data.profileOverlayData
                         )
                         return completion(dataAsFriend)

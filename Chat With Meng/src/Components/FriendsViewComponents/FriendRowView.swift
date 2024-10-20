@@ -13,7 +13,7 @@ enum FriendRowState: String {
 
 struct FriendRowView: View {
     @EnvironmentObject var chatViewModel: ChatViewModel
-    var friend: Friend
+    @State var friend: Friend
     
     var width: CGFloat  = 300
     var height: CGFloat = 80
@@ -23,6 +23,7 @@ struct FriendRowView: View {
     var onRejectAction: (() -> Void)?
     var onAcceptAction: (() -> Void)?
     var onMessageAction: (() -> Void)?
+    var onTapBellAction: ((Bool) -> Void)?
     
     init(friend: Friend, width: CGFloat = 300, height: CGFloat = 80) {
         self.friend = friend
@@ -68,6 +69,14 @@ struct FriendRowView: View {
                     print("Message")
                 }
                 .buttonStyle(PlainButtonStyle())
+                
+                IconView(iconName: friend.notifications ? "bell" : "bell.slash") {
+                    print("Tapped")
+                    friend.notifications.toggle()
+                    self.onTapBellAction?(friend.notifications)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .contentTransition(.symbolEffect(.replace))
             
             case .searched:
                 IconView(iconName: "plus") {
@@ -110,6 +119,12 @@ extension FriendRowView {
     func onMessage(_ action: @escaping () -> Void) -> FriendRowView {
         var view = self
         view.onMessageAction = action
+        return view
+    }
+    
+    func onBellTap(_ action: @escaping (Bool) -> Void) -> FriendRowView {
+        var view = self
+        view.onTapBellAction = action
         return view
     }
 }
