@@ -85,11 +85,14 @@ class ChatViewModel: ObservableObject {
                         case .added:
                             withAnimation(.smooth) {
                                 self?.friends.append(friendData)
+                                self?.friendSearchResult.removeAll {$0.id == friendData.id}
                             }
                             
                         case .removed:
-                            self?.friends.removeAll {$0.id == friendData.id}
-                            self?.friendSearchResult.removeAll {$0.id == friendData.id}
+                            withAnimation(.smooth) {
+                                self?.friends.removeAll {$0.id == friendData.id}
+                                self?.friendSearchResult.removeAll {$0.id == friendData.id}
+                            }
                             
                         case .modified:
                             let index = change.newIndex
@@ -192,7 +195,7 @@ class ChatViewModel: ObservableObject {
             }
             
         }
-        // self.listenToFriends()
+        self.listenToFriends()
         self.listenToRequests()
         
     }

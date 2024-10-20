@@ -16,7 +16,8 @@ struct FriendsView: View {
     @State private var height: CGFloat = 100
 
     @State private var searchKey: String = ""
-    @State var showRequests: Bool = true
+    @State private var showRequests: Bool = true
+    @State private var showFriends: Bool = true
 
     var body: some View {
         GeometryReader {
@@ -140,12 +141,52 @@ struct FriendsView: View {
                                 }
                                 .padding([.leading, .trailing], width * 0.07)
                             })
-                            
+                        }
+                        if !self.chatViewModel.friends.isEmpty {
+                            Section( content: {
+                                if self.showFriends {
+                                    ForEach (
+                                        chatViewModel.friends, id: \.self
+                                    ) {
+                                        friend in
+                                        FriendRowView(
+                                            friend: friend,
+                                            width: width,
+                                            height: height * 0.1
+                                        )
+                                        .onMessage {
+                                            print("Message")
+                                        }
+                                        .padding([.leading, .trailing])
+                                        
+                                        if (friend.id != chatViewModel.friends.last?.id) {
+                                            Divider()
+                                                .padding([.leading, .trailing])
+                                        }
+                                    }
+                                }
+                            }, header: {
+                                HStack {
+                                    Text("Friends")
+                                        .font(.title2)
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(.primary)
+                                    
+                                    Spacer()
+                                    
+                                    IconView(iconName: self.showFriends ? "chevron.down" : "chevron.forward", size: height * 0.02, color: .secondary) {
+                                        withAnimation(.smooth) {
+                                            self.showFriends.toggle()
+                                        }
+                                    }
+                                    .contentTransition(.symbolEffect(.replace))
+                                }
+                                .padding([.leading, .trailing], width * 0.07)
+                            })
                         }
                     }
                     .listRowSpacing(height * 0.02)
                     .scrollIndicators(.hidden)
-                    
                     Spacer()
 
                 }
