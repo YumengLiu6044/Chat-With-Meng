@@ -28,9 +28,6 @@ struct ChatView: View {
                         print("Sent")
                     }
                     
-                    IconView(iconName: "ellipsis") {
-                        print("Open option")
-                    }
                     
                 }
                 .padding()

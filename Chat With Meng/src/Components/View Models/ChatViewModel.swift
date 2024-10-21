@@ -38,9 +38,6 @@ class ChatViewModel: ObservableObject {
     @Published var friendRequests:     [Friend] = []
     @Published var friends:            [Friend] = []
     
-    private var isSearchingForUsers: Bool = false
-    
-    
     
     public func switchTo(view toView: ChatViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {
@@ -306,20 +303,7 @@ class ChatViewModel: ObservableObject {
         return friendRef
     }
     
-    public func searchUsers(from searchKey: String) async {
-        self.friendSearchResult = []
-        if searchKey.isEmpty {
-            isSearchingForUsers = false
-            return
-        }
-        
-        if isSearchingForUsers {
-            return
-        }
-        else {
-            isSearchingForUsers = true
-        }
-        
+    private func searchByKey(from searchKey: String) async {
         do {
             let queryDocs = try await FirebaseManager.shared.firestore.collection(FirebaseConstants.users)
                 .whereField(User.keys.userName.rawValue, isGreaterThanOrEqualTo: searchKey)
@@ -345,7 +329,12 @@ class ChatViewModel: ObservableObject {
             print(error.localizedDescription)
             
         }
-        isSearchingForUsers = false
+    }
+    
+    public func searchUsers(from searchKey: String) async {
+        self.friendSearchResult = []
+        await self.searchByKey(from: searchKey.lowercased())
+        await self.searchByKey(from: searchKey.uppercased())
     }
     
     public func sendFriendRequest(to userID: String?) {
