@@ -63,6 +63,7 @@ struct FriendRowView: View {
                     print("Message")
                 }
                 .buttonStyle(PlainButtonStyle())
+                .padding(.trailing)
                 
                 IconView(iconName: friend.notifications ? "bell" : "bell.slash") {
                     self.chatViewModel.updateFriendByKeyVal(for: self.friend.userID, FriendRef.keys.notifications, !self.friend.notifications) {
@@ -82,12 +83,10 @@ struct FriendRowView: View {
             }
         }
         .onAppear {
-            if self.chatViewModel.friendRequests
-                .filter({$0 == self.friend}).count > 0 {
+            if self.chatViewModel.friendRequests.contains(self.friend) {
                 self.resultState = .requested
             }
-            else if self.chatViewModel.friends
-                .filter({$0 == self.friend }).count > 0 {
+            else if self.chatViewModel.friends.contains(self.friend) {
                 self.resultState = .friended
             }
             else {

@@ -33,7 +33,7 @@ struct Friend: Identifiable, Equatable {
     var profileOverlayData: [CGFloat] = [0, 0, 0]
     
     static func ==(lhs: Friend, rhs: Friend) -> Bool {
-        return lhs.id == rhs.id
+        return lhs.userID == rhs.userID
     }
     
 }

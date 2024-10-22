@@ -103,11 +103,11 @@ struct FriendsView: View {
                                         }
                                     }
                                     label: {
-                                        Image(systemName: self.showRequests ? "chevron.down" : "chevron.forward")
+                                        Image(systemName: "chevron.forward")
                                             .font(.title3)
                                     }
                                     .tint(.secondary)
-                                    .contentTransition(.symbolEffect(.replace))
+                                    .rotationEffect(self.showRequests ? .degrees(90) : .zero)
                                 }
                                 .padding([.leading, .trailing], width * 0.07)
                             })
@@ -145,11 +145,11 @@ struct FriendsView: View {
                                         }
                                     }
                                     label: {
-                                        Image(systemName: self.showFriends ? "chevron.down" : "chevron.forward")
+                                        Image(systemName: "chevron.forward")
                                             .font(.title3)
                                     }
                                     .tint(.secondary)
-                                    .contentTransition(.symbolEffect(.replace))
+                                    .rotationEffect(self.showFriends ? .degrees(90) : .zero)
                                 }
                                 .padding([.leading, .trailing], width * 0.07)
                             })
