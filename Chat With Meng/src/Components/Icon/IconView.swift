@@ -21,7 +21,9 @@ struct IconView: View {
         } label: {
             ZStack {
                 Image(systemName: iconName)
-                    .font(.system(size: size))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: size, height: size)
                     .fontWeight(.semibold)
                 
                 if count > 0 {

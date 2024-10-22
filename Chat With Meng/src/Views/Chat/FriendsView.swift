@@ -97,11 +97,16 @@ struct FriendsView: View {
                                     
                                     Spacer()
                                     
-                                    IconView(iconName: self.showRequests ? "chevron.down" : "chevron.forward", size: height * 0.02, color: .secondary) {
+                                    Button {
                                         withAnimation(.smooth) {
                                             self.showRequests.toggle()
                                         }
                                     }
+                                    label: {
+                                        Image(systemName: self.showRequests ? "chevron.down" : "chevron.forward")
+                                            .font(.title3)
+                                    }
+                                    .tint(.secondary)
                                     .contentTransition(.symbolEffect(.replace))
                                 }
                                 .padding([.leading, .trailing], width * 0.07)
@@ -134,11 +139,16 @@ struct FriendsView: View {
                                     
                                     Spacer()
                                     
-                                    IconView(iconName: self.showFriends ? "chevron.down" : "chevron.forward", size: height * 0.02, color: .secondary) {
+                                    Button {
                                         withAnimation(.smooth) {
                                             self.showFriends.toggle()
                                         }
                                     }
+                                    label: {
+                                        Image(systemName: self.showFriends ? "chevron.down" : "chevron.forward")
+                                            .font(.title3)
+                                    }
+                                    .tint(.secondary)
                                     .contentTransition(.symbolEffect(.replace))
                                 }
                                 .padding([.leading, .trailing], width * 0.07)
