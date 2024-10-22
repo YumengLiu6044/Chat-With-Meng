@@ -24,9 +24,10 @@ struct MenuBarView: View {
     
     var body: some View {
         HStack {
-            IconView(iconName: "message", count: 5) {
+            IconView(iconName: "message", count: 5, size: 35) {
                 chatViewModel.switchTo(view: .messages)
             }
+            .frame(width: self.width * 0.2)
             .background {
                 if (chatViewModel.chatViewSelection == .messages) {
                     selection()
@@ -34,10 +35,10 @@ struct MenuBarView: View {
             }
             Spacer()
             
-            IconView(iconName: "person.2", count: self.chatViewModel.friendRequests.count) {
+            IconView(iconName: "person.2", count: self.chatViewModel.friendRequests.count, size: 35) {
                 chatViewModel.switchTo(view: .friends)
             }
-
+            .frame(width: self.width * 0.2)
             .background {
                 if (chatViewModel.chatViewSelection == .friends) {
                     selection()
@@ -45,9 +46,10 @@ struct MenuBarView: View {
             }
             Spacer()
             
-            IconView(iconName: "gear") {
+            IconView(iconName: "gear", size: 35) {
                 chatViewModel.switchTo(view: .settings)
             }
+            .frame(width: self.width * 0.2)
             .background {
                 if (chatViewModel.chatViewSelection == .settings) {
                     selection()

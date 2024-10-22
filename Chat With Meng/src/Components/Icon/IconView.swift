@@ -10,7 +10,7 @@ import SwiftUI
 struct IconView: View {
     var iconName: String = "person"
     var count: Int = 0
-    var size: CGFloat = 30
+    var size: CGFloat = 32
     var color: Color = .primary
     
     
