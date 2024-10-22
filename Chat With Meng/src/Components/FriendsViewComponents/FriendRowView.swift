@@ -18,18 +18,21 @@ struct FriendRowView: View {
     var width: CGFloat  = 300
     var height: CGFloat = 80
     
-    @State private var resultState: FriendRowState = .searched
+    @State private var resultState: FriendRowState  = .searched
     
-
     var body: some View {
         HStack {
-            NavigationLink(destination: ProfileView(friend: self.friend).environmentObject(self.chatViewModel)) {
+            NavigationLink(value: friend) {
                 ProfilePicView(
                     imageURL: friend.profilePicURL,
                     imageOverlayData: friend.profileOverlayData,
                     width: width * 0.15,
                     height: width * 0.15
                 )
+                .onTapGesture {
+                    self.chatViewModel.friendInView = friend
+                    self.chatViewModel.showProfile = true
+                }
                 .padding([.leading, .trailing])
             }
     
@@ -93,10 +96,13 @@ struct FriendRowView: View {
                 self.resultState = .searched
             }
         }
+        
     }
 }
 
 #Preview {
-    FriendRowView(friend: .constant(Friend()))
-        .environmentObject(ChatViewModel())
+    FriendRowView(
+        friend: .constant(Friend())
+    )
+    .environmentObject(ChatViewModel())
 }

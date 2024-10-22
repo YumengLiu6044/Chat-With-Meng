@@ -23,6 +23,7 @@ struct FirebaseConstants {
 @MainActor
 class ChatViewModel: ObservableObject {
     @Published var chatViewSelection: ChatViewSelection = .messages
+    @Published var friendInView: Friend                 = Friend()
     
     @Published var currentUser:     User        = User()
     @Published var toast:           Toast?      = nil
@@ -30,6 +31,7 @@ class ChatViewModel: ObservableObject {
     
     @Published var showImagePicker: Bool = false
     @Published var showMenu:        Bool = true
+    @Published var showProfile:     Bool = false
     
     @Published var currentFriendsListener: ListenerRegistration? = nil
     @Published var currentFriendRequestListener: ListenerRegistration? = nil
@@ -37,6 +39,7 @@ class ChatViewModel: ObservableObject {
     @Published var friendSearchResult: [Friend] = []
     @Published var friendRequests:     [Friend] = []
     @Published var friends:            [Friend] = []
+    @Published var removalQueue:       [Friend] = []
     
     
     public func switchTo(view toView: ChatViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
@@ -86,9 +89,12 @@ class ChatViewModel: ObservableObject {
                             }
                             
                         case .removed:
-                            withAnimation(.smooth) {
-                                self?.friends.removeAll {$0 == friendData}
-                                self?.friendSearchResult.removeAll {$0 == friendData}
+                            if friendData == self?.friendInView {
+                                self?.showProfile = false
+                                self?.removalQueue.append(friendData)
+                            }
+                            else {
+                                self?.removeFriendFromLocal(friendData)
                             }
                             
                         case .modified:
@@ -287,6 +293,25 @@ class ChatViewModel: ObservableObject {
         let friendRef = FriendRef(id: friendID, notifications: true)
         return friendRef
     }
+    private func sortSearchResult() {
+        self.friendSearchResult.sort { lhs, rhs in
+            let lhsIsFriend = self.friends.contains(lhs)
+            let lhsIsRequest = self.friendRequests.contains(lhs)
+            let lhsIsSearched = !(lhsIsFriend || lhsIsRequest)
+            
+            let rhsIsFriend = self.friends.contains(rhs)
+            let rhsIsRequest = self.friendRequests.contains(rhs)
+            let rhsIsSearched = !(rhsIsFriend || rhsIsRequest)
+            
+            if lhsIsFriend != rhsIsFriend {
+                return lhsIsFriend && !rhsIsFriend
+            } else if lhsIsRequest != rhsIsRequest {
+                return lhsIsRequest && !rhsIsRequest
+            } else {
+                return lhsIsSearched && !rhsIsSearched
+            }
+        }
+    }
     
     private func searchByKey(from searchKey: String) async {
         do {
@@ -307,23 +332,7 @@ class ChatViewModel: ObservableObject {
                     withAnimation(.smooth) {
                         self.friendSearchResult.append(friend)
                     }
-                    self.friendSearchResult.sort { lhs, rhs in
-                        let lhsIsFriend = self.friends.contains(lhs)
-                        let lhsIsRequest = self.friendRequests.contains(lhs)
-                        let lhsIsSearched = !(lhsIsFriend || lhsIsRequest)
-                        
-                        let rhsIsFriend = self.friends.contains(rhs)
-                        let rhsIsRequest = self.friendRequests.contains(rhs)
-                        let rhsIsSearched = !(rhsIsFriend || rhsIsRequest)
-                        
-                        if lhsIsFriend != rhsIsFriend {
-                            return lhsIsFriend && !rhsIsFriend
-                        } else if lhsIsRequest != rhsIsRequest {
-                            return lhsIsRequest && !rhsIsRequest
-                        } else {
-                            return lhsIsSearched && !rhsIsSearched
-                        }
-                    }
+                    self.sortSearchResult()
                 }
                 
             }
@@ -424,6 +433,14 @@ class ChatViewModel: ObservableObject {
         
         let localAsFriend = self.makeFriendRef(from: local_uid)
         self.addFriendToCloud(for: friendRef.id, friend: localAsFriend)
+        
+    }
+    
+    public func removeFriendFromLocal(_ friend: Friend) {
+        withAnimation(.smooth) {
+            self.friends.removeAll(where: {$0 == friend})
+            self.friendSearchResult.removeAll(where: {$0 == friend})
+        }
         
     }
 

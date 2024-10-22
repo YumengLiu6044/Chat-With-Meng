@@ -23,7 +23,7 @@ struct FriendRef: Codable {
     
 }
 
-struct Friend: Identifiable, Equatable {
+struct Friend: Identifiable, Equatable, Hashable {
     var email: String = ""
     var id: UUID = UUID()
     var userID: String = ""

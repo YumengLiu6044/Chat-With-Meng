@@ -10,7 +10,7 @@ import SwiftUI
 struct ProfileView: View {
     @EnvironmentObject var chatViewModel: ChatViewModel
     
-    var friend: Friend
+    @Binding var friend: Friend
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
@@ -94,6 +94,6 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(friend: Friend())
+    ProfileView(friend: .constant(Friend()))
         .environmentObject(ChatViewModel())
 }

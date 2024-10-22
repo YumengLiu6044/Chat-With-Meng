@@ -16,6 +16,7 @@ struct FriendsView: View {
     @State private var height: CGFloat = 100
 
     @State private var searchKey: String = ""
+    
     @State private var showRequests: Bool = true
     @State private var showFriends: Bool = true
 
@@ -53,8 +54,7 @@ struct FriendsView: View {
 
                     ScrollView {
                         if !self.searchKey.isEmpty {
-                            ForEach(Array(chatViewModel.friendSearchResult.enumerated()), id: \.element.id) {
-                                index, _ in
+                            ForEach(chatViewModel.friendSearchResult.indices, id: \.self) { index in
                                 FriendRowView(
                                     friend: $chatViewModel.friendSearchResult[index],
                                     width: width,
@@ -75,8 +75,7 @@ struct FriendsView: View {
                             Section(
                                 content: {
                                     if self.showRequests {
-                                        ForEach (Array(chatViewModel.friendRequests.enumerated()), id: \.element.id) {
-                                            index, _ in
+                                        ForEach(chatViewModel.friendRequests.indices, id: \.self) { index in
                                             FriendRowView(
                                                 friend: $chatViewModel.friendRequests[index],
                                                 width: width,
@@ -113,14 +112,14 @@ struct FriendsView: View {
                                     .tint(.secondary)
                                     .rotationEffect(self.showRequests ? .degrees(90) : .zero)
                                 }
-                                .padding([.leading, .trailing], width * 0.07)
+                                .padding([.leading, .trailing, .bottom], width * 0.05)
                             })
+                            
                         }
                         if self.searchKey.isEmpty && !self.chatViewModel.friends.isEmpty {
                             Section( content: {
                                 if self.showFriends {
-                                    ForEach (Array(chatViewModel.friends.enumerated()), id: \.element.id) {
-                                        index, _ in
+                                    ForEach(chatViewModel.friends.indices, id: \.self) { index in
                                         FriendRowView(
                                             friend: $chatViewModel.friends[index],
                                             width: width,
@@ -156,8 +155,9 @@ struct FriendsView: View {
                                     .tint(.secondary)
                                     .rotationEffect(self.showFriends ? .degrees(90) : .zero)
                                 }
-                                .padding([.leading, .trailing], width * 0.07)
+                                .padding([.leading, .trailing, .bottom], width * 0.05)
                             })
+                            
                         }
                     }
                     .listRowSpacing(height * 0.05)
@@ -175,8 +175,20 @@ struct FriendsView: View {
                     height = geometry.size.height
                     
                 }
-                
-            }.tint(.primary)
+
+                .navigationDestination(isPresented: $chatViewModel.showProfile, destination: {
+                    ProfileView(friend: $chatViewModel.friendInView)
+                        .onDisappear {
+                            let exitFriend = self.chatViewModel.friendInView
+                            if chatViewModel.removalQueue.contains(exitFriend) {
+                                chatViewModel.removeFriendFromLocal(exitFriend)
+                            }
+                            self.chatViewModel.friendInView = Friend()
+                        }
+                })
+            }
+    
+            .tint(.primary)
 
         }
 
