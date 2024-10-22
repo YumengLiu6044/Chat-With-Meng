@@ -65,6 +65,7 @@ struct FriendsView: View {
                                 
                                 if (index != chatViewModel.friendSearchResult.count - 1) {
                                     Divider()
+                                        .foregroundStyle(.primary)
                                         .padding([.leading, .trailing])
                                 }
                             }
@@ -85,6 +86,7 @@ struct FriendsView: View {
                                             
                                             if (index != chatViewModel.friendRequests.count - 1) {
                                                 Divider()
+                                                    .foregroundStyle(.primary)
                                                     .padding([.leading, .trailing])
                                             }
                                         }
@@ -128,6 +130,7 @@ struct FriendsView: View {
                                         
                                         if (index != chatViewModel.friends.count - 1) {
                                             Divider()
+                                                .foregroundStyle(.primary)
                                                 .padding([.leading, .trailing])
                                         }
                                     }
@@ -157,7 +160,7 @@ struct FriendsView: View {
                             })
                         }
                     }
-                    .listRowSpacing(height * 0.02)
+                    .listRowSpacing(height * 0.05)
                     .scrollIndicators(.hidden)
                     Spacer()
 

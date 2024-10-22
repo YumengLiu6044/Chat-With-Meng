@@ -30,15 +30,14 @@ struct FriendRowView: View {
                     width: width * 0.15,
                     height: width * 0.15
                 )
-                .padding(.leading)
+                .padding([.leading, .trailing])
             }
     
             Text(friend.userName)
-                .font(.system(size: height * 0.4))
-                .fontWeight(.semibold)
+                .font(.system(size: height * 0.32))
+                .fontWeight(.medium)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
-                .padding()
             
             Spacer()
             

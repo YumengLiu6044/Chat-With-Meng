@@ -92,6 +92,8 @@ class ChatViewModel: ObservableObject {
                             }
                             
                         case .modified:
+                            guard let modifiedIndex = self?.friends.firstIndex(where: {$0 == friendData}) else {return}
+                            self?.friends[modifiedIndex] = friendData
                             return
                             
                         default:
