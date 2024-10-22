@@ -30,7 +30,7 @@ struct FriendRowView: View {
                     width: width * 0.15,
                     height: width * 0.15
                 )
-                .padding()
+                .padding(.leading)
             }
     
             Text(friend.userName)
@@ -44,19 +44,20 @@ struct FriendRowView: View {
             
             switch self.resultState {
             case .requested:
-                IconView(iconName: "checkmark", color: .blue) {
+                IconView(iconName: "checkmark", size: 30, color: .blue) {
                     Task {
                         await self.chatViewModel.addFriend(from: friend.userID)
                     }
                 }
+                .padding(.trailing)
                 
-                IconView(iconName: "xmark", color: .red) {
+                IconView(iconName: "xmark", size: 30, color: .red) {
                     let reject_id = friend.userID
                     Task {
                         await self.chatViewModel.removeFriendRequest(at: reject_id)
                     }
                 }
-                .padding([.trailing])
+                
                 
             case .friended:
                 IconView(iconName: "paperplane") {

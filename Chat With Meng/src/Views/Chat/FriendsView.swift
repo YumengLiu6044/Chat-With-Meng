@@ -73,18 +73,20 @@ struct FriendsView: View {
                            !self.chatViewModel.friendRequests.isEmpty {
                             Section(
                                 content: {
-                                    ForEach (Array(chatViewModel.friendRequests.enumerated()), id: \.element.id) {
-                                        index, _ in
-                                        FriendRowView(
-                                            friend: $chatViewModel.friendRequests[index],
-                                            width: width,
-                                            height: height * 0.1
-                                        )
-                                        .padding([.leading, .trailing])
-                                        
-                                        if (index != chatViewModel.friendRequests.count - 1) {
-                                            Divider()
-                                                .padding([.leading, .trailing])
+                                    if self.showRequests {
+                                        ForEach (Array(chatViewModel.friendRequests.enumerated()), id: \.element.id) {
+                                            index, _ in
+                                            FriendRowView(
+                                                friend: $chatViewModel.friendRequests[index],
+                                                width: width,
+                                                height: height * 0.1
+                                            )
+                                            .padding([.leading, .trailing])
+                                            
+                                            if (index != chatViewModel.friendRequests.count - 1) {
+                                                Divider()
+                                                    .padding([.leading, .trailing])
+                                            }
                                         }
                                     }
                                 
@@ -112,7 +114,7 @@ struct FriendsView: View {
                                 .padding([.leading, .trailing], width * 0.07)
                             })
                         }
-                        if self.searchKey.isEmpty {
+                        if self.searchKey.isEmpty && !self.chatViewModel.friends.isEmpty {
                             Section( content: {
                                 if self.showFriends {
                                     ForEach (Array(chatViewModel.friends.enumerated()), id: \.element.id) {

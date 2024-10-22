@@ -305,7 +305,25 @@ class ChatViewModel: ObservableObject {
                     withAnimation(.smooth) {
                         self.friendSearchResult.append(friend)
                     }
+                    self.friendSearchResult.sort { lhs, rhs in
+                        let lhsIsFriend = self.friends.contains(lhs)
+                        let lhsIsRequest = self.friendRequests.contains(lhs)
+                        let lhsIsSearched = !(lhsIsFriend || lhsIsRequest)
+                        
+                        let rhsIsFriend = self.friends.contains(rhs)
+                        let rhsIsRequest = self.friendRequests.contains(rhs)
+                        let rhsIsSearched = !(rhsIsFriend || rhsIsRequest)
+                        
+                        if lhsIsFriend != rhsIsFriend {
+                            return lhsIsFriend && !rhsIsFriend
+                        } else if lhsIsRequest != rhsIsRequest {
+                            return lhsIsRequest && !rhsIsRequest
+                        } else {
+                            return lhsIsSearched && !rhsIsSearched
+                        }
+                    }
                 }
+                
             }
         }
         catch {
@@ -318,6 +336,7 @@ class ChatViewModel: ObservableObject {
         self.friendSearchResult = []
         await self.searchByKey(from: searchKey.lowercased())
         await self.searchByKey(from: searchKey.uppercased())
+        
     }
     
     public func sendFriendRequest(to userID: String?) {
