@@ -13,24 +13,14 @@ enum FriendRowState: String {
 
 struct FriendRowView: View {
     @EnvironmentObject var chatViewModel: ChatViewModel
-    @State var friend: Friend
+    @Binding var friend: Friend
     
     var width: CGFloat  = 300
     var height: CGFloat = 80
     
     @State private var resultState: FriendRowState = .searched
     
-    var onRejectAction: (() -> Void)?
-    var onAcceptAction: (() -> Void)?
-    var onMessageAction: (() -> Void)?
-    var onTapBellAction: ((Bool) -> Void)?
-    
-    init(friend: Friend, width: CGFloat = 300, height: CGFloat = 80) {
-        self.friend = friend
-        self.width = width
-        self.height = height
-        
-    }
+
     var body: some View {
         HStack {
             NavigationLink(destination: ProfileView(friend: self.friend).environmentObject(self.chatViewModel)) {
@@ -42,8 +32,7 @@ struct FriendRowView: View {
                 )
                 .padding()
             }
-            .tint(.none)
-            
+    
             Text(friend.userName)
                 .font(.system(size: height * 0.4))
                 .fontWeight(.semibold)
@@ -56,11 +45,16 @@ struct FriendRowView: View {
             switch self.resultState {
             case .requested:
                 IconView(iconName: "checkmark", color: .blue) {
-                    self.onAcceptAction?()
+                    Task {
+                        await self.chatViewModel.addFriend(from: friend.userID)
+                    }
                 }
                 
                 IconView(iconName: "xmark", color: .red) {
-                    self.onRejectAction?()
+                    let reject_id = friend.userID
+                    Task {
+                        await self.chatViewModel.removeFriendRequest(at: reject_id)
+                    }
                 }
                 .padding([.trailing])
                 
@@ -71,9 +65,9 @@ struct FriendRowView: View {
                 .buttonStyle(PlainButtonStyle())
                 
                 IconView(iconName: friend.notifications ? "bell" : "bell.slash") {
-                    print("Tapped")
-                    friend.notifications.toggle()
-                    self.onTapBellAction?(friend.notifications)
+                    self.chatViewModel.updateFriendByKeyVal(for: self.friend.userID, FriendRef.keys.notifications, !self.friend.notifications) {
+                        self.friend.notifications.toggle()
+                    }
                 }
                 .buttonStyle(PlainButtonStyle())
                 .contentTransition(.symbolEffect(.replace))
@@ -81,7 +75,7 @@ struct FriendRowView: View {
             case .searched:
                 IconView(iconName: "plus") {
                     Task {
-                        chatViewModel.sendFriendRequest(to: friend.id)
+                        chatViewModel.sendFriendRequest(to: friend.userID)
                     }
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -89,11 +83,11 @@ struct FriendRowView: View {
         }
         .onAppear {
             if self.chatViewModel.friendRequests
-                .filter({$0.id == self.friend.id}).count > 0 {
+                .filter({$0 == self.friend}).count > 0 {
                 self.resultState = .requested
             }
             else if self.chatViewModel.friends
-                .filter({$0.id == self.friend.id }).count > 0 {
+                .filter({$0 == self.friend }).count > 0 {
                 self.resultState = .friended
             }
             else {
@@ -103,33 +97,7 @@ struct FriendRowView: View {
     }
 }
 
-extension FriendRowView {
-    func onAccept(_ action: @escaping () -> Void) -> FriendRowView {
-        var view = self
-        view.onAcceptAction = action
-        return view
-    }
-    
-    func onReject(_ action: @escaping () -> Void) -> FriendRowView {
-        var view = self
-        view.onRejectAction = action
-        return view
-    }
-    
-    func onMessage(_ action: @escaping () -> Void) -> FriendRowView {
-        var view = self
-        view.onMessageAction = action
-        return view
-    }
-    
-    func onBellTap(_ action: @escaping (Bool) -> Void) -> FriendRowView {
-        var view = self
-        view.onTapBellAction = action
-        return view
-    }
-}
-
 #Preview {
-    FriendRowView(friend: Friend())
+    FriendRowView(friend: .constant(Friend()))
         .environmentObject(ChatViewModel())
 }

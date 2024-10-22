@@ -23,12 +23,17 @@ struct FriendRef: Codable {
     
 }
 
-struct Friend: Hashable, Identifiable, Equatable {
+struct Friend: Identifiable, Equatable {
     var email: String = ""
-    var id: String = ""
+    var id: UUID = UUID()
+    var userID: String = ""
     var profilePicURL: String = "https://img.decrypt.co/insecure/rs:fit:3840:0:0:0/plain/https://cdn.decrypt.co/wp-content/uploads/2024/05/doge-dogecoin-meme-kabosu-gID_7.jpg@webp"
     var userName: String = "Friend"
     var notifications: Bool = true
-    var profileOverlayData: [CGFloat] = []
+    var profileOverlayData: [CGFloat] = [0, 0, 0]
+    
+    static func ==(lhs: Friend, rhs: Friend) -> Bool {
+        return lhs.id == rhs.id
+    }
     
 }

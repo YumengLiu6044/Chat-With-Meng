@@ -47,82 +47,47 @@ struct FriendsView: View {
                     )
                     .onChange(of: self.searchKey) {
                         self.chatViewModel.friendSearchResult = []
-                        withAnimation(.smooth) {
-                            self.showRequests = false
-                            self.showFriends  = false
-                        }
                     }
                     .padding([.leading, .trailing], width * 0.02)
                     .padding([.top], height * -0.02)
 
                     ScrollView {
                         if !self.searchKey.isEmpty {
-                            ForEach(chatViewModel.friendSearchResult) {
-                                friend in
+                            ForEach(Array(chatViewModel.friendSearchResult.enumerated()), id: \.element.id) {
+                                index, _ in
                                 FriendRowView(
-                                    friend: friend,
+                                    friend: $chatViewModel.friendSearchResult[index],
                                     width: width,
                                     height: height * 0.1
                                 )
-                                .onReject {
-                                    let reject_id = friend.id
-                                    
-                                    Task {
-                                        await self.chatViewModel.removeFriendRequest(at: reject_id)
-                                    }
-                                }
-                                .onAccept {
-                                    Task {
-                                        await self.chatViewModel.addFriend(from: friend.id)
-                                    }
-                                }
-                                .onMessage {
-                                    print("Message")
-                                }
-                                .onBellTap { newValue in
-                                    self.chatViewModel.updateFriendByKeyVal(for: friend.id, FriendRef.keys.notifications, newValue)
-                                }
                                 .padding([.leading, .trailing])
                                 .environmentObject(self.chatViewModel)
                                 
-                                if (friend.id != chatViewModel.friendSearchResult.last?.id) {
+                                if (index != chatViewModel.friendSearchResult.count - 1) {
                                     Divider()
                                         .padding([.leading, .trailing])
                                 }
                             }
                         }
-                        if !self.chatViewModel.friendRequests.isEmpty {
-                            Section( content: {
-                                if self.showRequests {
-                                    ForEach (
-                                        chatViewModel.friendRequests, id: \.self
-                                    ) {
-                                        request in
+                        if self.searchKey.isEmpty &&
+                           !self.chatViewModel.friendRequests.isEmpty {
+                            Section(
+                                content: {
+                                    ForEach (Array(chatViewModel.friendRequests.enumerated()), id: \.element.id) {
+                                        index, _ in
                                         FriendRowView(
-                                            friend: request,
+                                            friend: $chatViewModel.friendRequests[index],
                                             width: width,
                                             height: height * 0.1
                                         )
-                                        .onReject {
-                                            let reject_id = request.id
-                                            
-                                            Task {
-                                                await self.chatViewModel.removeFriendRequest(at: reject_id)
-                                            }
-                                        }
-                                        .onAccept {
-                                            Task {
-                                                await self.chatViewModel.addFriend(from: request.id)
-                                            }
-                                        }
                                         .padding([.leading, .trailing])
                                         
-                                        if (request.id != chatViewModel.friendRequests.last?.id) {
+                                        if (index != chatViewModel.friendRequests.count - 1) {
                                             Divider()
                                                 .padding([.leading, .trailing])
                                         }
                                     }
-                                }
+                                
                             }, header: {
                                 HStack {
                                     Text("Requests")
@@ -142,27 +107,19 @@ struct FriendsView: View {
                                 .padding([.leading, .trailing], width * 0.07)
                             })
                         }
-                        if !self.chatViewModel.friends.isEmpty {
+                        if self.searchKey.isEmpty {
                             Section( content: {
                                 if self.showFriends {
-                                    ForEach (
-                                        chatViewModel.friends, id: \.self
-                                    ) {
-                                        friend in
+                                    ForEach (Array(chatViewModel.friends.enumerated()), id: \.element.id) {
+                                        index, _ in
                                         FriendRowView(
-                                            friend: friend,
+                                            friend: $chatViewModel.friends[index],
                                             width: width,
                                             height: height * 0.1
                                         )
-                                        .onMessage {
-                                            print("Message")
-                                        }
-                                        .onBellTap { newValue in
-                                            self.chatViewModel.updateFriendByKeyVal(for: friend.id, FriendRef.keys.notifications, newValue)
-                                        }
                                         .padding([.leading, .trailing])
                                         
-                                        if (friend.id != chatViewModel.friends.last?.id) {
+                                        if (index != chatViewModel.friends.count - 1) {
                                             Divider()
                                                 .padding([.leading, .trailing])
                                         }
@@ -204,7 +161,7 @@ struct FriendsView: View {
                     
                 }
                 
-            }
+            }.tint(.primary)
 
         }
 
