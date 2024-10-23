@@ -32,6 +32,7 @@ struct FriendRowView: View {
                 .onTapGesture {
                     self.chatViewModel.friendInView = friend
                     self.chatViewModel.showProfile = true
+                    self.chatViewModel.rowState     = self.resultState
                 }
                 .padding([.leading, .trailing])
             }
@@ -86,17 +87,20 @@ struct FriendRowView: View {
             }
         }
         .onAppear {
-            if self.chatViewModel.friendRequests.contains(self.friend) {
-                self.resultState = .requested
-            }
-            else if self.chatViewModel.friends.contains(self.friend) {
-                self.resultState = .friended
-            }
-            else {
-                self.resultState = .searched
-            }
+            determineState()
         }
-        
+    }
+    
+    private func determineState() {
+        if self.chatViewModel.friendRequests.contains(self.friend) {
+            self.resultState = .requested
+        }
+        else if self.chatViewModel.friends.contains(self.friend) {
+            self.resultState = .friended
+        }
+        else {
+            self.resultState = .searched
+        }
     }
 }
 

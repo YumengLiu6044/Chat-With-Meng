@@ -11,6 +11,7 @@ struct ProfileView: View {
     @EnvironmentObject var chatViewModel: ChatViewModel
     
     @Binding var friend: Friend
+    var rowState: FriendRowState
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
@@ -67,6 +68,30 @@ struct ProfileView: View {
                     .scrollContentBackground(.hidden)
                     .padding([.top], height * 0.05)
                     
+                    Button {
+                        if self.rowState == .friended {
+                            self.chatViewModel.updateFriendByKeyVal(for: self.friend.userID, FriendRef.keys.notifications, !self.friend.notifications) {
+                                self.friend.notifications.toggle()
+                            }
+                        }
+                    }
+                    label: {
+                        HStack {
+                            Spacer()
+                            Text("Unfriend")
+                                .font(.title2)
+                            Spacer()
+                            
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.roundedRectangle(radius: width * 0.03))
+                    .tint(.red)
+                    .shadow(radius: 5)
+                    .padding([.bottom], height * 0.13)
+                    .padding([.leading, .trailing])
+                    
+                    
                     Spacer()
 
                 }
@@ -94,6 +119,6 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(friend: .constant(Friend()))
+    ProfileView(friend: .constant(Friend()), rowState: .friended)
         .environmentObject(ChatViewModel())
 }

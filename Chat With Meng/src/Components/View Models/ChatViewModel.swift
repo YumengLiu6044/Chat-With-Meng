@@ -41,6 +41,8 @@ class ChatViewModel: ObservableObject {
     @Published var friends:            [Friend] = []
     @Published var removalQueue:       [Friend] = []
     
+    @Published var rowState:     FriendRowState = .friended
+    
     
     public func switchTo(view toView: ChatViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {
@@ -89,6 +91,11 @@ class ChatViewModel: ObservableObject {
                             }
                             
                         case .removed:
+//                            withAnimation(.smooth) {
+//                                self?.friends.removeAll {$0 == friendData}
+//                                self?.friendSearchResult.removeAll {$0 == friendData}
+//                            }
+//                            return
                             if friendData == self?.friendInView {
                                 self?.showProfile = false
                                 self?.removalQueue.append(friendData)
@@ -97,9 +104,18 @@ class ChatViewModel: ObservableObject {
                                 self?.removeFriendFromLocal(friendData)
                             }
                             
+                            
                         case .modified:
-                            guard let modifiedIndex = self?.friends.firstIndex(where: {$0 == friendData}) else {return}
-                            self?.friends[modifiedIndex] = friendData
+//                            guard let modifiedIndex = self?.friends.firstIndex(where: {$0 == friendData}) else {return}
+//                            withAnimation(.smooth) {
+//                                self?.friends[modifiedIndex] = friendData
+//                            }
+//                            
+//                            guard let modifiedAtResult = self?.friendSearchResult.firstIndex(where: {$0 == friendData}) else {return}
+//                            withAnimation(.smooth) {
+//                                self?.friendSearchResult[modifiedAtResult] = friendData
+//                            }
+                            
                             return
                             
                         default:
@@ -293,26 +309,21 @@ class ChatViewModel: ObservableObject {
         let friendRef = FriendRef(id: friendID, notifications: true)
         return friendRef
     }
-    private func sortSearchResult() {
+    public func sortSearchResult() {
         self.friendSearchResult.sort { lhs, rhs in
-            let lhsIsFriend = self.friends.contains(lhs)
-            let lhsIsRequest = self.friendRequests.contains(lhs)
-            let lhsIsSearched = !(lhsIsFriend || lhsIsRequest)
+            let lhsRank = (self.friends.contains(lhs) ? 0 : self.friendRequests.contains(lhs) ? 1 : 2)
+            let rhsRank = (self.friends.contains(rhs) ? 0 : self.friendRequests.contains(rhs) ? 1 : 2)
             
-            let rhsIsFriend = self.friends.contains(rhs)
-            let rhsIsRequest = self.friendRequests.contains(rhs)
-            let rhsIsSearched = !(rhsIsFriend || rhsIsRequest)
-            
-            if lhsIsFriend != rhsIsFriend {
-                return lhsIsFriend && !rhsIsFriend
-            } else if lhsIsRequest != rhsIsRequest {
-                return lhsIsRequest && !rhsIsRequest
+            if lhsRank != rhsRank {
+                return lhsRank < rhsRank
             } else {
-                return lhsIsSearched && !rhsIsSearched
+                return lhs.userName < rhs.userName
             }
         }
+
     }
     
+    @MainActor
     private func searchByKey(from searchKey: String) async {
         do {
             let queryDocs = try await FirebaseManager.shared.firestore.collection(FirebaseConstants.users)
@@ -441,6 +452,7 @@ class ChatViewModel: ObservableObject {
             self.friends.removeAll(where: {$0 == friend})
             self.friendSearchResult.removeAll(where: {$0 == friend})
         }
+        self.removalQueue.removeAll(where: {$0 == friend})
         
     }
 

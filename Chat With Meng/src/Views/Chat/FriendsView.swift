@@ -54,110 +54,39 @@ struct FriendsView: View {
 
                     ScrollView {
                         if !self.searchKey.isEmpty {
-                            ForEach(chatViewModel.friendSearchResult.indices, id: \.self) { index in
-                                FriendRowView(
-                                    friend: $chatViewModel.friendSearchResult[index],
-                                    width: width,
-                                    height: height * 0.1
-                                )
-                                .padding([.leading, .trailing])
-                                .environmentObject(self.chatViewModel)
-                                
-                                if (index != chatViewModel.friendSearchResult.count - 1) {
-                                    Divider()
-                                        .foregroundStyle(.primary)
-                                        .padding([.leading, .trailing])
+                            ForEach(chatViewModel.friendSearchResult) { friend in
+                                if let index = chatViewModel.friendSearchResult.firstIndex(where: { $0.id == friend.id }) {
+                                    FriendRowView(
+                                        friend: $chatViewModel.friendSearchResult[index],
+                                        width: width,
+                                        height: height * 0.1
+                                    )
+                                    .padding([.leading, .trailing])
+                                    .environmentObject(self.chatViewModel)
+                                    
+                                    if (index != chatViewModel.friendSearchResult.count - 1) {
+                                        Divider()
+                                            .foregroundStyle(.primary)
+                                            .padding([.leading, .trailing])
+                                    }
                                 }
                             }
                         }
                         if self.searchKey.isEmpty &&
                            !self.chatViewModel.friendRequests.isEmpty {
-                            Section(
-                                content: {
-                                    if self.showRequests {
-                                        ForEach(chatViewModel.friendRequests.indices, id: \.self) { index in
-                                            FriendRowView(
-                                                friend: $chatViewModel.friendRequests[index],
-                                                width: width,
-                                                height: height * 0.1
-                                            )
-                                            .padding([.leading, .trailing])
-                                            
-                                            if (index != chatViewModel.friendRequests.count - 1) {
-                                                Divider()
-                                                    .foregroundStyle(.primary)
-                                                    .padding([.leading, .trailing])
-                                            }
-                                        }
-                                    }
-                                
-                            }, header: {
-                                HStack {
-                                    Text("Requests")
-                                        .font(.title2)
-                                        .fontWeight(.medium)
-                                        .foregroundStyle(.primary)
-                                    
-                                    Spacer()
-                                    
-                                    Button {
-                                        withAnimation(.smooth) {
-                                            self.showRequests.toggle()
-                                        }
-                                    }
-                                    label: {
-                                        Image(systemName: "chevron.forward")
-                                            .font(.title3)
-                                    }
-                                    .tint(.secondary)
-                                    .rotationEffect(self.showRequests ? .degrees(90) : .zero)
-                                }
-                                .padding([.leading, .trailing, .bottom], width * 0.05)
-                            })
+                            FriendViewSection(showFriends: $showRequests,
+                                              friends: $chatViewModel.friendRequests,
+                                              sectionTitle: "Requests",
+                                              width: width,
+                                              height: height)
                             
                         }
                         if self.searchKey.isEmpty && !self.chatViewModel.friends.isEmpty {
-                            Section( content: {
-                                if self.showFriends {
-                                    ForEach(chatViewModel.friends.indices, id: \.self) { index in
-                                        FriendRowView(
-                                            friend: $chatViewModel.friends[index],
-                                            width: width,
-                                            height: height * 0.1
-                                        )
-                                        .padding([.leading, .trailing])
-                                        
-                                        if (index != chatViewModel.friends.count - 1) {
-                                            Divider()
-                                                .foregroundStyle(.primary)
-                                                .padding([.leading, .trailing])
-                                        }
-                                    }
-                                }
-                            }, header: {
-                                HStack {
-                                    Text("Friends")
-                                        .font(.title2)
-                                        .fontWeight(.medium)
-                                        .foregroundStyle(.primary)
-                                    
-                                    Spacer()
-                                    
-                                    Button {
-                                        withAnimation(.smooth) {
-                                            self.showFriends.toggle()
-                                        }
-                                    }
-                                    label: {
-                                        Image(systemName: "chevron.forward")
-                                            .font(.title3)
-                                    }
-                                    .tint(.secondary)
-                                    .rotationEffect(self.showFriends ? .degrees(90) : .zero)
-                                }
-                                .padding([.leading, .trailing, .bottom], width * 0.05)
-                            })
-                            
+                            FriendViewSection(showFriends: $showFriends,
+                                              friends: self.$chatViewModel.friends,
+                                              sectionTitle: "Friends",
+                                              width: width,
+                                              height: height)
                         }
                     }
                     .listRowSpacing(height * 0.05)
@@ -165,6 +94,17 @@ struct FriendsView: View {
                     Spacer()
 
                 }
+                .navigationDestination(isPresented: $chatViewModel.showProfile, destination: {
+                    ProfileView(friend: $chatViewModel.friendInView, rowState: chatViewModel.rowState)
+                        .onDisappear {
+                            let exitFriend = self.chatViewModel.friendInView
+                            if chatViewModel.removalQueue.contains(exitFriend) {
+                                chatViewModel.removeFriendFromLocal(exitFriend)
+                            }
+                            self.chatViewModel.friendInView = Friend()
+                            self.chatViewModel.rowState     = .searched
+                        }
+                })
                 .scrollContentBackground(.hidden)
                 .background(
                     Color(.init(white: 0, alpha: 0.1))
@@ -175,23 +115,67 @@ struct FriendsView: View {
                     height = geometry.size.height
                     
                 }
-
-                .navigationDestination(isPresented: $chatViewModel.showProfile, destination: {
-                    ProfileView(friend: $chatViewModel.friendInView)
-                        .onDisappear {
-                            let exitFriend = self.chatViewModel.friendInView
-                            if chatViewModel.removalQueue.contains(exitFriend) {
-                                chatViewModel.removeFriendFromLocal(exitFriend)
-                            }
-                            self.chatViewModel.friendInView = Friend()
-                        }
-                })
             }
     
             .tint(.primary)
 
         }
 
+    }
+}
+
+struct FriendViewSection: View {
+    @EnvironmentObject var chatViewModel: ChatViewModel
+    @Binding var showFriends: Bool
+    @Binding var friends: [Friend]
+    var sectionTitle: String
+    var width: CGFloat
+    var height: CGFloat
+    
+    var body: some View {
+        Section( content: {
+            if self.showFriends {
+                ForEach(friends) { friend in
+                    if let index = friends.firstIndex(where: { $0.id == friend.id }) {
+                        FriendRowView(
+                            friend: $friends[index],
+                            width: width,
+                            height: height * 0.1
+                        )
+                        .padding([.leading, .trailing])
+                        
+                        if (index != chatViewModel.friends.count - 1) {
+                            Divider()
+                                .foregroundStyle(.primary)
+                                .padding([.leading, .trailing])
+                        }
+                    }
+                }
+            }
+        }, header: {
+            HStack {
+                Text(sectionTitle)
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+                
+                Button {
+                    withAnimation(.smooth) {
+                        self.showFriends.toggle()
+                    }
+                }
+                label: {
+                    Image(systemName: "chevron.forward")
+                        .font(.title3)
+                }
+                .tint(.secondary)
+                .rotationEffect(self.showFriends ? .degrees(90) : .zero)
+            }
+            .padding([.leading, .trailing, .bottom], width * 0.05)
+        })
+        
     }
 }
 
