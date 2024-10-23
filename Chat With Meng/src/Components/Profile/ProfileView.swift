@@ -15,7 +15,9 @@ struct ProfileView: View {
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
-
+    
+    @State private var showAlert: Bool = false
+    
     var body: some View {
         GeometryReader {
             geometry in
@@ -72,7 +74,7 @@ struct ProfileView: View {
                         Button {
                             switch self.rowState {
                             case .friended:
-                                print("Unfriend")
+                                self.showAlert = true
                                 
                             case .requested:
                                 print("Accepted")
@@ -100,16 +102,7 @@ struct ProfileView: View {
                         
                         if rowState == .requested {
                             Button {
-                                switch self.rowState {
-                                case .friended:
-                                    print("Unfriend")
-                                    
-                                case .requested:
-                                    print("Accepted")
-                                    
-                                case .searched:
-                                    print("Requested")
-                                }
+                                print("Rejected")
                             }
                             label: {
                                 HStack {
@@ -128,10 +121,7 @@ struct ProfileView: View {
                             .padding([.leading, .trailing])
                         }
                     }
-                    
-                    
                     Spacer()
-
                 }
             }
             .background(
@@ -142,7 +132,18 @@ struct ProfileView: View {
                 width = geometry.size.width
                 height = geometry.size.height
             }
-
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("Are you sure you want to delete \(friend.userName) from your friends?"),
+                primaryButton: .destructive(Text("Delete")) {
+                    print("Deleting")
+                    Task {
+                        await self.chatViewModel.unfriend(friend)
+                    }
+                },
+                secondaryButton: .cancel()
+            )
         }
     }
 }

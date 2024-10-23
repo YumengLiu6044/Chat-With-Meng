@@ -87,7 +87,14 @@ class ChatViewModel: ObservableObject {
                         case .added:
                             withAnimation(.smooth) {
                                 self?.friends.append(friendData)
-                                self?.friendSearchResult.removeAll {$0 == friendData}
+                                if ((self?.friendSearchResult.contains(friendData)) != nil) {
+                                    self?.friendSearchResult.removeAll {$0 == friendData}
+                                    self?.toast = Toast(
+                                        style: .success,
+                                        message: "\(friendData.userName) has accepted your friend request"
+                                    )
+                                }
+                                
                             }
                             
                         case .removed:
@@ -395,7 +402,6 @@ class ChatViewModel: ObservableObject {
             .document(uid)
             .collection(FirebaseConstants.friendRequests)
             .document(id)
-        print("Deleting \(uid)'s friend at \(id)")
         
         do {
             try await docRef.delete()
@@ -451,6 +457,30 @@ class ChatViewModel: ObservableObject {
         }
         self.removalQueue.removeAll(where: {$0 == friend})
         
+    }
+    
+    public func unfriend(_ friend: Friend) async {
+        guard let localUID = self.currentUser.id else {return}
+        
+        let friendDocRef = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(localUID)
+            .collection(FirebaseConstants.friends)
+            .document(friend.userID)
+        
+        let friendRefToLocal = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(friend.userID)
+            .collection(FirebaseConstants.friends)
+            .document(localUID)
+        
+        do {
+            try await friendDocRef.delete()
+            try await friendRefToLocal.delete()
+        }
+        catch {
+            print("Error removing friend")
+        }
     }
 
 }
