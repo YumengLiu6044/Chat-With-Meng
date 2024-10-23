@@ -68,28 +68,66 @@ struct ProfileView: View {
                     .scrollContentBackground(.hidden)
                     .padding([.top], height * 0.05)
                     
-                    Button {
-                        if self.rowState == .friended {
-                            self.chatViewModel.updateFriendByKeyVal(for: self.friend.userID, FriendRef.keys.notifications, !self.friend.notifications) {
-                                self.friend.notifications.toggle()
+                    HStack {
+                        Button {
+                            switch self.rowState {
+                            case .friended:
+                                print("Unfriend")
+                                
+                            case .requested:
+                                print("Accepted")
+                                
+                            case .searched:
+                                print("Requested")
                             }
                         }
-                    }
-                    label: {
-                        HStack {
-                            Spacer()
-                            Text("Unfriend")
-                                .font(.title2)
-                            Spacer()
-                            
+                        label: {
+                            HStack {
+                                Spacer()
+                                Text(rowState.buttonOne)
+                                    .font(.title2)
+                                    
+                                Spacer()
+                                
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.roundedRectangle(radius: width * 0.03))
+                        .tint(rowState.buttonOneStyle)
+                        .shadow(radius: 5)
+                        .padding([.bottom], height * 0.13)
+                        .padding([.leading, .trailing])
+                        
+                        if rowState == .requested {
+                            Button {
+                                switch self.rowState {
+                                case .friended:
+                                    print("Unfriend")
+                                    
+                                case .requested:
+                                    print("Accepted")
+                                    
+                                case .searched:
+                                    print("Requested")
+                                }
+                            }
+                            label: {
+                                HStack {
+                                    Spacer()
+                                    Text(rowState.buttonTwo)
+                                        .font(.title2)
+                                    Spacer()
+                                    
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.roundedRectangle(radius: width * 0.03))
+                            .tint(rowState.buttonTwoStyle)
+                            .shadow(radius: 5)
+                            .padding([.bottom], height * 0.13)
+                            .padding([.leading, .trailing])
                         }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.roundedRectangle(radius: width * 0.03))
-                    .tint(.red)
-                    .shadow(radius: 5)
-                    .padding([.bottom], height * 0.13)
-                    .padding([.leading, .trailing])
                     
                     
                     Spacer()

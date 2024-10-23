@@ -7,6 +7,7 @@ struct FriendViewSection: View {
     var sectionTitle: String
     var width: CGFloat
     var height: CGFloat
+    var hideTitle: Bool = false
     
     var body: some View {
         Section( content: {
@@ -19,6 +20,7 @@ struct FriendViewSection: View {
                             height: height * 0.1
                         )
                         .padding([.leading, .trailing])
+                        .padding(.top, index == 0 ? height * 0.01 : 0)
                         
                         if (index != chatViewModel.friends.count - 1) {
                             Divider()
@@ -29,27 +31,30 @@ struct FriendViewSection: View {
                 }
             }
         }, header: {
-            HStack {
-                Text(sectionTitle)
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                
-                Spacer()
-                
-                Button {
-                    withAnimation(.smooth) {
-                        self.showFriends.toggle()
+            if !hideTitle {
+                HStack {
+                    Text(sectionTitle)
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.primary)
+                    
+                    Spacer()
+                    
+                    Button {
+                        withAnimation(.smooth) {
+                            self.showFriends.toggle()
+                        }
                     }
+                    label: {
+                        Image(systemName: "chevron.forward")
+                            .font(.title3)
+                    }
+                    .tint(.secondary)
+                    .rotationEffect(self.showFriends ? .degrees(90) : .zero)
                 }
-                label: {
-                    Image(systemName: "chevron.forward")
-                        .font(.title3)
-                }
-                .tint(.secondary)
-                .rotationEffect(self.showFriends ? .degrees(90) : .zero)
+                .padding([.leading, .trailing], width * 0.05)
+                .padding(.top, height * 0.01)
             }
-            .padding([.leading, .trailing, .bottom], width * 0.05)
         })
         
     }

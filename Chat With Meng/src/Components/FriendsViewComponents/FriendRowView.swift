@@ -9,6 +9,52 @@ import SwiftUI
 
 enum FriendRowState: String {
     case requested, friended, searched
+    
+    var buttonOne: String {
+        switch self {
+        case .requested:
+            return "Accept"
+        case .friended:
+            return "Unfriend"
+        case .searched:
+            return "Friend"
+        }
+    }
+    
+    var buttonTwo: String {
+        switch self {
+        case .requested:
+            return "Reject"
+        
+        case .friended:
+            return "Unfriend"
+        
+        case .searched:
+            return "Friend"
+        }
+    }
+    
+    var buttonOneStyle: Color {
+        switch self {
+        case .requested:
+            return .blue
+        case .friended:
+            return .red
+        case .searched:
+            return .blue
+        }
+    }
+    
+    var buttonTwoStyle: Color {
+        switch self {
+        case .requested:
+            return .red
+        case .friended:
+            return .red
+        case .searched:
+            return .blue
+        }
+    }
 }
 
 struct FriendRowView: View {

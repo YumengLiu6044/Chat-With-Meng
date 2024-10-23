@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct FriendsView: View {
-
+    
     @EnvironmentObject var chatViewModel: ChatViewModel
     @ObservedObject var friendsViewModel: FriendsViewModel = FriendsViewModel()
 
-    @State private var width: CGFloat = 100
-    @State private var height: CGFloat = 100
+    @State private var width:   CGFloat = 100
+    @State private var height:  CGFloat = 100
 
-    @State private var searchKey: String = ""
+    @State private var searchKey:   String = ""
     
     @State private var showRequests: Bool   = true
     @State private var showFriends: Bool    = true
@@ -46,14 +46,12 @@ struct FriendsView: View {
                             }
                         }
                     )
-                    .onChange(of: self.searchKey) {
-                        self.chatViewModel.friendSearchResult = []
-                    }
                     .padding([.leading, .trailing], width * 0.02)
                     .padding([.top], height * -0.02)
 
                     ScrollView {
-                        if !self.searchKey.isEmpty {
+                        if !self.chatViewModel.friendSearchResult.isEmpty &&
+                            !self.searchKey.isEmpty {
                             ForEach(chatViewModel.friendSearchResult) { friend in
                                 if let index = chatViewModel.friendSearchResult.firstIndex(where: { $0.id == friend.id }) {
                                     FriendRowView(
@@ -87,7 +85,9 @@ struct FriendsView: View {
                                               friends: self.$chatViewModel.friends,
                                               sectionTitle: "Friends",
                                               width: width,
-                                              height: height)
+                                              height: height,
+                                              hideTitle: self.chatViewModel.friendRequests.isEmpty
+                            )
                         }
                     }
                     .listRowSpacing(height * 0.05)
@@ -97,13 +97,19 @@ struct FriendsView: View {
                 
                 .navigationDestination(isPresented: $chatViewModel.showProfile, destination: {
                     ProfileView(friend: $chatViewModel.friendInView, rowState: chatViewModel.rowState)
+//                        .onAppear {
+//                            withAnimation(.smooth) {
+//                                chatViewModel.showMenu = false
+//                            }
+//                        }
                         .onDisappear {
+//                            withAnimation(.smooth) {
+//                                chatViewModel.showMenu = true
+//                            }
                             let exitFriend = self.chatViewModel.friendInView
                             if chatViewModel.removalQueue.contains(exitFriend) {
                                 chatViewModel.removeFriendFromLocal(exitFriend)
                             }
-//                            self.chatViewModel.friendInView = Friend()
-//                            self.chatViewModel.rowState     = .searched
                         }
                 })
                 .scrollContentBackground(.hidden)

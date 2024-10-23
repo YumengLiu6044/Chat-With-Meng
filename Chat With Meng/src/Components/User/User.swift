@@ -23,7 +23,7 @@ struct User: Codable, Hashable, Identifiable, Equatable {
     
     enum keys: String, CodingKey {
         case email
-        case uid
+        case id
         case profilePicURL
         case userName
         case humanNotifications
