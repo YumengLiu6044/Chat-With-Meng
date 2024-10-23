@@ -57,7 +57,8 @@ struct FriendsView: View {
                                     FriendRowView(
                                         friend: $chatViewModel.friendSearchResult[index],
                                         width: width,
-                                        height: height * 0.1
+                                        height: height * 0.1,
+                                        resultState: determineState(of: chatViewModel.friendSearchResult[index])
                                     )
                                     .padding([.leading, .trailing])
                                     .padding(.top, index == 0 ? height * 0.02 : 0)
@@ -97,19 +98,15 @@ struct FriendsView: View {
                 
                 .navigationDestination(isPresented: $chatViewModel.showProfile, destination: {
                     ProfileView(friend: $chatViewModel.friendInView, rowState: chatViewModel.rowState)
-//                        .onAppear {
-//                            withAnimation(.smooth) {
-//                                chatViewModel.showMenu = false
-//                            }
-//                        }
                         .onDisappear {
-//                            withAnimation(.smooth) {
-//                                chatViewModel.showMenu = true
-//                            }
                             let exitFriend = self.chatViewModel.friendInView
-                            if chatViewModel.removalQueue.contains(exitFriend) {
+                            if chatViewModel.friendRemovalQueue.contains(exitFriend) {
                                 chatViewModel.removeFriendFromLocal(exitFriend)
                             }
+                            if self.chatViewModel.requestRemovalQueue.contains(exitFriend) {
+                                chatViewModel.removeFriendRequestFromLocal(exitFriend)
+                            }
+                            
                         }
                 })
                 .scrollContentBackground(.hidden)
@@ -128,6 +125,18 @@ struct FriendsView: View {
 
         }
 
+    }
+    
+    private func determineState(of friend: Friend) -> FriendRowState {
+        if self.chatViewModel.friendRequests.contains(friend) {
+            return .requested
+        }
+        else if self.chatViewModel.friends.contains(friend) {
+            return .friended
+        }
+        else {
+            return .searched
+        }
     }
 }
 

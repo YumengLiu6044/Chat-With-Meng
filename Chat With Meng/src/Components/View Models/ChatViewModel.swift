@@ -39,7 +39,8 @@ class ChatViewModel: ObservableObject {
     @Published var friendSearchResult: [Friend] = []
     @Published var friendRequests:     [Friend] = []
     @Published var friends:            [Friend] = []
-    @Published var removalQueue:       [Friend] = []
+    @Published var friendRemovalQueue:       [Friend] = []
+    @Published var requestRemovalQueue:      [Friend] = []
     
     @Published var rowState:     FriendRowState = .friended
     
@@ -87,12 +88,15 @@ class ChatViewModel: ObservableObject {
                         case .added:
                             withAnimation(.smooth) {
                                 self?.friends.append(friendData)
-                                if ((self?.friendSearchResult.contains(friendData)) != nil) {
-                                    self?.friendSearchResult.removeAll {$0 == friendData}
-                                    self?.toast = Toast(
-                                        style: .success,
-                                        message: "\(friendData.userName) has accepted your friend request"
-                                    )
+                                if let result = self?.friendSearchResult.contains(friendData) {
+                                    if result {
+                                        self?.friendSearchResult.removeAll {$0 == friendData}
+                                        self?.toast = Toast(
+                                            style: .success,
+                                            message: "\(friendData.userName) has accepted your friend request"
+                                        )
+                                    }
+                                    
                                 }
                                 
                             }
@@ -100,7 +104,7 @@ class ChatViewModel: ObservableObject {
                         case .removed:
                             if friendData == self?.friendInView {
                                 self?.showProfile = false
-                                self?.removalQueue.append(friendData)
+                                self?.friendRemovalQueue.append(friendData)
                             }
                             else {
                                 self?.removeFriendFromLocal(friendData)
@@ -164,9 +168,12 @@ class ChatViewModel: ObservableObject {
                                 return
                                 
                             case .removed:
-                                withAnimation(.smooth) {
-                                    self?.friendRequests.removeAll {$0 == friendData}
-                                    self?.friendSearchResult.removeAll {$0 == friendData}
+                                if friendData == self?.friendInView {
+                                    self?.showProfile = false
+                                    self?.requestRemovalQueue.append(friendData)
+                                }
+                                else {
+                                    self?.removeFriendRequestFromLocal(friendData)
                                 }
                                 return
                                 
@@ -403,6 +410,15 @@ class ChatViewModel: ObservableObject {
             .collection(FirebaseConstants.friendRequests)
             .document(id)
         
+        let friendData = Friend(userID: id)
+        if friendData == self.friendInView {
+            self.showProfile = false
+            self.requestRemovalQueue.append(friendData)
+        }
+        else {
+            self.removeFriendRequestFromLocal(friendData)
+        }
+        
         do {
             try await docRef.delete()
         }
@@ -422,12 +438,7 @@ class ChatViewModel: ObservableObject {
             .document(friendRef.id)
         
         do {
-            try friendDoc.setData(from: friendRef) {
-                error in
-                if let error = error {
-                    print(error.localizedDescription)
-                }
-            }
+            try friendDoc.setData(from: friendRef)
         }
         catch {
             print(error.localizedDescription)
@@ -438,25 +449,29 @@ class ChatViewModel: ObservableObject {
     public func addFriend(from friendID: String) async {
         guard let local_uid = self.currentUser.id else {return}
         let friendRef = self.makeFriendRef(from: friendID)
-        
-        // Remove request from User.friendRequests
         await self.removeFriendRequest(at: friendRef.id)
         
-        // Make friend for local user
         self.addFriendToCloud(for: local_uid, friend: friendRef)
         
         let localAsFriend = self.makeFriendRef(from: local_uid)
         self.addFriendToCloud(for: friendRef.id, friend: localAsFriend)
-        
     }
     
     public func removeFriendFromLocal(_ friend: Friend) {
         withAnimation(.smooth) {
-            self.friends.removeAll(where: {$0 == friend})
-            self.friendSearchResult.removeAll(where: {$0 == friend})
+            self.friends.removeAll {$0 == friend}
+            self.friendSearchResult.removeAll {$0 == friend}
         }
-        self.removalQueue.removeAll(where: {$0 == friend})
+        self.friendRemovalQueue.removeAll {$0 == friend}
         
+    }
+    
+    public func removeFriendRequestFromLocal(_ friend: Friend) {
+        withAnimation(.smooth) {
+            self.friendRequests.removeAll {$0 == friend}
+            self.friendSearchResult.removeAll {$0 == friend}
+        }
+        self.requestRemovalQueue.removeAll {$0 == friend}
     }
     
     public func unfriend(_ friend: Friend) async {

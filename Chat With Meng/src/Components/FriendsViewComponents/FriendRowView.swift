@@ -64,7 +64,7 @@ struct FriendRowView: View {
     var width: CGFloat  = 300
     var height: CGFloat = 80
     
-    @State private var resultState: FriendRowState  = .searched
+    var resultState: FriendRowState
     
     var body: some View {
         HStack {
@@ -130,27 +130,5 @@ struct FriendRowView: View {
                 .buttonStyle(PlainButtonStyle())
             }
         }
-        .onAppear {
-            determineState()
-        }
     }
-    
-    private func determineState() {
-        if self.chatViewModel.friendRequests.contains(self.friend) {
-            self.resultState = .requested
-        }
-        else if self.chatViewModel.friends.contains(self.friend) {
-            self.resultState = .friended
-        }
-        else {
-            self.resultState = .searched
-        }
-    }
-}
-
-#Preview {
-    FriendRowView(
-        friend: .constant(Friend())
-    )
-    .environmentObject(ChatViewModel())
 }

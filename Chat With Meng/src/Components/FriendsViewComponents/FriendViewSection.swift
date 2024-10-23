@@ -17,7 +17,8 @@ struct FriendViewSection: View {
                         FriendRowView(
                             friend: $friends[index],
                             width: width,
-                            height: height * 0.1
+                            height: height * 0.1,
+                            resultState: determineState(of: friends[index])
                         )
                         .padding([.leading, .trailing])
                         .padding(.top, index == 0 ? height * 0.01 : 0)
@@ -57,5 +58,17 @@ struct FriendViewSection: View {
             }
         })
         
+    }
+    
+    private func determineState(of friend: Friend) -> FriendRowState {
+        if self.chatViewModel.friendRequests.contains(friend) {
+            return .requested
+        }
+        else if self.chatViewModel.friends.contains(friend) {
+            return .friended
+        }
+        else {
+            return .searched
+        }
     }
 }

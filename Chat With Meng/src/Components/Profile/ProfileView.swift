@@ -77,10 +77,12 @@ struct ProfileView: View {
                                 self.showAlert = true
                                 
                             case .requested:
-                                print("Accepted")
+                                Task {
+                                    await self.chatViewModel.addFriend(from: friend.userID)
+                                }
                                 
                             case .searched:
-                                print("Requested")
+                                self.chatViewModel.sendFriendRequest(to: friend.userID)
                             }
                         }
                         label: {
@@ -102,7 +104,9 @@ struct ProfileView: View {
                         
                         if rowState == .requested {
                             Button {
-                                print("Rejected")
+                                Task {
+                                    await self.chatViewModel.removeFriendRequest(at: friend.userID)
+                                }
                             }
                             label: {
                                 HStack {
