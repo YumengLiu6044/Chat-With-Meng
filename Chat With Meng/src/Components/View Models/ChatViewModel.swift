@@ -91,11 +91,6 @@ class ChatViewModel: ObservableObject {
                             }
                             
                         case .removed:
-//                            withAnimation(.smooth) {
-//                                self?.friends.removeAll {$0 == friendData}
-//                                self?.friendSearchResult.removeAll {$0 == friendData}
-//                            }
-//                            return
                             if friendData == self?.friendInView {
                                 self?.showProfile = false
                                 self?.removalQueue.append(friendData)
@@ -106,15 +101,15 @@ class ChatViewModel: ObservableObject {
                             
                             
                         case .modified:
-//                            guard let modifiedIndex = self?.friends.firstIndex(where: {$0 == friendData}) else {return}
-//                            withAnimation(.smooth) {
-//                                self?.friends[modifiedIndex] = friendData
-//                            }
-//                            
-//                            guard let modifiedAtResult = self?.friendSearchResult.firstIndex(where: {$0 == friendData}) else {return}
-//                            withAnimation(.smooth) {
-//                                self?.friendSearchResult[modifiedAtResult] = friendData
-//                            }
+                            guard let modifiedIndex = self?.friends.firstIndex(where: {$0 == friendData}) else {return}
+                            withAnimation(.smooth) {
+                                self?.friends[modifiedIndex].notifications = friendData.notifications
+                            }
+                            
+                            guard let modifiedAtResult = self?.friendSearchResult.firstIndex(where: {$0 == friendData}) else {return}
+                            withAnimation(.smooth) {
+                                self?.friendSearchResult[modifiedAtResult].notifications = friendData.notifications
+                            }
                             
                             return
                             
@@ -220,7 +215,7 @@ class ChatViewModel: ObservableObject {
         userDocRef.updateData([key.rawValue: val])
     }
     
-    public func updateFriendByKeyVal(for friend: String, _ key: FriendRef.keys, _ val: Any, completion: @escaping () -> Void) {
+    public func updateFriendByKeyVal(for friend: String, _ key: FriendRef.keys, _ val: Any) {
         guard let currentUID = FirebaseManager.shared.auth.currentUser?.uid else {return}
         let friendRef = FirebaseManager.shared.firestore
             .collection(FirebaseConstants.users)
@@ -228,10 +223,7 @@ class ChatViewModel: ObservableObject {
             .collection(FirebaseConstants.friends)
             .document(friend)
         
-        friendRef.updateData([key.rawValue : val]) {
-            _ in
-            return completion()
-        }
+        friendRef.updateData([key.rawValue : val])
     }
     
     public func updateProfilePic() -> Void {
@@ -340,6 +332,11 @@ class ChatViewModel: ObservableObject {
                 }
                 self.makeFriend(from: data.id) { friend in
                     guard let friend = friend else {return}
+                    if let existingFriendIndex = self.friends.firstIndex(where: {friend == $0}) {
+                        self.friendSearchResult.append(self.friends[existingFriendIndex])
+                        self.sortSearchResult()
+                        return
+                    }
                     withAnimation(.smooth) {
                         self.friendSearchResult.append(friend)
                     }

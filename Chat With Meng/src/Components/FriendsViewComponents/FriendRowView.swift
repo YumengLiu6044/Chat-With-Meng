@@ -31,7 +31,7 @@ struct FriendRowView: View {
                 )
                 .onTapGesture {
                     self.chatViewModel.friendInView = friend
-                    self.chatViewModel.showProfile = true
+                    self.chatViewModel.showProfile  = true
                     self.chatViewModel.rowState     = self.resultState
                 }
                 .padding([.leading, .trailing])
@@ -70,9 +70,7 @@ struct FriendRowView: View {
                 .padding(.trailing)
                 
                 IconView(iconName: friend.notifications ? "bell" : "bell.slash") {
-                    self.chatViewModel.updateFriendByKeyVal(for: self.friend.userID, FriendRef.keys.notifications, !self.friend.notifications) {
-                        self.friend.notifications.toggle()
-                    }
+                    self.chatViewModel.updateFriendByKeyVal(for: self.friend.userID, FriendRef.keys.notifications, !self.friend.notifications)
                 }
                 .buttonStyle(PlainButtonStyle())
                 .contentTransition(.symbolEffect(.replace))

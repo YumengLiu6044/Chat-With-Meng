@@ -103,15 +103,6 @@ struct ProfileView: View {
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height
-                
-                withAnimation {
-                    self.chatViewModel.showMenu = false
-                }
-            }
-            .onDisappear {
-                withAnimation {
-                    self.chatViewModel.showMenu = true
-                }
             }
 
         }
