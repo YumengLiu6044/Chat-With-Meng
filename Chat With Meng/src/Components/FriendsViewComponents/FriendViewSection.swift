@@ -23,7 +23,7 @@ struct FriendViewSection: View {
                         .padding([.leading, .trailing])
                         .padding(.top, index == 0 ? height * 0.01 : 0)
                         
-                        if (index != chatViewModel.friends.count - 1) {
+                        if (index != friends.count - 1) {
                             Divider()
                                 .foregroundStyle(.primary)
                                 .padding([.leading, .trailing])

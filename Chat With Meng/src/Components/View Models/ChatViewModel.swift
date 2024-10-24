@@ -98,10 +98,10 @@ class ChatViewModel: ObservableObject {
                                     }
                                     
                                 }
-                                
                             }
                             
                         case .removed:
+                            print("Got deleted")
                             if friendData == self?.friendInView {
                                 self?.showProfile = false
                                 self?.friendRemovalQueue.append(friendData)

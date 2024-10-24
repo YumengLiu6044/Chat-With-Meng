@@ -106,7 +106,8 @@ struct FriendsView: View {
                             if self.chatViewModel.requestRemovalQueue.contains(exitFriend) {
                                 chatViewModel.removeFriendRequestFromLocal(exitFriend)
                             }
-                            
+                            chatViewModel.showProfile = false
+                            chatViewModel.friendInView = Friend()
                         }
                 })
                 .scrollContentBackground(.hidden)
