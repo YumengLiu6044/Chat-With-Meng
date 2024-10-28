@@ -9,16 +9,6 @@ import Foundation
 import SwiftUI
 import FirebaseFirestore
 
-enum ChatViewSelection : Hashable {
-    case messages, friends, settings
-}
-
-struct FirebaseConstants {
-    static let users = "users"
-    static let friends = "friends"
-    static let friendRequests = "friendRequests"
-    
-}
 
 @MainActor
 class ChatViewModel: ObservableObject {

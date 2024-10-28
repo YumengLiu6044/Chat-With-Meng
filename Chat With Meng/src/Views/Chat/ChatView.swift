@@ -9,12 +9,10 @@ import SwiftUI
 
 struct ChatView: View {
     @EnvironmentObject var chatViewModel: ChatViewModel
+    @ObservedObject var chattingViewModel: ChattingViewModel = ChattingViewModel()
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
-    
-    @State private var isComposing: Bool = false
-    @State private var searchkey: String = ""
 
     
     var body: some View {
@@ -31,30 +29,17 @@ struct ChatView: View {
                         
                         IconView(iconName: "paperplane") {
                             withAnimation(.smooth) {
-                                self.isComposing.toggle()
+                                chattingViewModel.isComposing.toggle()
                             }
-                            print(self.isComposing)
                         }
-                        
                         
                     }
                     .padding([.top, .leading, .trailing])
                     
-                    if isComposing {
-                        SearchBar(
-                            text: $searchkey,
-                            onCancelAction: {
-                                self.searchkey = ""
-                                withAnimation(.smooth) {
-                                    self.isComposing = false
-                                }
-                            },
-                            onSearchAction: {
-                                
-                            }
-                        )
-                        .padding([.leading, .trailing], width * 0.02)
-                        .padding([.top], height * -0.02)
+                    if chattingViewModel.isComposing {
+                        ComposeGroupView(width: width, height: height)
+                            .environmentObject(chattingViewModel)
+                            .environmentObject(chatViewModel)
                     }
                     else {
                         
@@ -65,6 +50,8 @@ struct ChatView: View {
                 .onAppear {
                     width = geometry.size.width
                     height = geometry.size.height
+                    
+                    print("\((width, height))")
                 }
             }
         }

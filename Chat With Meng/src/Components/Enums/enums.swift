@@ -1,11 +1,20 @@
-//
-//  Errors.swift
-//  Chat With Meng
-//
-//  Created by Yumeng Liu on 10/14/24.
-//
+import SwiftUI
 
-import Foundation
+enum ChatViewSelection : Hashable {
+    case messages, friends, settings
+}
+
+struct FirebaseConstants {
+    static let users = "users"
+    static let friends = "friends"
+    static let friendRequests = "friendRequests"
+    
+}
+
+
+enum AppViewSelection: Hashable {
+    case login, chat
+}
 
 enum SettingError: Error {
     case userNameEmpty
@@ -27,4 +36,8 @@ enum SettingError: Error {
         }
         return message
     }
+}
+
+enum FocusField: Hashable {
+    case email, password, confirmPassword, passwordReset
 }

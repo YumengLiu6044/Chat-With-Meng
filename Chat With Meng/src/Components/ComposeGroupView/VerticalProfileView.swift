@@ -9,19 +9,35 @@ import SwiftUI
 
 struct VerticalProfileView: View {
     var friend: Friend
-    var size: CGFloat = 50
+    var width: CGFloat = 80
+    var height: CGFloat = 100
+    var onTapAction: (() -> Void)?
     
     var body: some View {
-        ProfilePicView(
-            imageURL: friend.profilePicURL,
-            imageOverlayData: friend.profileOverlayData,
-            width: size,
-            height: size
-        )
+        Button {
+            self.onTapAction?()
+        }
+        label:{
+            ZStack {
+                ProfilePicView(
+                    imageURL: friend.profilePicURL,
+                    imageOverlayData: friend.profileOverlayData,
+                    width: width,
+                    height: width
+                )
+                
+                Image(systemName: "minus.circle.fill")
+                    .font(.title)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .foregroundStyle(.red)
+            }
+        }
+        .frame(width: width, height: height)
     }
 }
 
 
 #Preview {
     VerticalProfileView(friend: Friend())
+        .preferredColorScheme(.dark)
 }
