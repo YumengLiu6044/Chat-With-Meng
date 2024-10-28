@@ -22,18 +22,16 @@ struct ProfileView: View {
         GeometryReader {
             geometry in
             ZStack {
-                VStack {
-                    Rectangle()
-                        .frame(width: width, height: height * 0.2)
-                        .foregroundStyle(
-                            .linearGradient(
-                                Gradient(colors: [.myPurple, .myBlue]),
-                                startPoint: .leading, endPoint: .trailing)
-                        )
-                        .ignoresSafeArea()
+                Rectangle()
+                    .frame(width: width, height: height * 0.2)
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .foregroundStyle(
+                        .linearGradient(
+                            Gradient(colors: [.myPurple, .myBlue]),
+                            startPoint: .leading, endPoint: .trailing)
+                    )
+                    .ignoresSafeArea()
 
-                    Spacer()
-                }
 
                 VStack {
                     HStack {
