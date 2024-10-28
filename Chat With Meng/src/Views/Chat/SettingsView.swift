@@ -194,9 +194,7 @@ struct SettingsView: View {
                         .shadow(radius: 5)
                         .padding([.bottom], height * 0.13)
                         .padding([.leading, .trailing])
-                        
-                        Spacer()
-
+                        .frame(alignment: .bottom)
                     }
                     .onChange(of: chatViewModel.profilePic) {
                         chatViewModel.updateProfilePic()
