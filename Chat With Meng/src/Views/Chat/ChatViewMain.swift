@@ -25,6 +25,7 @@ struct ChatViewMain: View {
                 switch chatViewModel.chatViewSelection {
                 case .messages:
                     ChatView()
+                        .environmentObject(chatViewModel)
                         .transition(.move(edge: .leading))
                 case .friends:
                     FriendsView()
@@ -38,15 +39,13 @@ struct ChatViewMain: View {
                 }
                 
                 
-                VStack {
-                    Spacer()
-                    if self.chatViewModel.showMenu {
-                        MenuBarView(width: width * 0.9, height: height * 0.1)
-                            .environmentObject(chatViewModel)
-                    }
-                        
+                if self.chatViewModel.showMenu {
+                    MenuBarView(width: width * 0.9, height: height * 0.1)
+                        .environmentObject(chatViewModel)
+                        .frame(maxHeight: .infinity, alignment: .bottom)
+                        .ignoresSafeArea(.keyboard)
                 }
-                .ignoresSafeArea(.keyboard)
+                
             }
             .background(
                 Color(.init(white: 0, alpha: 0.1))
