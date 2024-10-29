@@ -46,6 +46,7 @@ struct FriendViewSection: View {
                             resultState: determineState(of: friends[index])
                         )
                         .padding([.leading, .trailing])
+                        .padding(.top, index == 0 ? 5 : 0)
                         .scrollTransition {
                             content, phase in
                             content

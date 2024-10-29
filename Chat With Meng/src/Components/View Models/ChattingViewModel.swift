@@ -110,6 +110,15 @@ class ChattingViewModel: ObservableObject {
         }
     }
     
+    public func getMembers(completion: @escaping ([Friend]?) -> Void)  {
+        var total = self.recipientList
+        self.makeFriend(from: self.currentUserID) { friend in
+            guard let friend = friend else {return completion(nil)}
+            total.append(friend)
+            return completion(total)
+        }
+    }
+    
     public func processSendButtonClick() async{
         var chatMembers: [String] = self.recipientList.compactMap { friend in
             return friend.userID

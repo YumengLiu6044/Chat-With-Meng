@@ -82,6 +82,7 @@ struct ChatView: View {
                         width: width,
                         height: height
                     )
+                    .environmentObject(chattingViewModel)
                 }
                 .onAppear {
                     width = geometry.size.width

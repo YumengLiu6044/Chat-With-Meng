@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct NewChatView: View {
-    var memebrs: [Friend] = []
-    var host: User = User()
+    @EnvironmentObject var chattingVM: ChattingViewModel
     
     var width: CGFloat = 400
     var height: CGFloat = 700
@@ -17,6 +16,13 @@ struct NewChatView: View {
     @FocusState private var focus: FocusField?
     
     @State private var groupName: String = ""
+    @State private var members: [Friend] = []
+    
+    let columns: [GridItem] = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
     
     var body: some View {
         NavigationStack {
@@ -56,6 +62,28 @@ struct NewChatView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading)
                 
+                ScrollView {
+                    LazyVGrid(columns: self.columns, spacing: width * 0.01) {
+                        ForEach(self.members) { member in
+                            VStack {
+                                ProfilePicView(
+                                    imageURL: member.profilePicURL,
+                                    imageOverlayData: member.profileOverlayData,
+                                    width: width * 0.2,
+                                    height: width * 0.2
+                                )
+                                .padding(.top)
+                                
+                                Text(member.userName)
+                                    .font(.title2)
+                                    .fontWeight(.medium)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.5)
+                            }
+                        }
+                    }
+                }
+                
                 Spacer()
                 
                 Button {
@@ -80,11 +108,20 @@ struct NewChatView: View {
                 
 
             }
+            .ignoresSafeArea(.keyboard)
             .navigationTitle("New Chat")
+            .onAppear {
+                self.chattingVM.getMembers { members in
+                    guard let members = members else {return}
+                    withAnimation {
+                        self.members = members
+                    }
+                }
+            }
         }
     }
 }
 
-#Preview {
-    NewChatView()
-}
+//#Preview {
+//    NewChatView()
+//}
