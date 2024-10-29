@@ -72,14 +72,18 @@ class ChattingViewModel: ObservableObject {
     public func moveSearchResultToRecipient(for friend: Friend) {
         withAnimation(.smooth) {
             searchResults.removeAll {$0 == friend}
-            recipientList.append(friend)
+            if !recipientList.contains(friend) {
+                recipientList.append(friend)
+            }
         }
     }
     
     public func moveRecipientToSearchResult(for friend: Friend) {
         withAnimation(.smooth) {
             recipientList.removeAll {$0 == friend}
-            searchResults.append(friend)
+            if !searchResults.contains(friend) {
+                searchResults.append(friend)
+            }
         }
     }
     

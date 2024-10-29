@@ -45,7 +45,12 @@ struct ComposeGroupView: View {
                         VerticalProfileView(friend: friend, width: width * 0.22, height: height * 0.1) {
                             chattingViewModel.moveRecipientToSearchResult(for: friend)
                         }
-                        
+                        .scrollTransition {
+                            content, phase in
+                            content
+                                .opacity(phase.isIdentity ? 1 : 0)
+                                .scaleEffect(phase.isIdentity ? 1: 0.5)
+                        }
                     }
                     .padding([.top, .bottom], height * 0.01)
                 }
