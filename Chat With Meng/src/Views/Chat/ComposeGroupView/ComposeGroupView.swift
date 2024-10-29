@@ -60,6 +60,7 @@ struct ComposeGroupView: View {
                 }
             }
             .scrollIndicators(.hidden)
+            .scrollClipDisabled()
             .padding([.leading, .trailing])
             
             ScrollView {

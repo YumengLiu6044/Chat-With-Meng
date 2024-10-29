@@ -81,8 +81,15 @@ struct NewChatView: View {
                                     .minimumScaleFactor(0.5)
                             }
                         }
+                        
+                        .scrollTransition {
+                            content, phase in
+                            content
+                                .opacity(phase.isIdentity ? 1 : 0)
+                        }
                     }
                 }
+                .scrollClipDisabled()
                 
                 Spacer()
                 

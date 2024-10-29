@@ -93,6 +93,7 @@ struct FriendsView: View {
                     }
                     .listRowSpacing(height * 0.05)
                     .scrollIndicators(.hidden)
+                    .scrollClipDisabled()
                     Spacer()
                 }
                 
