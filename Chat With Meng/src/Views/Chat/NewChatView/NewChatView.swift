@@ -47,7 +47,7 @@ struct NewChatView: View {
                         .stroke(.blue.opacity(0.8), lineWidth: (focus == .groupName) ? 2 : 0)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
+                .padding([.leading, .trailing])
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .keyboardType(.asciiCapable)
@@ -60,7 +60,7 @@ struct NewChatView: View {
                     .font(.title)
                     .fontWeight(.medium)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading)
+                    .padding([.leading, .top])
                 
                 ScrollView {
                     LazyVGrid(columns: self.columns, spacing: width * 0.01) {
