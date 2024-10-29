@@ -12,21 +12,22 @@ struct FriendViewSection: View {
     var body: some View {
         Section( content: {
             if self.showFriends {
-                ForEach(friends) { friend in
-                    if let index = friends.firstIndex(where: { $0.id == friend.id }) {
-                        FriendRowView(
-                            friend: $friends[index],
-                            width: width,
-                            height: height * 0.1,
-                            resultState: determineState(of: friends[index])
-                        )
-                        .padding([.leading, .trailing])
-                        .padding(.top, index == 0 ? height * 0.01 : 0)
-                        
-                        if (index != friends.count - 1) {
-                            Divider()
-                                .foregroundStyle(.primary)
-                                .padding([.leading, .trailing])
+                VStack(spacing: height * 0.025) {
+                    ForEach(friends) { friend in
+                        if let index = friends.firstIndex(where: { $0.id == friend.id }) {
+                            FriendRowView(
+                                friend: $friends[index],
+                                width: width,
+                                height: height * 0.1,
+                                resultState: determineState(of: friends[index])
+                            )
+                            .padding([.leading, .trailing])
+                            
+                            if (index != friends.count - 1) {
+                                Divider()
+                                    .foregroundStyle(.primary)
+                                    .padding([.leading, .trailing])
+                            }
                         }
                     }
                 }

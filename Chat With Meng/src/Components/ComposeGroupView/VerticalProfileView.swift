@@ -22,11 +22,12 @@ struct VerticalProfileView: View {
                 ProfilePicView(
                     imageURL: friend.profilePicURL,
                     imageOverlayData: friend.profileOverlayData,
-                    width: width,
-                    height: width
+                    width: width * 0.8,
+                    height: width * 0.8
                 )
                 
                 Image(systemName: "minus.circle.fill")
+                    .symbolRenderingMode(.multicolor)
                     .font(.title)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                     .foregroundStyle(.red)

@@ -24,7 +24,9 @@ class ChattingViewModel: ObservableObject {
         
         for friend in friends where
         friend.userName.lowercased().contains(searchkey.lowercased()){
-            self.searchResults.append(friend)
+            withAnimation(.smooth) {
+                self.searchResults.append(friend)
+            }
         }
     }
     
@@ -65,6 +67,20 @@ class ChattingViewModel: ObservableObject {
             }
         }
         return completion(nil)
+    }
+    
+    public func moveSearchResultToRecipient(for friend: Friend) {
+        withAnimation(.smooth) {
+            searchResults.removeAll {$0 == friend}
+            recipientList.append(friend)
+        }
+    }
+    
+    public func moveRecipientToSearchResult(for friend: Friend) {
+        withAnimation(.smooth) {
+            recipientList.removeAll {$0 == friend}
+            searchResults.append(friend)
+        }
     }
     
 }

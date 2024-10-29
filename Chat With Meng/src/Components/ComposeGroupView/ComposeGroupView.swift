@@ -19,9 +19,6 @@ struct ComposeGroupView: View {
             SearchBar(
                 text: $chattingViewModel.searchkey,
                 onCancelAction: {
-                    chattingViewModel.searchkey = ""
-                    chattingViewModel.recipientList = []
-                    chattingViewModel.searchResults = []
                     withAnimation(.smooth) {
                         chattingViewModel.isComposing = false
                     }
@@ -32,14 +29,55 @@ struct ComposeGroupView: View {
                 }
             )
             .padding([.leading, .trailing], width * 0.02)
-            .padding([.top], height * -0.02)
             
-            List {
-                ForEach(chattingViewModel.searchResults) {
-                    friend in
-                    Text(friend.userName)
+            ScrollView(.horizontal) {
+                if !chattingViewModel.recipientList.isEmpty {
+                    Text("Recipients")
+                        .font(.title2)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                HStack(spacing: width * 0.02) {
+                    ForEach(chattingViewModel.recipientList) {
+                        friend in
+                        VerticalProfileView(friend: friend, width: width * 0.2, height: height * 0.1) {
+                            chattingViewModel.moveRecipientToSearchResult(for: friend)
+                        }
+                    }
                 }
             }
+            .padding([.leading, .trailing])
+            
+            ScrollView {
+                Text("Friends")
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading)
+                
+                VStack(spacing: height * 0.05) {
+                    ForEach(chattingViewModel.searchResults) {
+                        friend in
+                        HorizontalProfileView(friend: friend, width: width, height: height * 0.1) {
+                            chattingViewModel.moveSearchResultToRecipient(for: friend)
+                        }
+                        .padding([.leading, .trailing])
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
+        }
+        .onAppear {
+            chattingViewModel.searchkey = ""
+            chattingViewModel.searchResults = chatViewModel.friends
+        }
+        .onDisappear {
+            chattingViewModel.searchkey = ""
+            chattingViewModel.searchResults = chatViewModel.friends
+            chattingViewModel.recipientList = []
+            
         }
     }
 }
