@@ -24,17 +24,19 @@ struct ChatView: View {
             NavigationStack {
                 VStack {
                     HStack {
-                        
-                        Text(isComposing ? "New Chat" : "Chat")
+                        Text("Chat")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                         
                         Spacer()
                         
                         Button {
-                            if isComposing &&
-                                !recipientList.isEmpty{
-                                print("New chat")
+                            if isComposing {
+                                if !recipientList.isEmpty{
+                                    Task {
+                                        await chattingViewModel.processSendButtonClick()
+                                    }
+                                }
                             }
                             else {
                                 withAnimation(.snappy) {
@@ -58,6 +60,7 @@ struct ChatView: View {
                                     .fontWeight(.semibold)
                             }
                         }
+                        .disabled(isComposing && recipientList.isEmpty)
                         .tint(.primary)
                         
                     }
@@ -74,13 +77,18 @@ struct ChatView: View {
                     Spacer()
                     
                 }
+                .navigationDestination(isPresented: $chattingViewModel.showNewChat) {
+                    NewChatView(
+                        width: width,
+                        height: height
+                    )
+                }
                 .onAppear {
                     width = geometry.size.width
                     height = geometry.size.height
-                    
-                    print("\((width, height))")
                 }
             }
+            .tint(.primary)
         }
         
     }

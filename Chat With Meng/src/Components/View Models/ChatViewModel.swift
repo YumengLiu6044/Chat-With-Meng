@@ -252,7 +252,7 @@ class ChatViewModel: ObservableObject {
         if (!newUserName.allSatisfy {$0.isLetter || $0.isNumber || $0.isWhitespace}) {
             return completion(SettingError.userNameInvalidCharacter)
         }
-        if (newUserName.count > 30) {
+        if (newUserName.count > 15) {
             return completion(SettingError.userNameTooLong)
         }
         else {

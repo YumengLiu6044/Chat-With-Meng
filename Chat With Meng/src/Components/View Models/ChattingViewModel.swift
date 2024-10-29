@@ -11,13 +11,22 @@ import FirebaseFirestore
 
 @MainActor
 class ChattingViewModel: ObservableObject {
+    @Published var showNewChat: Bool = false
     @Published var isComposing: Bool = false
+    
     @Published var searchkey: String = ""
     
     @Published var recipientList: [Friend] = []
     @Published var searchResults: [Friend] = []
     
     @Published var toast: Toast? = nil
+    
+    private var currentUserID: String = ""
+    
+    init() {
+        guard let id = FirebaseManager.shared.auth.currentUser?.uid else {return}
+        self.currentUserID = id
+    }
     
     func searchForFriends(from friends: [Friend]) {
         self.searchResults = []
@@ -87,9 +96,29 @@ class ChattingViewModel: ObservableObject {
         }
     }
     
-    public func makeGroupChat(with recipients: [Friend]) {
-        // Remember to include self
+    private func chatExists(of members: [String]) async -> Bool {
+        let query = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.chats)
+            .whereField(Chat.keys.userIDArray.rawValue, isEqualTo: members)
         
+        do {
+            let docs = try await query.getDocuments()
+            return docs.count > 0
+        }
+        catch {
+            return false
+        }
+    }
+    
+    public func processSendButtonClick() async{
+        var chatMembers: [String] = self.recipientList.compactMap { friend in
+            return friend.userID
+        }
+        chatMembers.append(self.currentUserID)
+        
+        if await !chatExists(of: chatMembers) {
+            self.showNewChat = true
+        }
     }
     
 }

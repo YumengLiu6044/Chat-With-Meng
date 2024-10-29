@@ -121,7 +121,6 @@ struct FriendsView: View {
                 }
                 
             }
-    
             .tint(.primary)
 
         }

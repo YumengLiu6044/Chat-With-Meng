@@ -19,7 +19,6 @@ struct ChatRef : Codable {
     }
 }
 
-
 struct Chat: Codable {
     @DocumentID var chatID: String? = nil
     var userIDArray: [String] = []
