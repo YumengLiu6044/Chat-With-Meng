@@ -29,6 +29,7 @@ struct ComposeGroupView: View {
                     
                 }
             )
+            .tint(.primary)
             .padding([.leading, .trailing], width * 0.02)
             
             if !chattingViewModel.recipientList.isEmpty {

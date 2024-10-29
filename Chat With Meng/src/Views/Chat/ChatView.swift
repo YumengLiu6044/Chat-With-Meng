@@ -16,20 +16,23 @@ struct ChatView: View {
 
     
     var body: some View {
+        let isComposing = chattingViewModel.isComposing
+        let recipientList = chattingViewModel.recipientList
+        
         GeometryReader {
             geometry in 
             NavigationStack {
                 VStack {
                     HStack {
-                        Text("Chat")
+                        
+                        Text(isComposing ? "New Chat" : "Chat")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                         
                         Spacer()
                         
                         Button {
-                            let isComposing = chattingViewModel.isComposing
-                            let recipientList = chattingViewModel.recipientList
+                            
                             
                             if isComposing {
                                 if !recipientList.isEmpty {
@@ -43,8 +46,8 @@ struct ChatView: View {
                             }
                         }
                         label: {
-                            if chattingViewModel.isComposing {
-                                Label("New Chat", systemImage: "paperplane")
+                            if isComposing {
+                                Label("Send", systemImage: "paperplane")
                                     .fontWeight(.semibold)
                                     .padding()
                                     .background(.ultraThickMaterial, in: .capsule)
@@ -63,7 +66,7 @@ struct ChatView: View {
                     }
                     .padding([.top, .leading, .trailing])
                     
-                    if chattingViewModel.isComposing {
+                    if isComposing {
                         ComposeGroupView(width: width, height: height)
                             .environmentObject(chattingViewModel)
                             .environmentObject(chatViewModel)
