@@ -67,8 +67,7 @@ struct ProfilePicView: View {
 }
 
 extension URLCache {
-    
-    static let imageCache = URLCache(memoryCapacity: 500_000, diskCapacity: 10_000_000_000)
+    static let imageCache = URLCache(memoryCapacity: 50_000, diskCapacity: 10_000_000_000)
 }
 
 extension UIImage {

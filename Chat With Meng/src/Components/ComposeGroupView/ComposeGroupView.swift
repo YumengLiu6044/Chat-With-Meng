@@ -30,23 +30,26 @@ struct ComposeGroupView: View {
             )
             .padding([.leading, .trailing], width * 0.02)
             
+            if !chattingViewModel.recipientList.isEmpty {
+                Text("Recipients: \(chattingViewModel.recipientList.count)")
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading)
+            }
             ScrollView(.horizontal) {
-                if !chattingViewModel.recipientList.isEmpty {
-                    Text("Recipients")
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.primary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
                 HStack(spacing: width * 0.02) {
                     ForEach(chattingViewModel.recipientList) {
                         friend in
-                        VerticalProfileView(friend: friend, width: width * 0.2, height: height * 0.1) {
+                        VerticalProfileView(friend: friend, width: width * 0.22, height: height * 0.1) {
                             chattingViewModel.moveRecipientToSearchResult(for: friend)
                         }
                     }
+                    .padding([.top, .bottom], height * 0.01)
                 }
             }
+            .scrollIndicators(.hidden)
             .padding([.leading, .trailing])
             
             ScrollView {
