@@ -31,7 +31,7 @@ struct ComposeGroupView: View {
             .padding([.leading, .trailing], width * 0.02)
             
             if !chattingViewModel.recipientList.isEmpty {
-                Text("Recipients: \(chattingViewModel.recipientList.count)")
+                Text("Recipients: \(recipientMessage())")
                     .font(.title2)
                     .fontWeight(.medium)
                     .foregroundStyle(.primary)
@@ -87,6 +87,21 @@ struct ComposeGroupView: View {
             chattingViewModel.recipientList = []
             
         }
+    }
+    
+    private func recipientMessage() -> String {
+        var msg: String = ""
+        if chattingViewModel.recipientList.count >= 1 {
+            msg += chattingViewModel.recipientList[0].userName
+        }
+        if chattingViewModel.recipientList.count >= 2 {
+            msg += ", " + chattingViewModel.recipientList[1].userName
+        }
+        if chattingViewModel.recipientList.count > 2 {
+            msg += ", and others"
+        }
+        return msg
+        
     }
 }
 
