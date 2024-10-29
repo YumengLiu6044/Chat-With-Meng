@@ -18,6 +18,7 @@ struct ComposeGroupView: View {
         VStack {
             SearchBar(
                 text: $chattingViewModel.searchkey,
+                alwaysShowCancel: true,
                 onCancelAction: {
                     withAnimation(.smooth) {
                         chattingViewModel.isComposing = false

@@ -5,6 +5,7 @@ import SwiftUI
 struct SearchBar: UIViewRepresentable {
 
     @Binding var text: String
+    var alwaysShowCancel: Bool = false
     var onCancelAction: (() -> Void)?
     var onSearchAction: (() -> Void)?
     
@@ -59,27 +60,12 @@ struct SearchBar: UIViewRepresentable {
         searchBar.delegate = context.coordinator
         searchBar.searchBarStyle = .minimal
         searchBar.autocapitalizationType = .none
-        
+        searchBar.showsCancelButton = self.alwaysShowCancel
         return searchBar
     }
     
     
     func updateUIView(_ uiView: UISearchBar, context: UIViewRepresentableContext<SearchBar>) {
         uiView.text = text
-    }
-}
-
-
-extension SearchBar {
-    func onCancelButtonPress(_ action: @escaping () -> Void) -> some View {
-        var modifiedSearchBar = self
-        modifiedSearchBar.onCancelAction = action
-        return modifiedSearchBar
-    }
-    
-    func onSearchButtonPress(_ action: @escaping () -> Void) -> some View {
-        var modifiedSearchBar = self
-        modifiedSearchBar.onSearchAction = action
-        return modifiedSearchBar
     }
 }
