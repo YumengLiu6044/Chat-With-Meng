@@ -45,6 +45,7 @@ struct ComposeGroupView: View {
                         VerticalProfileView(friend: friend, width: width * 0.22, height: height * 0.1) {
                             chattingViewModel.moveRecipientToSearchResult(for: friend)
                         }
+                        
                     }
                     .padding([.top, .bottom], height * 0.01)
                 }
@@ -60,16 +61,20 @@ struct ComposeGroupView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading)
                 
-                VStack(spacing: height * 0.05) {
-                    ForEach(chattingViewModel.searchResults) {
-                        friend in
-                        HorizontalProfileView(friend: friend, width: width, height: height * 0.1) {
-                            chattingViewModel.moveSearchResultToRecipient(for: friend)
-                        }
-                        .padding([.leading, .trailing])
+                ForEach(chattingViewModel.searchResults) {
+                    friend in
+                    HorizontalProfileView(friend: friend, width: width, height: height * 0.1) {
+                        chattingViewModel.moveSearchResultToRecipient(for: friend)
+                    }
+                    .padding([.leading, .trailing])
+                    if (friend != chattingViewModel.searchResults.last) {
+                        Divider()
+                            .foregroundStyle(.primary)
+                            .padding([.leading, .trailing])
                     }
                 }
             }
+            .listRowSpacing(height * 0.035)
             .scrollIndicators(.hidden)
         }
         .onAppear {
