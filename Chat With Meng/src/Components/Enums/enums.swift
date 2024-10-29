@@ -8,7 +8,9 @@ struct FirebaseConstants {
     static let users = "users"
     static let friends = "friends"
     static let friendRequests = "friendRequests"
-    
+    static let chats = "chats"
+    static let incomingChats = "incomingChats"
+    static let chatLogs = "chatLogs"
 }
 
 

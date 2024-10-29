@@ -147,7 +147,7 @@ class LoginViewModel: ObservableObject {
         userData.email = emailOnFile
         userData.userName = String(userData.email[..<emailOnFile.firstIndex(of: "@")!])
         userData.profilePicURL = profilePicURL.absoluteString
-        userData.id = uid
+        // userData.id = uid
         userData.profileOverlayData = colorData
         
         do {

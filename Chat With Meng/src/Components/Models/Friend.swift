@@ -6,10 +6,8 @@
 //
 
 import Firebase
-import FirebaseAuth
 import FirebaseFirestore
 import SwiftUI
-
 
 
 struct FriendRef: Codable {
@@ -20,7 +18,6 @@ struct FriendRef: Codable {
         case id
         case notifications
     }
-    
 }
 
 struct Friend: Identifiable, Equatable, Hashable {
@@ -35,5 +32,4 @@ struct Friend: Identifiable, Equatable, Hashable {
     static func ==(lhs: Friend, rhs: Friend) -> Bool {
         return lhs.userID == rhs.userID
     }
-    
 }

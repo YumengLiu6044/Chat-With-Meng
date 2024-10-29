@@ -32,12 +32,9 @@ struct ChatView: View {
                         Spacer()
                         
                         Button {
-                            
-                            
-                            if isComposing {
-                                if !recipientList.isEmpty {
-                                    print("New chat")
-                                }
+                            if isComposing &&
+                                !recipientList.isEmpty{
+                                print("New chat")
                             }
                             else {
                                 withAnimation(.snappy) {

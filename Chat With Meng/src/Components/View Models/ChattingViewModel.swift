@@ -87,4 +87,9 @@ class ChattingViewModel: ObservableObject {
         }
     }
     
+    public func makeGroupChat(with recipients: [Friend]) {
+        // Remember to include self
+        
+    }
+    
 }
