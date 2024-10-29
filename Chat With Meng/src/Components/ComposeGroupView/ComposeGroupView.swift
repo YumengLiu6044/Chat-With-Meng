@@ -37,6 +37,8 @@ struct ComposeGroupView: View {
                     .foregroundStyle(.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             }
             ScrollView(.horizontal) {
                 HStack(spacing: width * 0.02) {

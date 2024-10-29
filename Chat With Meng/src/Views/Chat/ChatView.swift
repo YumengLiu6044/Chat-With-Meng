@@ -27,11 +27,38 @@ struct ChatView: View {
                         
                         Spacer()
                         
-                        IconView(iconName: "paperplane") {
-                            withAnimation(.smooth) {
-                                chattingViewModel.isComposing.toggle()
+                        Button {
+                            let isComposing = chattingViewModel.isComposing
+                            let recipientList = chattingViewModel.recipientList
+                            
+                            if isComposing {
+                                if !recipientList.isEmpty {
+                                    print("New chat")
+                                }
+                            }
+                            else {
+                                withAnimation(.snappy) {
+                                    chattingViewModel.isComposing.toggle()
+                                }
                             }
                         }
+                        label: {
+                            if chattingViewModel.isComposing {
+                                Label("New Chat", systemImage: "paperplane")
+                                    .fontWeight(.semibold)
+                                    .padding()
+                                    .background(.ultraThickMaterial, in: .capsule)
+                                    .tint(chattingViewModel.recipientList.isEmpty ? .secondary : .primary)
+                            }
+                            else {
+                                Image(systemName: "paperplane")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 35, height: 35)
+                                    .fontWeight(.semibold)
+                            }
+                        }
+                        .tint(.primary)
                         
                     }
                     .padding([.top, .leading, .trailing])
