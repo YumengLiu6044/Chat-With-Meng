@@ -19,12 +19,13 @@ class FirebaseManager: NSObject {
         super.init()
     }
     
-    static public func uploadProfilePic(profilePic: UIImage, completion: @escaping (URL?, [CGFloat]?) -> Void) {
+    static public func uploadPicture(picture: UIImage, at path: String, completion: @escaping (URL?, [CGFloat]?) -> Void) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
             return
         }
-        let ref = FirebaseManager.shared.storage.reference(withPath: uid + "/profilePic/")
-        guard let imageData = profilePic.jpegData(compressionQuality: 0.1)
+        
+        let ref = FirebaseManager.shared.storage.reference(withPath: path)
+        guard let imageData = picture.jpegData(compressionQuality: 0.1)
         else { return }
 
         ref.putData(imageData) {
@@ -41,7 +42,7 @@ class FirebaseManager: NSObject {
                     return
                 }
                 if let imgURL = imgURL {
-                    return completion(imgURL, profilePic.averageColor)
+                    return completion(imgURL, picture.averageColor)
                 }
             }
         }
