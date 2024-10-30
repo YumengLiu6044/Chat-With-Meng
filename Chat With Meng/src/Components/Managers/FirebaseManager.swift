@@ -111,6 +111,10 @@ class FirebaseManager: NSObject {
             fromUserID: senderID
         )
         
+        // Add message to chatLogs at chatID
+        updateChatLog(atChatID: chatID, message: message)
+        
+        // For all members of chat, send message to incomingMessages
         FirebaseManager.shared.firestore
             .collection(FirebaseConstants.chats)
             .document(chatID)
@@ -124,6 +128,7 @@ class FirebaseManager: NSObject {
                 if let document = document {
                     do {
                         let data = try document.data(as: Chat.self)
+                        
                         for member in data.userIDArray {
                             setIncomingMessage(for: member, message: message)
                         }
@@ -138,6 +143,22 @@ class FirebaseManager: NSObject {
                 }
                 
             }
+    }
+    
+    static private func updateChatLog(atChatID chatID: String, message: Message) {
+        do {
+            try FirebaseManager.shared.firestore
+                .collection(FirebaseConstants.chats)
+                .document(chatID)
+                .collection(FirebaseConstants.chatLogs)
+                .addDocument(from: message) {
+                    error in
+                    print(error?.localizedDescription ?? "")
+                }
+        }
+        catch {
+            print(error.localizedDescription)
+        }
     }
     
     static private func setIncomingMessage(for userID: String, message: Message) {
@@ -155,4 +176,5 @@ class FirebaseManager: NSObject {
             print(error.localizedDescription)
         }
     }
+    
 }

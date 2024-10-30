@@ -11,6 +11,7 @@ struct FirebaseConstants {
     static let chats = "chats"
     static let incomingChats = "incomingChats"
     static let chatLogs = "chatLogs"
+    static let chatsIncludingUser = "chatsIncludingUser"
 }
 
 

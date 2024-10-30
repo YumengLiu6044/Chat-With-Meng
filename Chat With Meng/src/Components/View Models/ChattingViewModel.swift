@@ -16,7 +16,7 @@ class ChattingViewModel: ObservableObject {
     
     @Published var searchkey: String = ""
     
-    @Published var chatMap : [String : [Message]] = ["":[Message()]]
+    @Published var chatMap : [ChatMapItem] = []
     
     @Published var recipientList: [Friend] = []
     @Published var searchResults: [Friend] = []
@@ -36,6 +36,51 @@ class ChattingViewModel: ObservableObject {
     
     private func handleNewIncomingMessage(message: Message) {
         
+        let ref = ChatRef(chatID: message.chatID)
+        
+        do {
+            try FirebaseManager.shared.firestore
+                .collection(FirebaseConstants.users)
+                .document(self.currentUserID)
+                .collection(FirebaseConstants.chatsIncludingUser)
+                .document(message.chatID)
+                .setData(from: ref)
+        }
+        catch {
+            print("Failed to update chat reference collection for userID: \(self.currentUserID)")
+            return
+        }
+        
+        self.removeIncomingMessage(message)
+        
+        switch message.contentType {
+        case .text:
+            guard let index = self.chatMap.firstIndex(where: {$0.chatID == message.chatID}) else {
+                let newItem = ChatMapItem(chatID: message.chatID, chatLogs: [message])
+                self.chatMap.append(newItem)
+                return
+            }
+            self.chatMap[index].chatLogs.append(message)
+            break
+            
+        case .image:
+            // TODO: implement handling images
+            break
+        case .video:
+            // TODO: implement handling videos
+            break
+        }
+    }
+    
+    private func removeIncomingMessage(_ message: Message) {
+        guard let messageID = message.id else {return}
+        
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(self.currentUserID)
+            .collection(FirebaseConstants.incomingChats)
+            .document(messageID)
+            .delete()
     }
     
     private func attachIncomingMessageListner() {
@@ -77,8 +122,60 @@ class ChattingViewModel: ObservableObject {
         
     }
     
-    private func loadChatsOnAppear() {
-        
+    private func loadChatLogs(forChat chatID: String, completion: @escaping ([Message]?) -> Void) {
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.chats)
+            .document(chatID)
+            .collection(FirebaseConstants.chatLogs)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    self.toast = Toast(style: .error, message: error.localizedDescription)
+                    return
+                }
+                guard let snapshot = snapshot else {return}
+                
+                var messageList: [Message] = []
+                snapshot.documents.forEach { document in
+                    do {
+                        let data = try document.data(as: Message.self)
+                        messageList.append(data)
+                    }
+                    catch {
+                        print("Failed to load chats on appear")
+                        return
+                    }
+                }
+                return completion(messageList)
+            }
+    }
+    
+    public func loadChatsOnAppear() {
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(self.currentUserID)
+            .collection(FirebaseConstants.chatsIncludingUser)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    self.toast = Toast(style: .error, message: error.localizedDescription)
+                    return
+                }
+                guard let snapshot = snapshot else {return}
+                snapshot.documents.forEach { document in
+                    do {
+                        let data = try document.data(as: ChatRef.self)
+                        self.loadChatLogs(forChat: data.chatID){
+                            chatLogs in
+                            guard let chatLogs = chatLogs else {return}
+                            let mapItem = ChatMapItem(chatID: data.chatID, chatLogs: chatLogs)
+                            self.chatMap.append(mapItem)
+                        }
+                    }
+                    catch {
+                        print("Failed to load chats on appear")
+                        return
+                    }
+                }
+            }
     }
     
     func searchForFriends(from friends: [Friend]) {

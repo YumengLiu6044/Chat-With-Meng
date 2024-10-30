@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ChatRef : Codable {
     var chatID: String
-    var notifications: Bool
+    var notifications: Bool = true
     
     enum keys: String, CodingKey {
         case chatID
@@ -33,4 +33,10 @@ struct Chat: Codable {
         case chatCoverURL
         case chatCoverOverlay
     }
+}
+
+struct ChatMapItem: Identifiable {
+    var id: UUID = UUID()
+    var chatID: String
+    var chatLogs: [Message] = []
 }
