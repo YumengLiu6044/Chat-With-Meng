@@ -104,7 +104,7 @@ struct FriendsView: View {
                     Spacer()
                 }
                 
-                .navigationDestination(isPresented: $chatViewModel.showProfile, destination: {
+                .navigationDestination(isPresented: $friendsViewModel.showProfile, destination: {
                     ProfileView(friend: $friendsViewModel.friendInView, rowState: friendsViewModel.rowState)
                         .onDisappear {
                             let exitFriend = self.friendsViewModel.friendInView

@@ -13,13 +13,8 @@ import FirebaseFirestore
 @MainActor
 class ChatViewModel: ObservableObject {
     @Published var chatViewSelection: ChatViewSelection = .messages
-    
-    @Published var toast:           Toast?      = nil
-    
-    
     @Published var showImagePicker: Bool = false
     @Published var showMenu:        Bool = true
-    @Published var showProfile:     Bool = false
     
     public func switchTo(view toView: ChatViewSelection, after delay: Int = 0, animationLength length: CGFloat = 0.5) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay), execute: {

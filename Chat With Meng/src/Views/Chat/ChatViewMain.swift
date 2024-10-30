@@ -65,7 +65,6 @@ struct ChatViewMain: View {
                 self.friendsViewModel.removeListeners()
                 self.chattingViewModel.removeListeners()
             }
-            .toastView(toast: $chatViewModel.toast)
             .toastView(toast: $chattingViewModel.toast)
             .toastView(toast: $friendsViewModel.toast)
             .toastView(toast: $settingVM.toast)
