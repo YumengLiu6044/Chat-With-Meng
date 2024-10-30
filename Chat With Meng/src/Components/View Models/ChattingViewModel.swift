@@ -77,7 +77,7 @@ class ChattingViewModel: ObservableObject {
         
     }
     
-    private func loadChatsOnLoad() {
+    private func loadChatsOnAppear() {
         
     }
     

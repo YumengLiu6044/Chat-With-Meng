@@ -15,4 +15,15 @@ struct Message: Codable {
     var time: Date = .now
     var chatID: String = ""
     var fromUserID: String = ""
+    var isRead: Bool = false
+    
+    enum keys : String, CodingKey {
+        case id
+        case contentType
+        case content
+        case time
+        case chatID
+        case fromUserID
+        case isRead
+    }
 }
