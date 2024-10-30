@@ -10,6 +10,13 @@ import Foundation
 class PasswordManager: ObservableObject {
     @Published var policies: [PasswordPolicy] = []
     
+    init() {
+        requireLowerCase()
+        requireUpperCase()
+        requireMinimumSize(of: 10)
+        requireSpecialSymbolFromSet(of: "~`!@#$%^&*()_+-={}[]|\\:\";'<>?/.,'")
+    }
+    
     public func requireMinimumSize(of size: Int) {
         func checkMinimumSize(with password: String) -> Bool {
             return password.count >= size

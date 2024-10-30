@@ -41,7 +41,7 @@ class LoginViewModel: ObservableObject {
     @Published var isForgetPassword: Bool = false
     @Published var isShowImagePicker: Bool = false
     
-    private var passwordManager: PasswordManager = PasswordManager()
+    @Published var passwordManager: PasswordManager = PasswordManager()
     
     
     public func handleLogin(completion: @escaping (Bool) -> Void) {
@@ -129,15 +129,13 @@ class LoginViewModel: ObservableObject {
         guard let profilePic = profilePic else {return completion(false)}
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         let path = [FirebaseConstants.users, uid, "profilePic"].joined(separator: "/")
-        
         FirebaseManager.uploadPicture(picture: profilePic, at: path) {
             url in
             if let url = url {
                 self.uploadToCloud(
                     profilePicURL: url,
                     colorData: profilePic.averageColor,
-                    completion: completion
-                )
+                    completion: completion)
             }
             else {
                 self.toast = Toast(style: .error, message: "Error uploading profile picture")
