@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ComposeGroupView: View {
     @EnvironmentObject var chattingViewModel: ChattingViewModel
-    @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var friendVM: FriendsViewModel
     
     var width: CGFloat
     var height: CGFloat
@@ -25,7 +25,7 @@ struct ComposeGroupView: View {
                     }
                 },
                 onSearchAction: {
-                    chattingViewModel.searchForFriends(from: chatViewModel.friends)
+                    chattingViewModel.searchForFriends(from: friendVM.friends)
                     
                 }
             )
@@ -89,11 +89,11 @@ struct ComposeGroupView: View {
         }
         .onAppear {
             chattingViewModel.searchkey = ""
-            chattingViewModel.searchResults = chatViewModel.friends
+            chattingViewModel.searchResults = friendVM.friends
         }
         .onDisappear {
             chattingViewModel.searchkey = ""
-            chattingViewModel.searchResults = chatViewModel.friends
+            chattingViewModel.searchResults = friendVM.friends
             chattingViewModel.recipientList = []
             
         }

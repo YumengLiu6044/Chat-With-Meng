@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ChatView: View {
-    @EnvironmentObject var chatViewModel: ChatViewModel
-    @ObservedObject var chattingViewModel: ChattingViewModel = ChattingViewModel()
+    @EnvironmentObject var friendsVM: FriendsViewModel
+    @EnvironmentObject var chattingViewModel: ChattingViewModel
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
@@ -69,7 +69,7 @@ struct ChatView: View {
                     if isComposing {
                         ComposeGroupView(width: width, height: height)
                             .environmentObject(chattingViewModel)
-                            .environmentObject(chatViewModel)
+                            .environmentObject(friendsVM)
                     }
                     else {
                         

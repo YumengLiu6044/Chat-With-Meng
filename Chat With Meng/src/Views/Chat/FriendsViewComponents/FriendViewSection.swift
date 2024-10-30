@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FriendViewSection: View {
-    @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var friendVM: FriendsViewModel
     @Binding var showFriends: Bool
     @Binding var friends: [Friend]
     var sectionTitle: String
@@ -65,10 +65,10 @@ struct FriendViewSection: View {
     }
     
     private func determineState(of friend: Friend) -> FriendRowState {
-        if self.chatViewModel.friendRequests.contains(friend) {
+        if self.friendVM.friendRequests.contains(friend) {
             return .requested
         }
-        else if self.chatViewModel.friends.contains(friend) {
+        else if self.friendVM.friends.contains(friend) {
             return .friended
         }
         else {

@@ -10,6 +10,7 @@ import SwiftUI
 struct MenuBarView: View {
     @Namespace private var selectionAnimation
     @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var friendVM: FriendsViewModel
     
     var width: CGFloat = 300
     var height: CGFloat = 60
@@ -35,7 +36,7 @@ struct MenuBarView: View {
             }
             Spacer()
             
-            IconView(iconName: "person.2", count: self.chatViewModel.friendRequests.count, size: 35) {
+            IconView(iconName: "person.2", count: self.friendVM.friendRequests.count, size: 35) {
                 chatViewModel.switchTo(view: .friends)
             }
             .frame(width: self.width * 0.2)
@@ -68,10 +69,4 @@ struct MenuBarView: View {
         .transition(.opacity)
         
     }
-}
-
-#Preview {
-    MenuBarView()
-        .environmentObject(ChatViewModel())
-        .preferredColorScheme(.light)
 }

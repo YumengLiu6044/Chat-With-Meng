@@ -9,7 +9,7 @@ import SwiftUI
 
 
 struct FriendRowView: View {
-    @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var friendVM: FriendsViewModel
     @Binding var friend: Friend
     
     var width: CGFloat  = 300
@@ -27,9 +27,9 @@ struct FriendRowView: View {
                     height: width * 0.15
                 )
                 .onTapGesture {
-                    self.chatViewModel.friendInView = friend
-                    self.chatViewModel.showProfile  = true
-                    self.chatViewModel.rowState     = self.resultState
+                    self.friendVM.friendInView = friend
+                    self.friendVM.showProfile  = true
+                    self.friendVM.rowState     = self.resultState
                 }
                 .padding([.leading, .trailing])
             }
@@ -46,7 +46,7 @@ struct FriendRowView: View {
             case .requested:
                 IconView(iconName: "checkmark", size: 30, color: .blue) {
                     Task {
-                        await self.chatViewModel.addFriend(from: friend.userID)
+                        await self.friendVM.addFriend(from: friend.userID)
                     }
                 }
                 .padding(.trailing)
@@ -54,7 +54,7 @@ struct FriendRowView: View {
                 IconView(iconName: "xmark", size: 30, color: .red) {
                     let reject_id = friend.userID
                     Task {
-                        await self.chatViewModel.removeFriendRequest(at: reject_id)
+                        await self.friendVM.removeFriendRequest(at: reject_id)
                     }
                 }
                 
@@ -67,7 +67,7 @@ struct FriendRowView: View {
                 .padding(.trailing)
                 
                 IconView(iconName: friend.notifications ? "bell" : "bell.slash") {
-                    self.chatViewModel.updateFriendByKeyVal(for: self.friend.userID, FriendRef.keys.notifications, !self.friend.notifications)
+                    self.friendVM.updateFriendByKeyVal(for: self.friend.userID, FriendRef.keys.notifications, !self.friend.notifications)
                 }
                 .buttonStyle(PlainButtonStyle())
                 .contentTransition(.symbolEffect(.replace))
@@ -75,7 +75,7 @@ struct FriendRowView: View {
             case .searched:
                 IconView(iconName: "plus") {
                     Task {
-                        chatViewModel.sendFriendRequest(to: friend.userID)
+                        friendVM.sendFriendRequest(to: friend.userID)
                     }
                 }
                 .buttonStyle(PlainButtonStyle())

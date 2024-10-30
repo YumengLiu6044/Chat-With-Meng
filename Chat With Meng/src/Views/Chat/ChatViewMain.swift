@@ -11,6 +11,9 @@ struct ChatViewMain: View {
 
     @EnvironmentObject var appViewModel: AppViewModel
     @ObservedObject var chatViewModel: ChatViewModel = ChatViewModel()
+    @ObservedObject var chattingViewModel: ChattingViewModel = ChattingViewModel()
+    @ObservedObject var friendsViewModel: FriendsViewModel = FriendsViewModel()
+    @ObservedObject var settingVM: SettingViewModel = SettingViewModel()
 
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
@@ -25,22 +28,25 @@ struct ChatViewMain: View {
                 switch chatViewModel.chatViewSelection {
                 case .messages:
                     ChatView()
-                        .environmentObject(chatViewModel)
+                        .environmentObject(friendsViewModel)
+                        .environmentObject(chattingViewModel)
                         .transition(.move(edge: .leading))
                 case .friends:
                     FriendsView()
                         .environmentObject(chatViewModel)
+                        .environmentObject(friendsViewModel)
                         
                 case .settings:
                     SettingsView()
                         .environmentObject(appViewModel)
-                        .environmentObject(chatViewModel)
+                        .environmentObject(settingVM)
                         .transition(.move(edge: .trailing))
                 }
                 
                 if self.chatViewModel.showMenu {
                     MenuBarView(width: width * 0.9, height: height * 0.1)
                         .environmentObject(chatViewModel)
+                        .environmentObject(friendsViewModel)
                         .frame(maxHeight: .infinity, alignment: .bottom)
                         .ignoresSafeArea(.keyboard)
                 }
@@ -53,14 +59,10 @@ struct ChatViewMain: View {
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height
-                
-                if (!didAppear) {
-                    self.chatViewModel.initializeCurrentUser()
-                    didAppear = true
-                }
+            
             }
             .onDisappear {
-                self.chatViewModel.deinitializeCurrentUser()
+                self.friendsViewModel.removeListeners()
             }
             .toastView(toast: $chatViewModel.toast)
         }

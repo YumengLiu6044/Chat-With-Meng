@@ -10,7 +10,7 @@ import SwiftUI
 struct FriendsView: View {
     
     @EnvironmentObject var chatViewModel: ChatViewModel
-    @ObservedObject var friendsViewModel: FriendsViewModel = FriendsViewModel()
+    @EnvironmentObject var friendsViewModel: FriendsViewModel
 
     @State private var width:   CGFloat = 100
     @State private var height:  CGFloat = 100
@@ -19,6 +19,29 @@ struct FriendsView: View {
     
     @State private var showRequests: Bool   = true
     @State private var showFriends: Bool    = true
+    
+    @ViewBuilder
+    private func searchResults() -> some View {
+        ForEach(friendsViewModel.friendSearchResult) { friend in
+            if let index = friendsViewModel.friendSearchResult.firstIndex(where: { $0.id == friend.id }) {
+                FriendRowView(
+                    friend: $friendsViewModel.friendSearchResult[index],
+                    width: width,
+                    height: height * 0.1,
+                    resultState: determineState(of: friendsViewModel.friendSearchResult[index])
+                )
+                .padding([.leading, .trailing])
+                .padding(.top, index == 0 ? height * 0.02 : 0)
+                .environmentObject(self.friendsViewModel)
+                
+                if (index != friendsViewModel.friendSearchResult.count - 1) {
+                    Divider()
+                        .foregroundStyle(.primary)
+                        .padding([.leading, .trailing])
+                }
+            }
+        }
+    }
 
     var body: some View {
         GeometryReader {
@@ -41,7 +64,7 @@ struct FriendsView: View {
                         },
                         onSearchAction: {
                             Task {
-                                await self.chatViewModel.searchUsers(
+                                await self.friendsViewModel.searchUsers(
                                     from: searchKey)
                             }
                         }
@@ -50,45 +73,29 @@ struct FriendsView: View {
                     .padding([.top], height * -0.02)
 
                     ScrollView {
-                        if !self.chatViewModel.friendSearchResult.isEmpty &&
+                        if !self.friendsViewModel.friendSearchResult.isEmpty &&
                             !self.searchKey.isEmpty {
-                            ForEach(chatViewModel.friendSearchResult) { friend in
-                                if let index = chatViewModel.friendSearchResult.firstIndex(where: { $0.id == friend.id }) {
-                                    FriendRowView(
-                                        friend: $chatViewModel.friendSearchResult[index],
-                                        width: width,
-                                        height: height * 0.1,
-                                        resultState: determineState(of: chatViewModel.friendSearchResult[index])
-                                    )
-                                    .padding([.leading, .trailing])
-                                    .padding(.top, index == 0 ? height * 0.02 : 0)
-                                    .environmentObject(self.chatViewModel)
-                                    
-                                    if (index != chatViewModel.friendSearchResult.count - 1) {
-                                        Divider()
-                                            .foregroundStyle(.primary)
-                                            .padding([.leading, .trailing])
-                                    }
-                                }
-                            }
+                            searchResults()
                         }
                         if self.searchKey.isEmpty &&
-                           !self.chatViewModel.friendRequests.isEmpty {
+                           !self.friendsViewModel.friendRequests.isEmpty {
                             FriendViewSection(showFriends: $showRequests,
-                                              friends: $chatViewModel.friendRequests,
+                                              friends: $friendsViewModel.friendRequests,
                                               sectionTitle: "Requests",
                                               width: width,
                                               height: height)
+                            .environmentObject(friendsViewModel)
                             
                         }
-                        if self.searchKey.isEmpty && !self.chatViewModel.friends.isEmpty {
+                        if self.searchKey.isEmpty && !self.friendsViewModel.friends.isEmpty {
                             FriendViewSection(showFriends: $showFriends,
-                                              friends: self.$chatViewModel.friends,
+                                              friends: self.$friendsViewModel.friends,
                                               sectionTitle: "Friends",
                                               width: width,
                                               height: height,
-                                              hideTitle: self.chatViewModel.friendRequests.isEmpty
+                                              hideTitle: self.friendsViewModel.friendRequests.isEmpty
                             )
+                            .environmentObject(friendsViewModel)
                         }
                     }
                     .listRowSpacing(height * 0.05)
@@ -98,17 +105,17 @@ struct FriendsView: View {
                 }
                 
                 .navigationDestination(isPresented: $chatViewModel.showProfile, destination: {
-                    ProfileView(friend: $chatViewModel.friendInView, rowState: chatViewModel.rowState)
+                    ProfileView(friend: $friendsViewModel.friendInView, rowState: friendsViewModel.rowState)
                         .onDisappear {
-                            let exitFriend = self.chatViewModel.friendInView
-                            if chatViewModel.friendRemovalQueue.contains(exitFriend) {
-                                chatViewModel.removeFriendFromLocal(exitFriend)
+                            let exitFriend = self.friendsViewModel.friendInView
+                            if friendsViewModel.friendRemovalQueue.contains(exitFriend) {
+                                friendsViewModel.removeFriendFromLocal(exitFriend)
                             }
-                            if self.chatViewModel.requestRemovalQueue.contains(exitFriend) {
-                                chatViewModel.removeFriendRequestFromLocal(exitFriend)
+                            if self.friendsViewModel.requestRemovalQueue.contains(exitFriend) {
+                                friendsViewModel.removeFriendRequestFromLocal(exitFriend)
                             }
-                            chatViewModel.showProfile = false
-                            chatViewModel.friendInView = Friend()
+                            friendsViewModel.showProfile = false
+                            friendsViewModel.friendInView = Friend()
                         }
                 })
                 .scrollContentBackground(.hidden)
@@ -129,20 +136,14 @@ struct FriendsView: View {
     }
     
     private func determineState(of friend: Friend) -> FriendRowState {
-        if self.chatViewModel.friendRequests.contains(friend) {
+        if self.friendsViewModel.friendRequests.contains(friend) {
             return .requested
         }
-        else if self.chatViewModel.friends.contains(friend) {
+        else if self.friendsViewModel.friends.contains(friend) {
             return .friended
         }
         else {
             return .searched
         }
     }
-}
-
-#Preview {
-    FriendsView()
-        .environmentObject(ChatViewModel())
-
 }

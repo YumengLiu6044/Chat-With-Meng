@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var friendVM: FriendsViewModel
     
     @Binding var friend: Friend
     var rowState: FriendRowState
@@ -76,11 +76,11 @@ struct ProfileView: View {
                                 
                             case .requested:
                                 Task {
-                                    await self.chatViewModel.addFriend(from: friend.userID)
+                                    await self.friendVM.addFriend(from: friend.userID)
                                 }
                                 
                             case .searched:
-                                self.chatViewModel.sendFriendRequest(to: friend.userID)
+                                self.friendVM.sendFriendRequest(to: friend.userID)
                             }
                         }
                         label: {
@@ -103,7 +103,7 @@ struct ProfileView: View {
                         if rowState == .requested {
                             Button {
                                 Task {
-                                    await self.chatViewModel.removeFriendRequest(at: friend.userID)
+                                    await self.friendVM.removeFriendRequest(at: friend.userID)
                                 }
                             }
                             label: {
@@ -141,7 +141,7 @@ struct ProfileView: View {
                 primaryButton: .destructive(Text("Delete")) {
                     print("Deleting")
                     Task {
-                        await self.chatViewModel.unfriend(friend)
+                        await self.friendVM.unfriend(friend)
                     }
                 },
                 secondaryButton: .cancel()
@@ -152,5 +152,5 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView(friend: .constant(Friend()), rowState: .friended)
-        .environmentObject(ChatViewModel())
+        .environmentObject(FriendsViewModel())
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appViewModel: AppViewModel
-    @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var settingVM: SettingViewModel
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
@@ -35,13 +35,12 @@ struct SettingsView: View {
                     VStack {
                         HStack {
                             Button {
-                                chatViewModel.showImagePicker.toggle()
+                                settingVM.showImagePicker.toggle()
                             } label: {
                                 ZStack {
                                     ProfilePicView(
-                                        imageURL:
-                                            chatViewModel.currentUser.profilePicURL,
-                                        imageOverlayData: chatViewModel.currentUser.profileOverlayData,
+                                        imageURL: settingVM.currentUser.profilePicURL,
+                                        imageOverlayData: settingVM.currentUser.profileOverlayData,
                                         width: width * 0.3, height: width * 0.3
                                         
                                     )
@@ -71,14 +70,14 @@ struct SettingsView: View {
                             Spacer()
 
                             VStack(alignment: .trailing) {
-                                Text(chatViewModel.currentUser.userName)
+                                Text(settingVM.currentUser.userName)
                                     .font(.system(size: width * 0.12))
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.6)
                                     .fontWeight(.bold)
                                     .padding([.bottom, .trailing], height * 0.01)
 
-                                Text(chatViewModel.currentUser.email)
+                                Text(settingVM.currentUser.email)
                                     .font(.system(size: width * 0.05))
                                     .tint(.primary)
                                     .lineLimit(1)
@@ -96,14 +95,14 @@ struct SettingsView: View {
                                         TextField("", text: self.$userName)
                                             .multilineTextAlignment(.trailing)
                                             .onSubmit {
-                                                chatViewModel.updateUserName(to: self.userName) {
+                                                settingVM.updateUserName(to: self.userName) {
                                                     error in
                                                     if let error = error {
-                                                        self.chatViewModel.toast = Toast(style: .error, message: error.localizedDescription)
-                                                        self.userName = self.chatViewModel.currentUser.userName
+                                                        self.settingVM.toast = Toast(style: .error, message: error.localizedDescription)
+                                                        self.userName = self.settingVM.currentUser.userName
                                                     }
                                                     else {
-                                                        self.chatViewModel.toast = Toast(style: .success, message: "User name changed")
+                                                        self.settingVM.toast = Toast(style: .success, message: "User name changed")
                                                     }
                                                 }
                                             }
@@ -133,19 +132,20 @@ struct SettingsView: View {
                                 Section(
                                     content: {
                                         SettingOptionView(header: "Human") {
-                                            Toggle("", isOn: $chatViewModel.currentUser.humanNotifications)
+                                            
+                                            Toggle("", isOn: $settingVM.currentUser.humanNotifications)
                                                 .onTapGesture {
-                                                    chatViewModel.currentUser.humanNotifications.toggle()
-                                                    self.chatViewModel.updateCurrentUserByKeyVal(key: User.keys.humanNotifications, val: self.chatViewModel.currentUser.humanNotifications)
+                                                    settingVM.currentUser.humanNotifications.toggle()
+                                                    self.settingVM.updateCurrentUserByKeyVal(key: User.keys.humanNotifications, val: self.settingVM.currentUser.humanNotifications)
                                                 }
                                                 
                                             
                                         }
                                         SettingOptionView(header: "AI") {
-                                            Toggle("", isOn: $chatViewModel.currentUser.AiNotifications)
+                                            Toggle("", isOn: $settingVM.currentUser.AiNotifications)
                                                 .onTapGesture {
-                                                    chatViewModel.currentUser.AiNotifications.toggle()
-                                                    self.chatViewModel.updateCurrentUserByKeyVal(key: User.keys.AiNotifications, val: self.chatViewModel.currentUser.AiNotifications)
+                                                    settingVM.currentUser.AiNotifications.toggle()
+                                                    self.settingVM.updateCurrentUserByKeyVal(key: User.keys.AiNotifications, val: self.settingVM.currentUser.AiNotifications)
                                                 }
                                                 
                                         }
@@ -167,11 +167,10 @@ struct SettingsView: View {
                             appViewModel.signOut {
                                 success in
                                 if success {
-                                    self.chatViewModel.deinitializeCurrentUser()
                                     self.appViewModel.switchTo(view: .login)
                                 }
                                 else {
-                                    self.chatViewModel.toast = Toast(style: .error, message: "Failed to sign out")
+                                    self.settingVM.toast = Toast(style: .error, message: "Failed to sign out")
                                 }
                                 
                             }
@@ -196,15 +195,15 @@ struct SettingsView: View {
                         .padding([.leading, .trailing])
                         .frame(alignment: .bottom)
                     }
-                    .onChange(of: chatViewModel.profilePic) {
-                        chatViewModel.updateProfilePic()
+                    .toastView(toast: $settingVM.toast)
+                    .onChange(of: settingVM.profilePic) {
+                        settingVM.updateProfilePic()
                         
                     }
                     .onAppear {
                         width = geometry.size.width
                         height = geometry.size.height
-                        
-                        self.userName = chatViewModel.currentUser.userName
+                        self.userName = settingVM.currentUser.userName
                     }
                 }
             .ignoresSafeArea(.keyboard)
@@ -214,15 +213,8 @@ struct SettingsView: View {
         .fullScreenCover(isPresented: $isForgotPassword, onDismiss: nil) {
             PasswordResetView(isForgetPassword: $isForgotPassword, width: width, height: height, isSelf: true)
         }
-        .fullScreenCover(isPresented: $chatViewModel.showImagePicker, onDismiss: nil) {
-            ImagePicker(image: $chatViewModel.profilePic)
+        .fullScreenCover(isPresented: $settingVM.showImagePicker, onDismiss: nil) {
+            ImagePicker(image: $settingVM.profilePic)
         }
     }
-}
-
-#Preview {
-    SettingsView()
-        .environmentObject(AppViewModel())
-        .environmentObject(ChatViewModel())
-        .preferredColorScheme(.dark)
 }
