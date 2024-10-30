@@ -34,6 +34,10 @@ class ChattingViewModel: ObservableObject {
         attachIncomingMessageListner()
     }
     
+    private func handleNewIncomingMessage(message: Message) {
+        
+    }
+    
     private func attachIncomingMessageListner() {
         let listener = FirebaseManager.shared.firestore
             .collection(FirebaseConstants.users)
@@ -50,7 +54,14 @@ class ChattingViewModel: ObservableObject {
                 snapshot.documentChanges.forEach { change in
                     switch change.type {
                     case .added:
-                        print("Added message")
+                        do {
+                            let message = try change.document.data(as: Message.self)
+                            self?.handleNewIncomingMessage(message: message)
+                        }
+                        catch {
+                            print("Failed to decode message object")
+                            return
+                        }
                     default:
                         return
                     }
@@ -92,29 +103,28 @@ class ChattingViewModel: ObservableObject {
             
             if let error = error {
                 self.toast = Toast(style: .error, message: error.localizedDescription)
+                return
+            }
+            if let document = document {
+                do {
+                    let data = try document.data(as: User.self)
+                    guard let friendID = data.id else {return}
+                    let dataAsFriend = Friend(
+                        email: data.email,
+                        userID: friendID,
+                        profilePicURL: data.profilePicURL,
+                        userName: data.userName,
+                        notifications: notifications,
+                        profileOverlayData: data.profileOverlayData
+                    )
+                    return completion(dataAsFriend)
+                    
+                } catch {
+                    self.toast = Toast(style: .error, message: "Error decoding document")
+                }
             }
             else {
-                if let document = document {
-                    do {
-                        let data = try document.data(as: User.self)
-                        guard let friendID = data.id else {return}
-                        let dataAsFriend = Friend(
-                            email: data.email,
-                            userID: friendID,
-                            profilePicURL: data.profilePicURL,
-                            userName: data.userName,
-                            notifications: notifications,
-                            profileOverlayData: data.profileOverlayData
-                        )
-                        return completion(dataAsFriend)
-                        
-                    } catch {
-                        self.toast = Toast(style: .error, message: "Error decoding document")
-                    }
-                }
-                else {
-                    self.toast = Toast(style: .error, message: "Error getting document")
-                }
+                self.toast = Toast(style: .error, message: "Error getting document")
             }
         }
         return completion(nil)
@@ -174,10 +184,21 @@ class ChattingViewModel: ObservableObject {
     
     public func processGroupChatCreation(with name: String, of members: [Friend]) {
         FirebaseManager.makeGroupChat(with: name, of: members) { toast in
-            self.toast = toast
-            if self.toast?.style == .success {
+            
+            if toast.style == .success {
                 self.showNewChat = false
                 self.isComposing = false
+                
+                FirebaseManager.sendMessage(
+                    fromSender: self.currentUserID,
+                    toChat: toast.message,
+                    contentType: .text,
+                    content: "You have been invited to \(name)",
+                    time: .now
+                )
+            }
+            else {
+                self.toast = toast
             }
         }
         

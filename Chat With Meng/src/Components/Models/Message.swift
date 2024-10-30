@@ -13,6 +13,6 @@ struct Message: Codable {
     var contentType: ContentType = .text
     var content: String = ""
     var time: Date = .now
-    var fromChatID: String = ""
+    var chatID: String = ""
     var fromUserID: String = ""
 }
