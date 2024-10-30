@@ -32,7 +32,7 @@ struct ChatView: View {
                         
                         Button {
                             if isComposing {
-                                if !recipientList.isEmpty{
+                                if !recipientList.isEmpty {
                                     Task {
                                         await chattingViewModel.processSendButtonClick()
                                     }

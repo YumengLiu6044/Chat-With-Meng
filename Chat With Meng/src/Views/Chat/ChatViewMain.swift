@@ -38,7 +38,6 @@ struct ChatViewMain: View {
                         .transition(.move(edge: .trailing))
                 }
                 
-                
                 if self.chatViewModel.showMenu {
                     MenuBarView(width: width * 0.9, height: height * 0.1)
                         .environmentObject(chatViewModel)
