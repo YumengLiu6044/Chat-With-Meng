@@ -94,3 +94,9 @@ enum FriendRowState: String {
         }
     }
 }
+
+enum ContentType: String, Codable {
+    case text = "text"
+    case image = "image"
+    case video = "video"
+}

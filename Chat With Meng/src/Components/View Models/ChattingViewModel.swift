@@ -16,6 +16,8 @@ class ChattingViewModel: ObservableObject {
     
     @Published var searchkey: String = ""
     
+    @Published var chatMap : [String : [Message]] = ["":[]]
+    
     @Published var recipientList: [Friend] = []
     @Published var searchResults: [Friend] = []
     
@@ -57,7 +59,11 @@ class ChattingViewModel: ObservableObject {
             }
     }
     
-    func removeListeners() {
+    public func removeListeners() {
+        
+    }
+    
+    private func loadChatsOnLoad() {
         
     }
     
