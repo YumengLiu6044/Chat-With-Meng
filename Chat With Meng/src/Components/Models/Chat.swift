@@ -22,11 +22,15 @@ struct ChatRef : Codable {
 struct Chat: Codable {
     @DocumentID var chatID: String? = nil
     var userIDArray: [String] = []
-    var chatTitle: String
+    var chatTitle: String = ""
+    var chatCoverURL: String = ""
+    var chatCoverOverlay: [CGFloat] = [0, 0, 0]
     
     enum keys : String, CodingKey {
         case chatID
         case userIDArray
         case chatTitle
+        case chatCoverURL
+        case chatCoverOverlay
     }
 }

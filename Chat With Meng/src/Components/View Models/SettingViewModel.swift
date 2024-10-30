@@ -43,11 +43,14 @@ class SettingViewModel: ObservableObject {
     
     public func updateProfilePic() -> Void {
         guard let uid = currentUser.id else {return}
+        guard let profilePic = profilePic else {return}
+        
         let path = [FirebaseConstants.users, uid, "profilePic"].joined(separator: "/")
+        let colorData = profilePic.averageColor
+        
         FirebaseManager.uploadPicture(picture: self.profilePic!, at: path) {
-            imgURL, colorData in
-            
-            if let imgURL = imgURL, let colorData = colorData {
+            imgURL in
+            if let imgURL = imgURL {
                 self.currentUser.profilePicURL = imgURL.absoluteString
                 self.currentUser.profileOverlayData = colorData
                 self.updateCurrentUserByKeyVal(key: User.keys.profilePicURL, val: imgURL.absoluteString)

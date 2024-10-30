@@ -186,11 +186,20 @@ class ChattingViewModel: ObservableObject {
             return completion(false)
         }
         
-        let chat = Chat(
+        uploadToFirestore(
+            members: members,
+            name: name,
+            completion: completion
+        )
+    }
+    
+    private func uploadToFirestore(members: [Friend], name: String, completion: @escaping (Bool) -> Void) {
+        let chat = Chat (
             chatID: nil,
             userIDArray: members.compactMap {$0.userID},
             chatTitle: name
         )
+        
         do {
             try FirebaseManager.shared.firestore
                 .collection(FirebaseConstants.chats)

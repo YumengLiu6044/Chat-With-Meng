@@ -129,10 +129,15 @@ class LoginViewModel: ObservableObject {
         guard let profilePic = profilePic else {return completion(false)}
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         let path = [FirebaseConstants.users, uid, "profilePic"].joined(separator: "/")
+        
         FirebaseManager.uploadPicture(picture: profilePic, at: path) {
-            url, colorData in
-            if let url = url, let colorData = colorData {
-                self.uploadToCloud(profilePicURL: url, colorData: colorData, completion: completion)
+            url in
+            if let url = url {
+                self.uploadToCloud(
+                    profilePicURL: url,
+                    colorData: profilePic.averageColor,
+                    completion: completion
+                )
             }
             else {
                 self.toast = Toast(style: .error, message: "Error uploading profile picture")

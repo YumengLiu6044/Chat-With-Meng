@@ -24,7 +24,8 @@ struct ProfilePicView: View {
         CachedAsyncImage(url: URL(string: imageURL), urlCache: .imageCache, transaction: Transaction(animation: .spring(response: 1, dampingFraction: 0.6, blendDuration: 0.5))) { phase in
             switch phase {
             case .success(let image):
-                image.resizable()
+                image
+                    .resizable()
                     .scaledToFill()
                     .saturation(isOnline ? 1 : 0.3)
                     .clipShape(Circle())
@@ -38,29 +39,36 @@ struct ProfilePicView: View {
                 
             case .failure:
                 Image(systemName: "person.fill")
-                    .scaledToFill()
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(Circle())
+                    .frame(width: width, height: width)
                     .overlay {
                         Circle()
                             .stroke(lineWidth: width * 0.05)
                     }
-                    .clipShape(Circle())
-                    .frame(width: width, height: width)
                     .tint(Color.primary)
             
             case .empty:
                 ProgressView()
-                    .onAppear {
-                        isLoading = true
-                    }
                     .scaledToFill()
                     .frame(width: width, height: width)
                     .tint(Color.primary)
+                    .onAppear {
+                        isLoading = true
+                    }
                     
                 
             @unknown default:
-                EmptyView()
-                    .onAppear {
-                        isLoading = false
+                Image(systemName: "person.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(Circle())
+                    .frame(width: width, height: width)
+                    .overlay {
+                        Circle()
+                            .stroke(.secondary, lineWidth: width * 0.04)
+                            .frame(width: width * 1.1, height: width * 1.1)
                     }
             }}
     }
