@@ -195,7 +195,6 @@ struct SettingsView: View {
                         .padding([.leading, .trailing])
                         .frame(alignment: .bottom)
                     }
-                    .toastView(toast: $settingVM.toast)
                     .onChange(of: settingVM.profilePic) {
                         settingVM.updateProfilePic()
                         

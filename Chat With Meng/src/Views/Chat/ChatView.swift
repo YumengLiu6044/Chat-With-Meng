@@ -77,7 +77,6 @@ struct ChatView: View {
                     Spacer()
                     
                 }
-                .toastView(toast: $chattingViewModel.toast)
                 .navigationDestination(isPresented: $chattingViewModel.showNewChat) {
                     NewChatView(
                         width: width,

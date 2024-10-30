@@ -22,10 +22,43 @@ class ChattingViewModel: ObservableObject {
     @Published var toast: Toast? = nil
     
     private var currentUserID: String = ""
+    private var incomingMessageListener: ListenerRegistration? = nil
     
     init() {
         guard let id = FirebaseManager.shared.auth.currentUser?.uid else {return}
         self.currentUserID = id
+        
+        // Start listener
+        attachIncomingMessageListner()
+    }
+    
+    private func attachIncomingMessageListner() {
+        let listener = FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(self.currentUserID)
+            .collection(FirebaseConstants.incomingChats)
+            .addSnapshotListener(includeMetadataChanges: true) {
+                [weak self]
+                snapshot, error in
+                if let error = error {
+                    self?.toast = Toast(style: .error, message: error.localizedDescription)
+                    return
+                }
+                guard let snapshot = snapshot else {return}
+                snapshot.documentChanges.forEach { change in
+                    switch change.type {
+                    case .added:
+                        print("Added message")
+                    default:
+                        return
+                    }
+                }
+                
+            }
+    }
+    
+    func removeListeners() {
+        
     }
     
     func searchForFriends(from friends: [Friend]) {
