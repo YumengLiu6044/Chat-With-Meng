@@ -94,13 +94,7 @@ struct NewChatView: View {
                 Spacer()
                 
                 Button {
-                    chattingVM.makeGroupChat(with: groupName, of: members) {
-                        result in
-                        if result {
-                            chattingVM.showNewChat = false
-                            chattingVM.isComposing = false
-                        }
-                    }
+                    chattingVM.processGroupChatCreation(with: groupName, of: members)
                 }
                 label: {
                     HStack {

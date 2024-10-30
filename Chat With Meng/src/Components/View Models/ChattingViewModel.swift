@@ -16,7 +16,7 @@ class ChattingViewModel: ObservableObject {
     
     @Published var searchkey: String = ""
     
-    @Published var chatMap : [String : [Message]] = ["":[]]
+    @Published var chatMap : [String : [Message]] = ["":[Message()]]
     
     @Published var recipientList: [Friend] = []
     @Published var searchResults: [Friend] = []
@@ -57,9 +57,12 @@ class ChattingViewModel: ObservableObject {
                 }
                 
             }
+        self.incomingMessageListener = listener
     }
     
     public func removeListeners() {
+        self.incomingMessageListener?.remove()
+        self.incomingMessageListener = nil
         
     }
     
@@ -169,57 +172,15 @@ class ChattingViewModel: ObservableObject {
         }
     }
     
-    public func makeGroupChat(with name: String, of members: [Friend], completion: @escaping (Bool) -> Void) {
-        if (name.isEmpty) {
-            return completion(false)
-        }
-        if (name.allSatisfy {$0.isWhitespace}) {
-            toast = Toast(style: .error, message: "At least one non-space character is required")
-            return completion(false)
-        }
-        if (!name.allSatisfy {$0.isLetter || $0.isNumber || $0.isWhitespace}) {
-            toast = Toast(style: .error, message: "Only alpha-numeric characters and spaces are allowed")
-            return completion(false)
-        }
-        if (name.count > 30) {
-            toast = Toast(style: .error, message: "The maximum character count is 30")
-            return completion(false)
+    public func processGroupChatCreation(with name: String, of members: [Friend]) {
+        FirebaseManager.makeGroupChat(with: name, of: members) { toast in
+            self.toast = toast
+            if self.toast?.style == .success {
+                self.showNewChat = false
+                self.isComposing = false
+            }
         }
         
-        uploadToFirestore(
-            members: members,
-            name: name,
-            completion: completion
-        )
-    }
-    
-    private func uploadToFirestore(members: [Friend], name: String, completion: @escaping (Bool) -> Void) {
-        let chat = Chat (
-            chatID: nil,
-            userIDArray: members.compactMap {$0.userID},
-            chatTitle: name
-        )
-        
-        do {
-            try FirebaseManager.shared.firestore
-                .collection(FirebaseConstants.chats)
-                .addDocument(from: chat) {
-                    error in
-                    if let error = error {
-                        self.toast = Toast(style: .error, message: error.localizedDescription)
-                        return completion(false)
-                    }
-                    else {
-                        self.toast = Toast(style: .success, message: "You have made the \"\(name)\"")
-                        return completion(true)
-                    }
-                }
-            
-        }
-        catch {
-            toast = Toast(style: .error, message: "Failed to make new chat")
-            return completion(false)
-        }
     }
     
 }
