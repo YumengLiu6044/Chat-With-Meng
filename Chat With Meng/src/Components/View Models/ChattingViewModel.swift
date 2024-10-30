@@ -32,6 +32,7 @@ class ChattingViewModel: ObservableObject {
         
         // Start listener
         attachIncomingMessageListner()
+        loadChatsOnAppear()
     }
     
     private func handleNewIncomingMessage(message: Message) {
