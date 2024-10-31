@@ -14,7 +14,7 @@ struct MessageLogsSectionView: View {
     
     var body: some View {
         ScrollView{
-            VStack(spacing: height * 0.02) {
+            VStack(spacing: height * 0.01) {
                 ForEach(chattingVM.chatMap) {chat in
                     ChatRowView(chatMapItem: chat, width: width, height: height * 0.1)
                         .environmentObject(chattingVM)
