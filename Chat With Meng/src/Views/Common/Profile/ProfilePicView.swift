@@ -50,13 +50,16 @@ struct ProfilePicView: View {
                     .tint(Color.primary)
             
             case .empty:
-                ProgressView()
-                    .scaledToFill()
+                Image(systemName: "person.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(Circle())
                     .frame(width: width, height: width)
-                    .tint(Color.primary)
-                    .onAppear {
-                        isLoading = true
+                    .overlay {
+                        Circle()
+                            .stroke(lineWidth: width * 0.05)
                     }
+                    .tint(Color.primary)
                     
                 
             @unknown default:

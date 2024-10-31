@@ -30,9 +30,11 @@ class ChattingViewModel: ObservableObject {
         guard let id = FirebaseManager.shared.auth.currentUser?.uid else {return}
         self.currentUserID = id
         
+        loadChatsOnAppear()
+        
         // Start listener
         attachIncomingMessageListner()
-        loadChatsOnAppear()
+        
     }
     
     private func handleNewIncomingMessage(message: Message) {
@@ -58,10 +60,14 @@ class ChattingViewModel: ObservableObject {
         case .text:
             guard let index = self.chatMap.firstIndex(where: {$0.chatID == message.chatID}) else {
                 let newItem = ChatMapItem(chatID: message.chatID, chatLogs: [message])
-                self.chatMap.append(newItem)
+                withAnimation(.smooth) {
+                    self.chatMap.append(newItem)
+                }
                 return
             }
-            self.chatMap[index].chatLogs.append(message)
+            withAnimation(.smooth) {
+                self.chatMap[index].chatLogs.append(message)
+            }
             break
             
         case .image:
@@ -168,7 +174,9 @@ class ChattingViewModel: ObservableObject {
                             chatLogs in
                             guard let chatLogs = chatLogs else {return}
                             let mapItem = ChatMapItem(chatID: data.chatID, chatLogs: chatLogs)
-                            self.chatMap.append(mapItem)
+                            withAnimation(.smooth) {
+                                self.chatMap.append(mapItem)
+                            }
                         }
                     }
                     catch {

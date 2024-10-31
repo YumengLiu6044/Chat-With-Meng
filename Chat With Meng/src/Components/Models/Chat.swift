@@ -35,8 +35,12 @@ struct Chat: Codable {
     }
 }
 
-struct ChatMapItem: Identifiable {
+struct ChatMapItem: Identifiable, Equatable {
     var id: UUID = UUID()
     var chatID: String
     var chatLogs: [Message] = []
+    
+    static func ==(lhs: ChatMapItem, rhs: ChatMapItem) -> Bool {
+        return lhs.chatID == rhs.chatID
+    }
 }

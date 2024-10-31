@@ -177,4 +177,19 @@ class FirebaseManager: NSObject {
         }
     }
     
+    static func makeChatObject(fromID chatID: String) async -> Chat? {
+        do {
+            let document = try await self.shared.firestore
+                .collection(FirebaseConstants.chats)
+                .document(chatID)
+                .getDocument(as: Chat.self)
+            
+            return document
+        }
+        catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
 }

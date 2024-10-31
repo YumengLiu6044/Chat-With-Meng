@@ -72,7 +72,7 @@ struct ChatView: View {
                             .environmentObject(friendsVM)
                     }
                     else {
-                        MessageLogsSectionView()
+                        MessageLogsSectionView(width: width, height: height)
                             .environmentObject(chattingViewModel)
                     }
                     Spacer()
