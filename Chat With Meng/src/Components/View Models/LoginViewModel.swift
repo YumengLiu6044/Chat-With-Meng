@@ -129,6 +129,7 @@ class LoginViewModel: ObservableObject {
         guard let profilePic = profilePic else {return completion(false)}
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         let path = [FirebaseConstants.users, uid, "profilePic"].joined(separator: "/")
+        
         FirebaseManager.uploadPicture(picture: profilePic, at: path) {
             url in
             if let url = url {
@@ -147,7 +148,7 @@ class LoginViewModel: ObservableObject {
     private func uploadToCloud(profilePicURL: URL, colorData: [CGFloat], completion: @escaping (Bool) -> Void) {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {return}
         guard let emailOnFile = FirebaseManager.shared.auth.currentUser?.email else {return}
-        
+
         var userData = User()
         userData.email = emailOnFile
         userData.userName = String(userData.email[..<emailOnFile.firstIndex(of: "@")!])

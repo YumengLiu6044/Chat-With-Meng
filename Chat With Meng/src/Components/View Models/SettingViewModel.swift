@@ -48,7 +48,7 @@ class SettingViewModel: ObservableObject {
         let path = [FirebaseConstants.users, uid, "profilePic"].joined(separator: "/")
         let colorData = profilePic.averageColor
         
-        FirebaseManager.uploadPicture(picture: self.profilePic!, at: path) {
+        FirebaseManager.uploadPicture(picture: profilePic, at: path) {
             imgURL in
             if let imgURL = imgURL {
                 self.currentUser.profilePicURL = imgURL.absoluteString
