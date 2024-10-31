@@ -20,9 +20,15 @@ struct MessageLogsSectionView: View {
                     width: width,
                     height: height * 0.1
                 )
-                    .environmentObject(chattingVM)
+                .environmentObject(chattingVM)
+            }
+            .onDelete { indexSet in
+                for index in indexSet {
+                    chattingVM.handleOnChatRowDelete(index)
+                }
             }
         }
+        
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
         .listStyle(.plain)

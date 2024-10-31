@@ -346,4 +346,25 @@ class ChattingViewModel: ObservableObject {
         
     }
     
+    public func handleOnChatRowDelete(_ index: Int) {
+        if !chatMap.indices.contains(index) {
+            self.toast = Toast(style: .error, message: "ChatMap doesn't include index: \(index)")
+            return
+        }
+        
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.users)
+            .document(self.currentUserID)
+            .collection(FirebaseConstants.chatsIncludingUser)
+            .document(self.chatMap[index].chatID)
+            .delete {
+                error in
+                if let error = error {
+                    self.toast = Toast(style: .error, message: error.localizedDescription)
+                    return
+                }
+                self.chatMap.remove(at: index)
+            }
+    }
+    
 }

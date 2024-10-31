@@ -85,9 +85,6 @@ struct ChatRowView: View {
         }
     }
     
-   
-
-    
     private func loadChatObj() async {
         guard let obj = await FirebaseManager.makeChatObject(fromID: self.chatMapItem.chatID) else {return}
         
