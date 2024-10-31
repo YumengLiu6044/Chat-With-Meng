@@ -13,28 +13,19 @@ struct MessageLogsSectionView: View {
     var height: CGFloat
     
     var body: some View {
-        ScrollView{
-            VStack(spacing: height * 0.01) {
-                ForEach(chattingVM.chatMap) {chat in
-                    ChatRowView(chatMapItem: chat, width: width, height: height * 0.1)
-                        .environmentObject(chattingVM)
-                        .padding([.leading, .trailing])
-                        .padding(.top, chat == chattingVM.chatMap.first ? 5 : 0)
-                        .scrollTransition {
-                            content, phase in
-                            content
-                                .opacity(phase.isIdentity ? 1 : 0)
-                        }
-                    
-                    if (chat != chattingVM.chatMap.last) {
-                        Divider()
-                            .foregroundStyle(.primary)
-                            .padding([.leading, .trailing])
-                    }
-                }
+        List {
+            ForEach(chattingVM.chatMap) {chat in
+                ChatRowView(
+                    chatMapItem: chat,
+                    width: width,
+                    height: height * 0.1
+                )
+                    .environmentObject(chattingVM)
             }
         }
+        .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
+        .listStyle(.plain)
         .safeAreaInset(edge: .top) {
             SearchBar(text: .constant(""))
         }
