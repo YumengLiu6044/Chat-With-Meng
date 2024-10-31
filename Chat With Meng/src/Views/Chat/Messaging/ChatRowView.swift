@@ -46,7 +46,7 @@ struct ChatRowView: View {
                         
                     Spacer()
                     
-                    Text(timeAgoDescription(from: lastMessage.time))
+                    Text(chattingVM.timeAgoDescription(from: lastMessage.time))
                         .font(.system(size: height * 0.24))
                         .foregroundStyle(.primary)
                         .fontWeight(.medium)
@@ -85,33 +85,7 @@ struct ChatRowView: View {
         }
     }
     
-    private func timeAgoDescription(from date: Date) -> String {
-        let calendar = Calendar.current
-        let now = Date()
-        let components = calendar.dateComponents([.year, .month, .weekOfYear, .day, .hour, .minute, .second], from: date, to: now)
-        let dateFormatter = DateFormatter()
-        
-        if let week = components.weekOfYear, week > 0 {
-            dateFormatter.dateFormat = "MM/dd/yy"
-            return dateFormatter.string(from: date)
-        }
-        
-        if let day = components.day {
-            switch day {
-            case 0:
-                dateFormatter.dateFormat = "h:mm a"
-                return dateFormatter.string(from: date)
-                
-            case 1:
-                return "Yesterday"
-                
-            default:
-                dateFormatter.dateFormat = "EEEE"
-                return dateFormatter.string(from: date)
-            }
-        }
-        return date.formatted(.iso8601)
-    }
+   
 
     
     private func loadChatObj() async {
