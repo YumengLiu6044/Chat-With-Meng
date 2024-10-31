@@ -59,15 +59,17 @@ class ChattingViewModel: ObservableObject {
         switch message.contentType {
         case .text:
             guard let index = self.chatMap.firstIndex(where: {$0.chatID == message.chatID}) else {
-                let newItem = ChatMapItem(chatID: message.chatID, chatLogs: [message])
+                let newItem = ChatMapItem(chatID: message.chatID, mostRecent: message)
                 withAnimation(.smooth) {
-                    self.chatMap.append(newItem)
+                    self.chatMap.insertSorted(newItem: newItem)
                 }
                 return
             }
             withAnimation(.smooth) {
-                self.chatMap[index].chatLogs.append(message)
+                let current = self.chatMap[index].mostRecent
+                self.chatMap[index].mostRecent = min(current, message)
             }
+            self.chatMap.sort{$0.mostRecent < $1.mostRecent}
             break
             
         case .image:
@@ -129,11 +131,13 @@ class ChattingViewModel: ObservableObject {
         
     }
     
-    private func loadChatLogs(forChat chatID: String, completion: @escaping ([Message]?) -> Void) {
+    private func loadChatLogs(forChat chatID: String, limit: Int = 1000, completion: @escaping ([Message]?) -> Void) {
         FirebaseManager.shared.firestore
             .collection(FirebaseConstants.chats)
             .document(chatID)
             .collection(FirebaseConstants.chatLogs)
+            .order(by: Message.keys.time.rawValue, descending: true)
+            .limit(to: limit)
             .getDocuments { snapshot, error in
                 if let error = error {
                     self.toast = Toast(style: .error, message: error.localizedDescription)
@@ -170,12 +174,12 @@ class ChattingViewModel: ObservableObject {
                 snapshot.documents.forEach { document in
                     do {
                         let data = try document.data(as: ChatRef.self)
-                        self.loadChatLogs(forChat: data.chatID){
+                        self.loadChatLogs(forChat: data.chatID, limit: 1){
                             chatLogs in
                             guard let chatLogs = chatLogs else {return}
-                            let mapItem = ChatMapItem(chatID: data.chatID, chatLogs: chatLogs)
+                            let mapItem = ChatMapItem(chatID: data.chatID, mostRecent: chatLogs.first ?? Message(contentType: .text, content: "No message exists"))
                             withAnimation(.smooth) {
-                                self.chatMap.append(mapItem)
+                                self.chatMap.insertSorted(newItem: mapItem)
                             }
                         }
                     }

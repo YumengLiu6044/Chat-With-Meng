@@ -16,14 +16,13 @@ struct ChatRowView: View {
     @State private var chatObj: Chat = Chat()
     
     var body: some View {
+        let lastMessage = chatMapItem.mostRecent
         HStack {
             HStack {
-                if let lastMessage = chatMapItem.chatLogs.last{
-                    Circle()
-                        .fill()
-                        .frame(width: height * 0.15)
-                        .foregroundStyle(.myBlue.opacity(lastMessage.isRead ? 0: 1))
-                }
+                Circle()
+                    .fill()
+                    .frame(width: height * 0.15)
+                    .foregroundStyle(.myBlue.opacity(lastMessage.isRead ? 0: 1))
                 
                 ProfilePicView(
                     imageURL: chatObj.chatCoverURL,
@@ -47,26 +46,22 @@ struct ChatRowView: View {
                         
                     Spacer()
                     
-                    if let lastMessage = chatMapItem.chatLogs.last {
-                        Text(timeAgoDescription(from: lastMessage.time))
-                            .font(.system(size: height * 0.24))
-                            .foregroundStyle(.primary)
-                            .fontWeight(.medium)
-                            .frame(alignment: .topTrailing)
-                    }
+                    Text(timeAgoDescription(from: lastMessage.time))
+                        .font(.system(size: height * 0.24))
+                        .foregroundStyle(.primary)
+                        .fontWeight(.medium)
+                        .frame(alignment: .topTrailing)
                 }
                 .padding(.bottom, height * 0.01)
                 
+                Text(lastMessage.content)
+                    .font(.system(size: height * 0.24))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.5)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity , alignment: .leading)
                 
-                if let lastMessage = chatMapItem.chatLogs.last {
-                    Text(lastMessage.content)
-                        .font(.system(size: height * 0.24))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.5)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity , alignment: .leading)
-                }
                 Spacer()
                 
             }
@@ -128,6 +123,6 @@ struct ChatRowView: View {
 }
 
 #Preview {
-    ChatRowView(chatMapItem: ChatMapItem(chatID: ""))
+    ChatRowView(chatMapItem: ChatMapItem(chatID: "", mostRecent: Message()))
         .environmentObject(ChattingViewModel())
 }

@@ -35,12 +35,17 @@ struct Chat: Codable {
     }
 }
 
-struct ChatMapItem: Identifiable, Equatable {
+struct ChatMapItem: Identifiable, Equatable, Comparable {
     var id: UUID = UUID()
     var chatID: String
-    var chatLogs: [Message] = []
+    var mostRecent: Message
     
     static func ==(lhs: ChatMapItem, rhs: ChatMapItem) -> Bool {
         return lhs.chatID == rhs.chatID
     }
+    
+    static func <(lhs: ChatMapItem, rhs: ChatMapItem) -> Bool {
+        return lhs.mostRecent < rhs.mostRecent
+    }
 }
+
