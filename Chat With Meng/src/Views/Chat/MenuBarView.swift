@@ -10,6 +10,7 @@ import SwiftUI
 struct MenuBarView: View {
     @Namespace private var selectionAnimation
     @EnvironmentObject var chatViewModel: ChatViewModel
+    @EnvironmentObject var chattingVM: ChattingViewModel
     @EnvironmentObject var friendVM: FriendsViewModel
     
     var width: CGFloat = 300
@@ -25,7 +26,7 @@ struct MenuBarView: View {
     
     var body: some View {
         HStack {
-            IconView(iconName: "message", count: 5, size: 35) {
+            IconView(iconName: "message", count: self.chattingVM.countUnreadMessages(), size: 35) {
                 chatViewModel.switchTo(view: .messages)
             }
             .frame(width: self.width * 0.2)

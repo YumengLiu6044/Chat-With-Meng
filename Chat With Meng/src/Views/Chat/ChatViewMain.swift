@@ -47,6 +47,7 @@ struct ChatViewMain: View {
                     MenuBarView(width: width * 0.9, height: height * 0.1)
                         .environmentObject(chatViewModel)
                         .environmentObject(friendsViewModel)
+                        .environmentObject(chattingViewModel)
                         .frame(maxHeight: .infinity, alignment: .bottom)
                         .ignoresSafeArea(.keyboard)
                 }

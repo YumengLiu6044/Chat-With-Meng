@@ -202,6 +202,10 @@ class ChattingViewModel: ObservableObject {
         }
     }
     
+    public func countUnreadMessages() -> Int {
+        return self.chatMap.count(where: {!$0.mostRecent.isRead})
+    }
+    
     public func makeFriend(from id: String?, notifications: Bool = true, completion: @escaping (Friend?) -> Void) {
         guard let id = id else {return completion(nil)}
         
