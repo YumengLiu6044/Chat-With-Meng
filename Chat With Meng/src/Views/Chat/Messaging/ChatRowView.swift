@@ -83,6 +83,10 @@ struct ChatRowView: View {
                 await loadChatObj()
             }
         }
+        .onTapGesture {
+            chattingVM.showMessageView = true
+            chattingVM.chatObjInView = chatObj
+        }
     }
     
     private func loadChatObj() async {

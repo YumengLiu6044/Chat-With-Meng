@@ -13,6 +13,7 @@ import FirebaseFirestore
 class ChattingViewModel: ObservableObject {
     @Published var showNewChat: Bool = false
     @Published var isComposing: Bool = false
+    @Published var showMessageView: Bool = false
     
     @Published var searchkey: String = ""
     
@@ -22,6 +23,8 @@ class ChattingViewModel: ObservableObject {
     @Published var searchResults: [Friend] = []
     
     @Published var toast: Toast? = nil
+    
+    @Published var chatObjInView: Chat = Chat()
     
     private var currentUserID: String = ""
     private var incomingMessageListener: ListenerRegistration? = nil
@@ -290,17 +293,21 @@ class ChattingViewModel: ObservableObject {
         }
     }
     
-    private func chatExists(of members: [String]) async -> Bool {
+    private func chatExists(of members: [String]) async -> Chat? {
         let query = FirebaseManager.shared.firestore
             .collection(FirebaseConstants.chats)
             .whereField(Chat.keys.userIDArray.rawValue, isEqualTo: members)
         
         do {
-            let docs = try await query.getDocuments()
-            return docs.count > 0
+            guard let docs = try await query.getDocuments().documents.first
+            else {
+                return nil
+            }
+            let firstData = try docs.data(as: Chat.self)
+            return firstData
         }
         catch {
-            return false
+            return nil
         }
     }
     
@@ -319,10 +326,19 @@ class ChattingViewModel: ObservableObject {
         }
         chatMembers.append(self.currentUserID)
         
-        if await !chatExists(of: chatMembers) {
+        if let chatObj = await chatExists(of: chatMembers) {
+            self.chatObjInView = chatObj
+            self.showMessageView = true
+            self.isComposing = false
+        }
+        else {
             self.showNewChat = true
         }
     }
+    
+//    public func processAirPlaneButtonPress(friend: Friend) {
+//        processGroupChatCreation(with: friend.userName, of: <#T##[Friend]#>)
+//    }
     
     public func processGroupChatCreation(with name: String, of members: [Friend]) {
         FirebaseManager.makeGroupChat(with: name, of: members) { toast in
@@ -365,6 +381,13 @@ class ChattingViewModel: ObservableObject {
                 }
                 self.chatMap.remove(at: index)
             }
+    }
+    
+    public func loadChatOnAppear(fromChat chatID: String) async {
+        guard let chatObj = await FirebaseManager.makeChatObject(fromID: chatID)
+        else {return}
+        
+        self.chatObjInView = chatObj
     }
     
 }

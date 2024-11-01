@@ -11,6 +11,7 @@ struct FriendsView: View {
     
     @EnvironmentObject var chatViewModel: ChatViewModel
     @EnvironmentObject var friendsViewModel: FriendsViewModel
+    @EnvironmentObject var chattingVM:    ChattingViewModel
 
     @State private var width:   CGFloat = 100
     @State private var height:  CGFloat = 100

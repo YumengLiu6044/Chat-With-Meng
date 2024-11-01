@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct ChatView: View {
-    @EnvironmentObject var friendsVM: FriendsViewModel
-    @EnvironmentObject var chattingViewModel: ChattingViewModel
+    @EnvironmentObject var friendsVM:           FriendsViewModel
+    @EnvironmentObject var chattingViewModel:   ChattingViewModel
+    @EnvironmentObject var chatVM:              ChatViewModel
     
     @State private var width: CGFloat = 100
     @State private var height: CGFloat = 100
@@ -74,6 +75,7 @@ struct ChatView: View {
                     else {
                         MessageLogsSectionView(width: width, height: height)
                             .environmentObject(chattingViewModel)
+                            .environmentObject(chatVM)
                     }
                     Spacer()
                     
@@ -94,8 +96,4 @@ struct ChatView: View {
         }
         
     }
-}
-
-#Preview {
-    ChatView()
 }

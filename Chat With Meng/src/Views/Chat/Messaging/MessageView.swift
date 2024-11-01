@@ -11,7 +11,14 @@ struct MessageView: View {
     @EnvironmentObject var chattingVM: ChattingViewModel
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        let chatInView = chattingVM.chatObjInView
+        
+        NavigationStack {
+            VStack {
+                
+            }
+            .navigationTitle(chatInView.chatTitle)
+        }
     }
 }
 

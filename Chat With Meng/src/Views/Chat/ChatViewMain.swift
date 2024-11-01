@@ -30,11 +30,13 @@ struct ChatViewMain: View {
                     ChatView()
                         .environmentObject(friendsViewModel)
                         .environmentObject(chattingViewModel)
+                        .environmentObject(chatViewModel)
                         .transition(.move(edge: .leading))
                 case .friends:
                     FriendsView()
-                        .environmentObject(chatViewModel)
                         .environmentObject(friendsViewModel)
+                        .environmentObject(chattingViewModel)
+                        .environmentObject(chatViewModel)
                         
                 case .settings:
                     SettingsView()
@@ -45,9 +47,9 @@ struct ChatViewMain: View {
                 
                 if self.chatViewModel.showMenu {
                     MenuBarView(width: width * 0.9, height: height * 0.1)
-                        .environmentObject(chatViewModel)
                         .environmentObject(friendsViewModel)
                         .environmentObject(chattingViewModel)
+                        .environmentObject(chatViewModel)
                         .frame(maxHeight: .infinity, alignment: .bottom)
                         .ignoresSafeArea(.keyboard)
                 }
