@@ -278,19 +278,24 @@ class FriendsViewModel: ObservableObject {
                 if data.userName == self.currentUser.userName {
                     continue
                 }
-                self.makeFriend(from: data.id) { friend in
-                    guard let friend = friend else {return}
-                    if let existingFriendIndex = self.friends.firstIndex(where: {friend == $0}) {
-                        self.friendSearchResult.append(self.friends[existingFriendIndex])
-                        self.sortSearchResult()
-                        return
-                    }
+                guard let dataID = data.id else {continue}
+                let friend = Friend(
+                    email: data.email,
+                    userID: dataID,
+                    profilePicURL: data.profilePicURL,
+                    userName: data.userName,
+                    notifications: data.humanNotifications,
+                    profileOverlayData: data.profileOverlayData
+                )
+                if let index = self.friends.firstIndex(where: {$0 == friend}) {
                     withAnimation(.smooth) {
-                        self.friendSearchResult.append(friend)
+                        self.friendSearchResult.append(self.friends[index])
                     }
-                    self.sortSearchResult()
+                    continue
                 }
-                
+                withAnimation(.smooth) {
+                    self.friendSearchResult.append(friend)
+                }
             }
         }
         catch {
@@ -303,7 +308,7 @@ class FriendsViewModel: ObservableObject {
         self.friendSearchResult = []
         await self.searchByKey(from: searchKey.lowercased())
         await self.searchByKey(from: searchKey.uppercased())
-        
+        self.sortSearchResult()
     }
     
     public func sendFriendRequest(to userID: String?) {

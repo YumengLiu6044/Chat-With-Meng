@@ -32,4 +32,6 @@ struct Friend: Identifiable, Equatable, Hashable {
     static func ==(lhs: Friend, rhs: Friend) -> Bool {
         return lhs.userID == rhs.userID
     }
+    
+    
 }
