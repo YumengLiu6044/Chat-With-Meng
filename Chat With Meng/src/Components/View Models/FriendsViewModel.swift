@@ -29,6 +29,7 @@ class FriendsViewModel: ObservableObject {
     @Published var currentUser:     User        = User()
     
     @Published var showProfile:     Bool = false
+    @Published var isSearching:     Bool = false
     
     public func removeListeners() {
         self.currentFriendsListener?.remove()
@@ -263,12 +264,12 @@ class FriendsViewModel: ObservableObject {
 
     }
     
-    @MainActor
-    private func searchByKey(from searchKey: String) async {
+    public func searchUsers(from searchKey: String) async {
+        self.friendSearchResult = []
         do {
             let queryDocs = try await FirebaseManager.shared.firestore.collection(FirebaseConstants.users)
-                .whereField(User.keys.userName.rawValue, isGreaterThanOrEqualTo: searchKey)
-                .whereField(User.keys.userName.rawValue, isLessThanOrEqualTo: searchKey + "~")
+                .whereField(User.keys.userName.rawValue, isGreaterThanOrEqualTo: searchKey.uppercased())
+                .whereField(User.keys.userName.rawValue, isLessThanOrEqualTo: searchKey.lowercased())
                 .order(by: User.keys.userName.rawValue)
                 .limit(to: 10)
                 .getDocuments()
@@ -278,15 +279,26 @@ class FriendsViewModel: ObservableObject {
                 if data.userName == self.currentUser.userName {
                     continue
                 }
-                self.makeFriend(from: data.id) { friend in
-                    guard let friend = friend else {return}
-                    if let existingFriendIndex = self.friends.firstIndex(where: {friend == $0}) {
-                        self.friendSearchResult.append(self.friends[existingFriendIndex])
-                        self.sortSearchResult()
-                        return
-                    }
+                print(data.userName)
+                guard let friendID = data.id else {return}
+                let friend = Friend(
+                    email: data.email,
+                    userID: friendID,
+                    profilePicURL: data.profilePicURL,
+                    userName: data.userName,
+                    profileOverlayData: data.profileOverlayData
+                )
+                
+                if let existingFriendIndex = self.friends.firstIndex(where: {friend == $0}) {
+                    self.friendSearchResult.append(self.friends[existingFriendIndex])
+                    self.sortSearchResult()
+                    return
+                }
+                
+                self.makeFriend(from: data.id) { newFriend in
+                    guard let newFriend = newFriend else {return}
                     withAnimation(.smooth) {
-                        self.friendSearchResult.append(friend)
+                        self.friendSearchResult.append(newFriend)
                     }
                     self.sortSearchResult()
                 }
@@ -297,13 +309,6 @@ class FriendsViewModel: ObservableObject {
             print(error.localizedDescription)
             
         }
-    }
-    
-    public func searchUsers(from searchKey: String) async {
-        self.friendSearchResult = []
-        await self.searchByKey(from: searchKey.lowercased())
-        await self.searchByKey(from: searchKey.uppercased())
-        
     }
     
     public func sendFriendRequest(to userID: String?) {
