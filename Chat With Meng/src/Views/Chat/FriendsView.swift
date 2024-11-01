@@ -34,6 +34,8 @@ struct FriendsView: View {
                 .padding([.leading, .trailing])
                 .padding(.top, index == 0 ? height * 0.02 : 0)
                 .environmentObject(self.friendsViewModel)
+                .environmentObject(self.chatViewModel)
+                .environmentObject(self.chattingVM)
                 
                 if (index != friendsViewModel.friendSearchResult.count - 1) {
                     Divider()
@@ -85,7 +87,9 @@ struct FriendsView: View {
                                               sectionTitle: "Requests",
                                               width: width,
                                               height: height)
-                            .environmentObject(friendsViewModel)
+                            .environmentObject(self.friendsViewModel)
+                            .environmentObject(self.chatViewModel)
+                            .environmentObject(self.chattingVM)
                             
                         }
                         if self.searchKey.isEmpty && !self.friendsViewModel.friends.isEmpty {
@@ -96,7 +100,9 @@ struct FriendsView: View {
                                               height: height,
                                               hideTitle: self.friendsViewModel.friendRequests.isEmpty
                             )
-                            .environmentObject(friendsViewModel)
+                            .environmentObject(self.friendsViewModel)
+                            .environmentObject(self.chatViewModel)
+                            .environmentObject(self.chattingVM)
                         }
                     }
                     .listRowSpacing(height * 0.05)
@@ -104,7 +110,20 @@ struct FriendsView: View {
                     .scrollClipDisabled()
                     Spacer()
                 }
-                
+                .navigationDestination(isPresented: $chattingVM.showMessageView) {
+                    MessageView()
+                        .environmentObject(chattingVM)
+                        .onAppear {
+                            withAnimation(.smooth) {
+                                chatViewModel.showMenu = false
+                            }
+                        }
+                        .onDisappear {
+                            withAnimation(.smooth) {
+                                chatViewModel.showMenu = true
+                            }
+                        }
+                }
                 .navigationDestination(isPresented: $friendsViewModel.showProfile, destination: {
                     ProfileView(friend: $friendsViewModel.friendInView, rowState: friendsViewModel.rowState)
                         .onDisappear {

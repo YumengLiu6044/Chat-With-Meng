@@ -44,47 +44,45 @@ class FirebaseManager: NSObject {
         }
     }
     
-    static func makeGroupChat(with name: String, of members: [Friend], completion: @escaping (Toast) -> Void) {
+    static func makeGroupChat(with name: String, of members: [Friend], completion: @escaping (Toast, Chat?) -> Void) {
         if (name.isEmpty) {
             let toast = Toast(style: .error, message: "Name is empty")
-            return completion(toast)
+            return completion(toast, nil)
         }
         if (name.allSatisfy {$0.isWhitespace}) {
             let toast = Toast(style: .error, message: "At least one non-space character is required")
-            return completion(toast)
+            return completion(toast, nil)
         }
         if (!name.allSatisfy {$0.isLetter || $0.isNumber || $0.isWhitespace}) {
             let toast = Toast(style: .error, message: "Only alpha-numeric characters and spaces are allowed")
-            return completion(toast)
+            return completion(toast, nil)
         }
         if (name.count > 30) {
             let toast = Toast(style: .error, message: "The maximum character count is 30")
-            return completion(toast)
+            return completion(toast, nil)
         }
+        let chat = Chat (
+            chatID: nil,
+            userIDArray: Dictionary(uniqueKeysWithValues: members.map { ($0.userID, "") }),
+            chatTitle: name
+        )
         
         uploadChatDataToFirestore(
-            members: members,
-            name: name
+            chat: chat
         ) {
             docID in
             if let docID = docID {
                 let toast = Toast(style: .success, message: docID)
-                return completion(toast)
+                return completion(toast, chat)
             }
             else {
                 let toast = Toast(style: .error, message: "Failed to upload chat data")
-                return completion(toast)
+                return completion(toast, nil)
             }
         }
     }
     
-    static private func uploadChatDataToFirestore(members: [Friend], name: String, completion: @escaping (String?) -> Void) {
-        let chat = Chat (
-            chatID: nil,
-            userIDArray: members.compactMap {$0.userID},
-            chatTitle: name
-        )
-        
+    static private func uploadChatDataToFirestore(chat: Chat, completion: @escaping (String?) -> Void) {
         do {
             let docRef = try FirebaseManager.shared.firestore
                 .collection(FirebaseConstants.chats)
@@ -130,7 +128,7 @@ class FirebaseManager: NSObject {
                         let data = try document.data(as: Chat.self)
                         
                         for member in data.userIDArray {
-                            setIncomingMessage(for: member, message: message)
+                            setIncomingMessage(for: member.key, message: message)
                         }
                     }
                     catch {

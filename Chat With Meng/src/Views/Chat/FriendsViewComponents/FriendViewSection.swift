@@ -2,8 +2,12 @@ import SwiftUI
 
 struct FriendViewSection: View {
     @EnvironmentObject var friendVM: FriendsViewModel
+    @EnvironmentObject var chattingVM: ChattingViewModel
+    @EnvironmentObject var chatVM: ChatViewModel
+    
     @Binding var showFriends: Bool
     @Binding var friends: [Friend]
+    
     var sectionTitle: String
     var width: CGFloat
     var height: CGFloat
@@ -45,6 +49,9 @@ struct FriendViewSection: View {
                             height: height * 0.1,
                             resultState: determineState(of: friends[index])
                         )
+                        .environmentObject(friendVM)
+                        .environmentObject(chatVM)
+                        .environmentObject(chattingVM)
                         .padding([.leading, .trailing])
                         .padding(.top, index == 0 ? 5 : 0)
                         .scrollTransition {

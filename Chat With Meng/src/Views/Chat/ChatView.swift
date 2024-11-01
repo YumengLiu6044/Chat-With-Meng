@@ -80,6 +80,20 @@ struct ChatView: View {
                     Spacer()
                     
                 }
+                .navigationDestination(isPresented: $chattingViewModel.showMessageView) {
+                    MessageView()
+                        .environmentObject(chattingViewModel)
+                        .onAppear {
+                            withAnimation(.smooth) {
+                                chatVM.showMenu = false
+                            }
+                        }
+                        .onDisappear {
+                            withAnimation(.smooth) {
+                                chatVM.showMenu = true
+                            }
+                        }
+                }
                 .navigationDestination(isPresented: $chattingViewModel.showNewChat) {
                     NewChatView(
                         width: width,

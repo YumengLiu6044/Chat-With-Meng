@@ -21,7 +21,7 @@ struct ChatRef : Codable {
 
 struct Chat: Codable {
     @DocumentID var chatID: String? = nil
-    var userIDArray: [String] = []
+    var userIDArray: [String : String?] = [:]
     var chatTitle: String = ""
     var chatCoverURL: String = ""
     var chatCoverOverlay: [CGFloat] = [0, 0, 0]

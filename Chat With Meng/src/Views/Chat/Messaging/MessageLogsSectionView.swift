@@ -32,20 +32,6 @@ struct MessageLogsSectionView: View {
                 }
             }
         }
-        .navigationDestination(isPresented: $chattingVM.showMessageView) {
-            MessageView()
-                .environmentObject(chattingVM)
-                .onAppear {
-                    withAnimation(.smooth) {
-                        chatVM.showMenu = false
-                    }
-                }
-                .onDisappear {
-                    withAnimation(.smooth) {
-                        chatVM.showMenu = true
-                    }
-                }
-        }
         .scrollIndicators(.hidden)
         .listStyle(.plain)
         .safeAreaInset(edge: .top) {

@@ -10,6 +10,9 @@ import SwiftUI
 
 struct FriendRowView: View {
     @EnvironmentObject var friendVM: FriendsViewModel
+    @EnvironmentObject var chattingVM: ChattingViewModel
+    @EnvironmentObject var chatVM: ChatViewModel
+    
     @Binding var friend: Friend
     
     var width: CGFloat  = 300
@@ -58,10 +61,12 @@ struct FriendRowView: View {
                     }
                 }
                 
-                
             case .friended:
                 IconView(iconName: "paperplane") {
-                    print("Message")
+                    // self.chatVM.switchTo(view: .messages)
+                    Task {
+                        await self.chattingVM.processAirPlaneButtonPress(friend: self.friend)
+                    }
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.trailing)

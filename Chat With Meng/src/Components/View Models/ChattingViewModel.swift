@@ -296,7 +296,8 @@ class ChattingViewModel: ObservableObject {
     private func chatExists(of members: [String]) async -> Chat? {
         let query = FirebaseManager.shared.firestore
             .collection(FirebaseConstants.chats)
-            .whereField(Chat.keys.userIDArray.rawValue, isEqualTo: members)
+            .whereField(Chat.keys.userIDArray.rawValue,
+                        isEqualTo: Dictionary(uniqueKeysWithValues: members.map { ($0, "") }))
         
         do {
             guard let docs = try await query.getDocuments().documents.first
@@ -336,17 +337,36 @@ class ChattingViewModel: ObservableObject {
         }
     }
     
-//    public func processAirPlaneButtonPress(friend: Friend) {
-//        processGroupChatCreation(with: friend.userName, of: <#T##[Friend]#>)
-//    }
+    public func processAirPlaneButtonPress(friend: Friend) async {
+        let chatMembers = [self.currentUserID, friend.userID]
+        
+        if let chatObj = await chatExists(of: chatMembers) {
+            self.chatObjInView = chatObj
+            self.showMessageView = true
+            self.isComposing = false
+        }
+        else {
+            self.makeFriend(from: self.currentUserID){
+                selfAsFriend in
+                guard let selfAsFriend = selfAsFriend else {return}
+                let members = [selfAsFriend, friend]
+                self.processGroupChatCreation(with: friend.userName, of: members, sendWelcomeMessage: false)
+            }
+        }
+        
+    }
     
-    public func processGroupChatCreation(with name: String, of members: [Friend]) {
-        FirebaseManager.makeGroupChat(with: name, of: members) { toast in
-            
-            if toast.style == .success {
+    public func processGroupChatCreation(with name: String, of members: [Friend], sendWelcomeMessage: Bool = true) {
+        FirebaseManager.makeGroupChat(with: name, of: members) { toast, chat in
+            if toast.style == .success, let chat = chat {
                 self.showNewChat = false
                 self.isComposing = false
+                self.chatObjInView = chat
+                self.showMessageView = true
                 
+                if !sendWelcomeMessage {
+                    return
+                }
                 FirebaseManager.sendMessage(
                     fromSender: self.currentUserID,
                     toChat: toast.message,
