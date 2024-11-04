@@ -93,6 +93,7 @@ struct ChatRowView: View {
         guard let obj = await FirebaseManager.makeChatObject(fromID: self.chatMapItem.chatID) else {return}
         
         self.chatObj = obj
+        (self.chatObj.chatCoverURL, self.chatObj.chatCoverOverlay) = await chattingVM.determineCoverPic(forChat: chatObj)
         
     }
 }

@@ -410,4 +410,28 @@ class ChattingViewModel: ObservableObject {
         self.chatObjInView = chatObj
     }
     
+    public func determineCoverPic(forChat chatObj: Chat) async -> (String, [CGFloat]) {
+        if !chatObj.chatCoverURL.isEmpty {
+            return (chatObj.chatCoverURL, chatObj.chatCoverOverlay)
+        }
+        if chatObj.userIDArray.count == 2 {
+            guard let other = chatObj.userIDArray.first(where: {$0.key != self.currentUserID})?.key else {
+                return ("", [0, 0, 0])
+            }
+            do {
+                let document = try await FirebaseManager.shared.firestore
+                    .collection(FirebaseConstants.users)
+                    .document(other)
+                    .getDocument(as: User.self)
+                return (document.profilePicURL, document.profileOverlayData)
+            }
+            catch {
+                print(error.localizedDescription.localizedLowercase)
+                return ("", [0, 0, 0])
+            }
+                
+        }
+        
+        return ("", [0, 0, 0])
+    }
 }
