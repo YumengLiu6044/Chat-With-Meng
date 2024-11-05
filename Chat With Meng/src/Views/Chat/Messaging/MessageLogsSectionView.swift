@@ -18,12 +18,14 @@ struct MessageLogsSectionView: View {
         
         List {
             ForEach(chatMap) {chat in
-                ChatRowView(
-                    chatMapItem: chat,
-                    width: width,
-                    height: height * 0.1
-                )
-                .environmentObject(chattingVM)
+                if let index = chatMap.firstIndex(of: chat) {
+                    ChatRowView(
+                        chatMapItem: $chattingVM.chatMap[index],
+                        width: width,
+                        height: height * 0.1
+                    )
+                    .environmentObject(chattingVM)
+                }
                 
             }
             .onDelete { indexSet in

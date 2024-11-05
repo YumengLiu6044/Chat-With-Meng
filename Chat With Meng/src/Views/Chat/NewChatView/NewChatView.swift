@@ -94,7 +94,9 @@ struct NewChatView: View {
                 Spacer()
                 
                 Button {
-                    chattingVM.processGroupChatCreation(with: groupName, of: members)
+                    Task {
+                        await chattingVM.processGroupChatCreation(with: groupName, of: members)
+                    }
                 }
                 label: {
                     HStack {
@@ -118,8 +120,8 @@ struct NewChatView: View {
             .ignoresSafeArea(.keyboard)
             .navigationTitle("New Chat")
             .onAppear {
-                self.chattingVM.getMembers { members in
-                    guard let members = members else {return}
+                Task {
+                    guard let members = await self.chattingVM.getMembers() else {return}
                     withAnimation {
                         self.members = members
                     }

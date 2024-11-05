@@ -13,12 +13,11 @@ struct MessageView: View {
     var body: some View {
         let chatInView = chattingVM.chatObjInView
         
-        NavigationStack {
-            VStack {
-                
-            }
-            .navigationTitle(chatInView.chatTitle)
+        VStack {
+            
         }
+        .navigationTitle(chatInView.chatTitle)
+        
     }
 }
 

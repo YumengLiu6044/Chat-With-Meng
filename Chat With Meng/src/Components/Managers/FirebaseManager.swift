@@ -44,22 +44,22 @@ class FirebaseManager: NSObject {
         }
     }
     
-    static func makeGroupChat(with name: String, of members: [Friend], completion: @escaping (Toast, Chat?) -> Void) {
+    static func makeGroupChat(with name: String, of members: [Friend]) async -> (Toast, Chat?) {
         if (name.isEmpty) {
             let toast = Toast(style: .error, message: "Name is empty")
-            return completion(toast, nil)
+            return (toast, nil)
         }
         if (name.allSatisfy {$0.isWhitespace}) {
             let toast = Toast(style: .error, message: "At least one non-space character is required")
-            return completion(toast, nil)
+            return (toast, nil)
         }
         if (!name.allSatisfy {$0.isLetter || $0.isNumber || $0.isWhitespace}) {
             let toast = Toast(style: .error, message: "Only alpha-numeric characters and spaces are allowed")
-            return completion(toast, nil)
+            return (toast, nil)
         }
         if (name.count > 30) {
             let toast = Toast(style: .error, message: "The maximum character count is 30")
-            return completion(toast, nil)
+            return (toast, nil)
         }
         let chat = Chat (
             chatID: nil,
@@ -67,31 +67,26 @@ class FirebaseManager: NSObject {
             chatTitle: name
         )
         
-        uploadChatDataToFirestore(
-            chat: chat
-        ) {
-            docID in
-            if let docID = docID {
-                let toast = Toast(style: .success, message: docID)
-                return completion(toast, chat)
-            }
-            else {
-                let toast = Toast(style: .error, message: "Failed to upload chat data")
-                return completion(toast, nil)
-            }
+        guard let chatID = await uploadChatDataToFirestore(chat: chat)
+        else {
+            let toast = Toast(style: .error, message: "Failed to upload chat data")
+            return (toast, nil)
         }
+        
+        let toast = Toast(style: .success, message: chatID)
+        return (toast, chat)
     }
     
-    static private func uploadChatDataToFirestore(chat: Chat, completion: @escaping (String?) -> Void) {
+    static private func uploadChatDataToFirestore(chat: Chat) async -> String? {
         do {
             let docRef = try FirebaseManager.shared.firestore
                 .collection(FirebaseConstants.chats)
                 .addDocument(from: chat)
-            return completion(docRef.documentID)
+            return docRef.documentID
             
         }
         catch {
-            return completion(nil)
+            return nil
         }
     }
     
@@ -101,8 +96,8 @@ class FirebaseManager: NSObject {
         contentType: ContentType,
         content: String,
         time: Date
-    ){
-        let message = Message(
+    ) async {
+        var message = Message(
             contentType: contentType,
             content: content,
             chatID: chatID,
@@ -110,62 +105,55 @@ class FirebaseManager: NSObject {
         )
         
         // Add message to chatLogs at chatID
-        updateChatLog(atChatID: chatID, message: message)
+        guard let messageID = updateChatLog(atChatID: chatID, message: message)
+        else {
+            print("No message id found")
+            return
+        }
+        print(messageID)
+        message.id = messageID
         
         // For all members of chat, send message to incomingMessages
-        FirebaseManager.shared.firestore
-            .collection(FirebaseConstants.chats)
-            .document(chatID)
-            .getDocument {
-                document, error in
-                if let error = error {
-                    print(error.localizedDescription)
-                    return
-                }
-                
-                if let document = document {
-                    do {
-                        let data = try document.data(as: Chat.self)
-                        
-                        for member in data.userIDArray {
-                            setIncomingMessage(for: member.key, message: message)
-                        }
-                    }
-                    catch {
-                        print(error.localizedDescription)
-                        return
-                    }
-                }
-                else {
-                    print("No document found")
-                }
-                
+        do {
+            let data = try await FirebaseManager.shared.firestore
+                .collection(FirebaseConstants.chats)
+                .document(chatID)
+                .getDocument(as: Chat.self)
+            
+            for member in data.userIDArray {
+                setIncomingMessage(for: member.key, message: message)
             }
+        }
+        catch {
+            
+        }
     }
     
-    static private func updateChatLog(atChatID chatID: String, message: Message) {
+    static private func updateChatLog(atChatID chatID: String, message: Message) -> String? {
         do {
-            try FirebaseManager.shared.firestore
+            let docID = try FirebaseManager.shared.firestore
                 .collection(FirebaseConstants.chats)
                 .document(chatID)
                 .collection(FirebaseConstants.chatLogs)
-                .addDocument(from: message) {
-                    error in
-                    print(error?.localizedDescription ?? "")
-                }
+                .addDocument(from: message)
+            return docID.documentID
         }
         catch {
             print(error.localizedDescription)
+            return nil
         }
+        
     }
     
     static private func setIncomingMessage(for userID: String, message: Message) {
         do {
+            guard let messageID = message.id else {return}
             try FirebaseManager.shared.firestore
                 .collection(FirebaseConstants.users)
                 .document(userID)
                 .collection(FirebaseConstants.incomingChats)
-                .addDocument(from: message) {
+                .document(messageID)
+                .setData(from: message) {
                     error in
                     print(error?.localizedDescription ?? "")
                 }
@@ -189,5 +177,32 @@ class FirebaseManager: NSObject {
             return nil
         }
     }
+    
+    static func makeFriend(from id: String?, notifications: Bool = true) async -> Friend? {
+        guard let id = id else {return nil}
+        
+        do {
+            let data = try await FirebaseManager.shared.firestore
+                .collection(FirebaseConstants.users)
+                .document(id)
+                .getDocument(as: User.self)
+            
+            guard let friendID = data.id else {return nil}
+            let dataAsFriend = Friend(
+                email: data.email,
+                userID: friendID,
+                profilePicURL: data.profilePicURL,
+                userName: data.userName,
+                notifications: notifications,
+                profileOverlayData: data.profileOverlayData
+            )
+            return dataAsFriend
+        }
+        catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
     
 }

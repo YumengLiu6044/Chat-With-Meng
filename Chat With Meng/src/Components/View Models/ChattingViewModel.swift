@@ -237,43 +237,6 @@ class ChattingViewModel: ObservableObject {
         return date.formatted(.iso8601)
     }
     
-    public func makeFriend(from id: String?, notifications: Bool = true, completion: @escaping (Friend?) -> Void) {
-        guard let id = id else {return completion(nil)}
-        
-        FirebaseManager.shared.firestore
-            .collection(FirebaseConstants.users)
-            .document(id)
-            .getDocument {
-            document, error in
-            
-            if let error = error {
-                self.toast = Toast(style: .error, message: error.localizedDescription)
-                return
-            }
-            if let document = document {
-                do {
-                    let data = try document.data(as: User.self)
-                    guard let friendID = data.id else {return}
-                    let dataAsFriend = Friend(
-                        email: data.email,
-                        userID: friendID,
-                        profilePicURL: data.profilePicURL,
-                        userName: data.userName,
-                        notifications: notifications,
-                        profileOverlayData: data.profileOverlayData
-                    )
-                    return completion(dataAsFriend)
-                    
-                } catch {
-                    self.toast = Toast(style: .error, message: "Error decoding document")
-                }
-            }
-            else {
-                self.toast = Toast(style: .error, message: "Error getting document")
-            }
-        }
-        return completion(nil)
-    }
     
     public func moveSearchResultToRecipient(for friend: Friend) {
         withAnimation(.smooth) {
@@ -312,13 +275,14 @@ class ChattingViewModel: ObservableObject {
         }
     }
     
-    public func getMembers(completion: @escaping ([Friend]?) -> Void)  {
+    public func getMembers() async -> [Friend]? {
         var total = self.recipientList
-        self.makeFriend(from: self.currentUserID) { friend in
-            guard let friend = friend else {return completion(nil)}
-            total.append(friend)
-            return completion(total)
+        guard let friend = await FirebaseManager.makeFriend(from: self.currentUserID) else
+        {
+            return nil
         }
+        total.append(friend)
+        return total
     }
     
     public func processSendButtonClick() async{
@@ -346,40 +310,39 @@ class ChattingViewModel: ObservableObject {
             self.isComposing = false
         }
         else {
-            self.makeFriend(from: self.currentUserID){
-                selfAsFriend in
-                guard let selfAsFriend = selfAsFriend else {return}
-                let members = [selfAsFriend, friend]
-                self.processGroupChatCreation(with: friend.userName, of: members, sendWelcomeMessage: false)
-            }
+            guard let selfAsFriend =  await FirebaseManager.makeFriend(from: self.currentUserID)
+            else {return}
+            let members = [selfAsFriend, friend]
+            await self.processGroupChatCreation(with: friend.userName, of: members, sendWelcomeMessage: false)
         }
         
     }
     
-    public func processGroupChatCreation(with name: String, of members: [Friend], sendWelcomeMessage: Bool = true) {
-        FirebaseManager.makeGroupChat(with: name, of: members) { toast, chat in
-            if toast.style == .success, let chat = chat {
+    public func processGroupChatCreation(with name: String, of members: [Friend], sendWelcomeMessage: Bool = true) async {
+        let (toast, chat) = await FirebaseManager.makeGroupChat(with: name, of: members)
+        if toast.style == .success, let chat = chat {
+            withAnimation(.smooth) {
                 self.showNewChat = false
                 self.isComposing = false
                 self.chatObjInView = chat
                 self.showMessageView = true
-                
-                if !sendWelcomeMessage {
-                    return
-                }
-                FirebaseManager.sendMessage(
-                    fromSender: self.currentUserID,
-                    toChat: toast.message,
-                    contentType: .text,
-                    content: "You have been invited to \(name)",
-                    time: .now
-                )
             }
-            else {
-                self.toast = toast
+            
+            if !sendWelcomeMessage {
+                return
             }
+            
+            await FirebaseManager.sendMessage(
+                fromSender: self.currentUserID,
+                toChat: toast.message,
+                contentType: .text,
+                content: "You have been invited to \(name)",
+                time: .now
+            )
         }
-        
+        else {
+            self.toast = toast
+        }
     }
     
     public func handleOnChatRowDelete(_ index: Int) {
@@ -433,5 +396,14 @@ class ChattingViewModel: ObservableObject {
         }
         
         return ("", [0, 0, 0])
+    }
+    
+    public func markAsRead(inChat chatID: String) {
+        guard let index = self.chatMap.first(where: {$0.chatID == chatID}) else {return}
+        
+        FirebaseManager.shared.firestore
+            .collection(FirebaseConstants.chats)
+            .document(chatID)
+            .collection(FirebaseConstants.chatLogs)
     }
 }

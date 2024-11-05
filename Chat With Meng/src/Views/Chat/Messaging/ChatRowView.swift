@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChatRowView: View {
     @EnvironmentObject var chattingVM: ChattingViewModel
-    var chatMapItem: ChatMapItem
+    @Binding var chatMapItem: ChatMapItem
     var width: CGFloat = 300
     var height: CGFloat = 80
     
@@ -99,6 +99,6 @@ struct ChatRowView: View {
 }
 
 #Preview {
-    ChatRowView(chatMapItem: ChatMapItem(chatID: "", mostRecent: Message()))
+    ChatRowView(chatMapItem: .constant(ChatMapItem(chatID: "", mostRecent: Message())))
         .environmentObject(ChattingViewModel())
 }
