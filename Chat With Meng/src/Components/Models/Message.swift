@@ -8,7 +8,7 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct Message: Codable, Comparable {
+struct Message: Codable, Comparable, Identifiable {
     @DocumentID var id: String? = nil
     var contentType: ContentType = .text
     var content: String = ""

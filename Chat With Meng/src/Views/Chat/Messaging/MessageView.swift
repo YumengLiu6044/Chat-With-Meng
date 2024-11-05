@@ -14,6 +14,7 @@ struct MessageView: View {
     var height: CGFloat
     
     @FocusState private var focus: FocusField?
+    @State private var messages: [Message] = []
     
     @ViewBuilder
     func header() -> some View {
@@ -76,9 +77,28 @@ struct MessageView: View {
     
     var body: some View {
         let chatInView = chattingVM.chatObjInView
+        let messagesInView = chattingVM.messagesInView
         
-        VStack {
-            
+        ScrollView {
+            LazyVStack {
+                ForEach(messagesInView) {
+                    message in
+                    Text(message.content)
+                        .foregroundStyle(.primary)
+                }
+            }
+        }
+        .onAppear {
+            Task {
+                guard let chatID = chatInView.chatID else {return}
+                let messages = await chattingVM.loadChatLogs(forChat: chatID)
+                chattingVM.messagesInView = messages ?? []
+                print(messages ?? [])
+            }
+        }
+        .onDisappear {
+            chattingVM.messagesInView = []
+            chattingVM.chatObjInView = Chat()
         }
         .safeAreaInset(edge: .top) {
             header()

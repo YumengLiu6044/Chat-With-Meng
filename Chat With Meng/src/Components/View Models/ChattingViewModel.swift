@@ -26,6 +26,7 @@ class ChattingViewModel: ObservableObject {
     @Published var toast: Toast? = nil
     
     @Published var chatObjInView: Chat = Chat()
+    @Published var messagesInView: [Message] = []
     
     private var currentUserID: String = ""
     private var incomingMessageListener: ListenerRegistration? = nil
@@ -33,8 +34,6 @@ class ChattingViewModel: ObservableObject {
     init() {
         guard let id = FirebaseManager.shared.auth.currentUser?.uid else {return}
         self.currentUserID = id
-        
-        loadChatsOnAppear()
         
         // Start listener
         attachIncomingMessageListner()
@@ -62,6 +61,12 @@ class ChattingViewModel: ObservableObject {
         
         switch message.contentType {
         case .text:
+            // Insert to messagesInView
+            if let chatID = chatObjInView.chatID, message.chatID == chatID {
+                self.messagesInView.insertSorted(newItem: message)
+            }
+            
+            // Create new chatMap if it doesn't exist
             guard let index = self.chatMap.firstIndex(where: {$0.chatID == message.chatID}) else {
                 let newItem = ChatMapItem(chatID: message.chatID, mostRecent: message)
                 withAnimation(.smooth) {
@@ -135,64 +140,55 @@ class ChattingViewModel: ObservableObject {
         
     }
     
-    private func loadChatLogs(forChat chatID: String, limit: Int = 1000, completion: @escaping ([Message]?) -> Void) {
-        FirebaseManager.shared.firestore
-            .collection(FirebaseConstants.chats)
-            .document(chatID)
-            .collection(FirebaseConstants.chatLogs)
-            .order(by: Message.keys.time.rawValue, descending: true)
-            .limit(to: limit)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    self.toast = Toast(style: .error, message: error.localizedDescription)
-                    return
-                }
-                guard let snapshot = snapshot else {return}
-                
-                var messageList: [Message] = []
-                snapshot.documents.forEach { document in
-                    do {
-                        let data = try document.data(as: Message.self)
-                        messageList.append(data)
-                    }
-                    catch {
-                        print("Failed to load chats on appear")
-                        return
-                    }
-                }
-                return completion(messageList)
+    public func loadChatLogs(forChat chatID: String, limit: Int = 1000) async -> [Message]? {
+        do {
+            let documents = try await FirebaseManager.shared.firestore
+                .collection(FirebaseConstants.chats)
+                .document(chatID)
+                .collection(FirebaseConstants.chatLogs)
+                .order(by: Message.keys.time.rawValue, descending: true)
+                .limit(to: limit)
+                .getDocuments()
+            
+            var messageList: [Message] = []
+            for document in documents.documents {
+                let data = try document.data(as: Message.self)
+                messageList.append(data)
             }
+            return messageList
+        }
+        catch {
+            return nil
+        }
     }
     
-    public func loadChatsOnAppear() {
-        FirebaseManager.shared.firestore
-            .collection(FirebaseConstants.users)
-            .document(self.currentUserID)
-            .collection(FirebaseConstants.chatsIncludingUser)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    self.toast = Toast(style: .error, message: error.localizedDescription)
-                    return
-                }
-                guard let snapshot = snapshot else {return}
-                snapshot.documents.forEach { document in
-                    do {
-                        let data = try document.data(as: ChatRef.self)
-                        self.loadChatLogs(forChat: data.chatID, limit: 1){
-                            chatLogs in
-                            guard let chatLogs = chatLogs else {return}
-                            let mapItem = ChatMapItem(chatID: data.chatID, mostRecent: chatLogs.first ?? Message(contentType: .text, content: "No message exists"))
-                            withAnimation(.smooth) {
-                                self.chatMap.insertSorted(newItem: mapItem)
-                            }
-                        }
-                    }
-                    catch {
-                        print("Failed to load chats on appear")
-                        return
-                    }
+    public func loadChatsOnAppear() async {
+        print("Loading")
+        do {
+            let documents = try await FirebaseManager.shared.firestore
+                .collection(FirebaseConstants.users)
+                .document(self.currentUserID)
+                .collection(FirebaseConstants.chatsIncludingUser)
+                .getDocuments()
+            
+            for document in documents.documents {
+                let data = try document.data(as: ChatRef.self)
+                guard let chatLogs = await self.loadChatLogs(forChat: data.chatID, limit: 1)
+                else {return}
+                let mapItem = ChatMapItem(
+                    chatID: data.chatID,
+                    mostRecent: chatLogs.first ?? Message(contentType: .text, content: "No message exists")
+                )
+                withAnimation(.smooth) {
+                    print("Added new chat: \(mapItem.chatID)")
+                    self.chatMap.insertSorted(newItem: mapItem)
                 }
             }
+        }
+        catch {
+            print(error.localizedDescription)
+            return
+        }
     }
     
     func searchForFriends(from friends: [Friend]) {

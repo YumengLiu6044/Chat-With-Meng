@@ -62,6 +62,9 @@ struct ChatViewMain: View {
             .onAppear {
                 width = geometry.size.width
                 height = geometry.size.height
+                Task {
+                    await self.chattingViewModel.loadChatsOnAppear()
+                }
             
             }
             .onDisappear {
