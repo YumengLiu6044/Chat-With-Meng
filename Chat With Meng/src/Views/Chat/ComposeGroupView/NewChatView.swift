@@ -37,6 +37,7 @@ struct NewChatView: View {
                     "Name", text: $groupName,
                     prompt: Text("Name").foregroundStyle(.gray)
                 )
+                .submitLabel(.done)
                 .frame(height: height * 0.02)
                 .padding()
                 .background(.ultraThickMaterial)

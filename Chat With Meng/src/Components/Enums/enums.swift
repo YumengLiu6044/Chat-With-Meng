@@ -44,6 +44,7 @@ enum SettingError: Error {
 enum FocusField: Hashable {
     case email, password, confirmPassword, passwordReset
     case groupName
+    case messageField
 }
 
 enum FriendRowState: String {

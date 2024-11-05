@@ -94,6 +94,7 @@ struct SettingsView: View {
                                     SettingOptionView(header: "User name") {
                                         TextField("", text: self.$userName)
                                             .multilineTextAlignment(.trailing)
+                                            .submitLabel(.done)
                                             .onSubmit {
                                                 settingVM.updateUserName(to: self.userName) {
                                                     error in

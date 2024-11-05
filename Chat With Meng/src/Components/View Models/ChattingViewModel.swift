@@ -16,6 +16,7 @@ class ChattingViewModel: ObservableObject {
     @Published var showMessageView: Bool = false
     
     @Published var searchkey: String = ""
+    @Published var messageText: String = ""
     
     @Published var chatMap : [ChatMapItem] = []
     

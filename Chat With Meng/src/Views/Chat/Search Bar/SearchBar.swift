@@ -61,6 +61,7 @@ struct SearchBar: UIViewRepresentable {
         searchBar.searchBarStyle = .minimal
         searchBar.autocapitalizationType = .none
         searchBar.showsCancelButton = self.alwaysShowCancel
+        searchBar.returnKeyType = .search
         return searchBar
     }
     
