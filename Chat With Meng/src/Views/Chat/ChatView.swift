@@ -81,7 +81,7 @@ struct ChatView: View {
                     
                 }
                 .navigationDestination(isPresented: $chattingViewModel.showMessageView) {
-                    MessageView()
+                    MessageView(width: width, height: height)
                         .environmentObject(chattingViewModel)
                         .onAppear {
                             withAnimation(.smooth) {

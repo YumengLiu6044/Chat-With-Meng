@@ -325,7 +325,9 @@ class ChattingViewModel: ObservableObject {
                 self.showNewChat = false
                 self.isComposing = false
                 self.chatObjInView = chat
-                self.showMessageView = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.showMessageView = true
+                }
             }
             
             if !sendWelcomeMessage {

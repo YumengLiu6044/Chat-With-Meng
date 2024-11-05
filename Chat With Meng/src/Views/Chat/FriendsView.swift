@@ -111,7 +111,7 @@ struct FriendsView: View {
                     Spacer()
                 }
                 .navigationDestination(isPresented: $chattingVM.showMessageView) {
-                    MessageView()
+                    MessageView(width: width, height: height)
                         .environmentObject(chattingVM)
                         .onAppear {
                             withAnimation(.smooth) {
