@@ -308,7 +308,7 @@ class FriendsViewModel: ObservableObject {
         self.friendSearchResult = []
         
         await self.searchByKey(from: searchKey.lowercased())
-        await self.searchByKey(from: searchKey.uppercased())
+        await self.searchByKey(from: searchKey.capitalized)
         self.sortSearchResult()
     }
     

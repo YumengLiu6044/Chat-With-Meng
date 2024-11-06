@@ -90,6 +90,7 @@ struct MessageView: View {
                         await chattingVM.sendMessage(messageContent: messageText, chatID: chatID)
                         
                         chattingVM.messageText = ""
+                        focus = nil
                     }
                     
                 }
@@ -114,11 +115,18 @@ struct MessageView: View {
                 ScrollView {
                     ForEach(messagesInView) {
                         message in
+                        let showProfile = chattingVM.determineIsShowProfile(message)
+                        let showTime = chattingVM.determineShowTime(message)
+                        if showTime {
+                            let description = chattingVM.timeAgoDescription(from: message.time, detailed: true)
+                            Text(description)
+                                .foregroundStyle(.gray.opacity(0.5))
+                        }
                         MessageRowView(
                             message: message,
                             width: width,
                             senderIsSelf: chattingVM.idIsSelf(other: message.fromUserID),
-                            showProfile: chattingVM.determineIsShowProfile(message)
+                            showProfile: showProfile
                         )
                         .environmentObject(chattingVM)
                         .id(message.id)
@@ -150,6 +158,7 @@ struct MessageView: View {
                 (chattingVM.chatObjInView.chatCoverURL, chattingVM.chatObjInView.chatCoverOverlay) = await chattingVM.determineCoverPic(forChat: chatInView)
                 let messages = await chattingVM.loadChatLogs(forChat: chatID)
                 chattingVM.messagesInView = messages ?? []
+                let _ = chattingVM.messagesInView.map{chattingVM.markAsRead(message: $0)}
             }
         }
         .onDisappear {

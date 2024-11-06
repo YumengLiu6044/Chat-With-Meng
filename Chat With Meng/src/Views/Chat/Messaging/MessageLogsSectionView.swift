@@ -39,5 +39,6 @@ struct MessageLogsSectionView: View {
         .safeAreaInset(edge: .top) {
             SearchBar(text: .constant(""))
         }
+        .safeAreaPadding(.bottom, height * 0.1)
     }
 }

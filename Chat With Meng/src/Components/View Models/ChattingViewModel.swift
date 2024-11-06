@@ -70,6 +70,7 @@ class ChattingViewModel: ObservableObject {
                 withAnimation(.smooth) {
                     self.messagesInView.insertSorted(newItem: message, descending: true)
                 }
+                markAsRead(message: message)
             }
             
             // Create new chatMap if it doesn't exist
@@ -217,15 +218,21 @@ class ChattingViewModel: ObservableObject {
         return self.chatMap.count(where: {!$0.mostRecent.isRead})
     }
     
-    public func timeAgoDescription(from date: Date) -> String {
+    public func timeAgoDescription(from date: Date, detailed: Bool = false) -> String {
         let calendar = Calendar.current
         let now = Date()
         let components = calendar.dateComponents([.year, .month, .weekOfYear, .day, .hour, .minute, .second], from: date, to: now)
         let dateFormatter = DateFormatter()
         
+        dateFormatter.dateFormat = "h:mm a"
+        var detailedPart: String = ""
+        if detailed {
+            detailedPart = " at \(dateFormatter.string(from: date))"
+        }
+        
         if let week = components.weekOfYear, week > 0 {
             dateFormatter.dateFormat = "MM/dd/yy"
-            return dateFormatter.string(from: date)
+            return dateFormatter.string(from: date) + detailedPart
         }
         
         if let day = components.day {
@@ -235,11 +242,11 @@ class ChattingViewModel: ObservableObject {
                 return dateFormatter.string(from: date)
                 
             case 1:
-                return "Yesterday"
+                return "Yesterday" + detailedPart
                 
             default:
                 dateFormatter.dateFormat = "EEEE"
-                return dateFormatter.string(from: date)
+                return dateFormatter.string(from: date) + detailedPart
             }
         }
         return date.formatted(.iso8601)
@@ -407,13 +414,24 @@ class ChattingViewModel: ObservableObject {
         return ("", [0, 0, 0])
     }
     
-    public func markAsRead(inChat chatID: String) {
-        guard let index = self.chatMap.first(where: {$0.chatID == chatID}) else {return}
+    public func markAsRead(message: Message) {
+        guard let messageID = message.id else {return}
+        if message.isRead {return}
         
         FirebaseManager.shared.firestore
             .collection(FirebaseConstants.chats)
-            .document(chatID)
+            .document(message.chatID)
             .collection(FirebaseConstants.chatLogs)
+            .document(messageID)
+            .updateData([Message.keys.isRead.rawValue : true]) { error in
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                }
+                guard let index = self.chatMap.firstIndex(where: {$0.mostRecent == message})
+                else {return}
+                self.chatMap[index].mostRecent.isRead = true
+            }
     }
     
     public func determineIsShowProfile(_ message: Message) -> Bool {
@@ -441,5 +459,21 @@ class ChattingViewModel: ObservableObject {
         let previousTime = previousMessage.time
         let timeDifference = messageTime.timeIntervalSince(previousTime)
         return timeDifference > minutes * 60
+    }
+    
+    public func determineShowTime(_ message: Message) -> Bool {
+        guard let messageIndex = messagesInView.firstIndex(of: message) else {
+            return true
+        }
+        if messageIndex == 0 {
+            return true
+        }
+        
+        let previousMessage = messagesInView[messageIndex - 1]
+        return messageMoreThanMinutesApart(
+            message: message,
+            previousMessage: previousMessage,
+            minutes: 10
+        )
     }
 }
