@@ -11,9 +11,6 @@ struct ChatView: View {
     @EnvironmentObject var friendsVM:           FriendsViewModel
     @EnvironmentObject var chattingViewModel:   ChattingViewModel
     @EnvironmentObject var chatVM:              ChatViewModel
-    
-    @State private var width: CGFloat = 100
-    @State private var height: CGFloat = 100
 
     
     var body: some View {
@@ -21,7 +18,10 @@ struct ChatView: View {
         let recipientList = chattingViewModel.recipientList
         
         GeometryReader {
-            geometry in 
+            geometry in
+            let width = geometry.size.width
+            let height = geometry.size.height
+            
             NavigationStack {
                 VStack {
                     HStack {
@@ -100,10 +100,6 @@ struct ChatView: View {
                         height: height
                     )
                     .environmentObject(chattingViewModel)
-                }
-                .onAppear {
-                    width = geometry.size.width
-                    height = geometry.size.height
                 }
             }
             .tint(.primary)

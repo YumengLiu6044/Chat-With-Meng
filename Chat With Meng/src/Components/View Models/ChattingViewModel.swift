@@ -40,6 +40,10 @@ class ChattingViewModel: ObservableObject {
         
     }
     
+    public func idIsSelf(other: String) -> Bool {
+        return other == self.currentUserID
+    }
+    
     private func handleNewIncomingMessage(message: Message) {
         
         let ref = ChatRef(chatID: message.chatID)
@@ -63,7 +67,7 @@ class ChattingViewModel: ObservableObject {
         case .text:
             // Insert to messagesInView
             if let chatID = chatObjInView.chatID, message.chatID == chatID {
-                self.messagesInView.insertSorted(newItem: message)
+                self.messagesInView.insertSorted(newItem: message, descending: true)
             }
             
             // Create new chatMap if it doesn't exist
@@ -76,9 +80,9 @@ class ChattingViewModel: ObservableObject {
             }
             withAnimation(.smooth) {
                 let current = self.chatMap[index].mostRecent
-                self.chatMap[index].mostRecent = min(current, message)
+                self.chatMap[index].mostRecent = max(current, message)
             }
-            self.chatMap.sort{$0.mostRecent < $1.mostRecent}
+            self.chatMap.sort{$0.mostRecent > $1.mostRecent}
             break
             
         case .image:
@@ -155,7 +159,7 @@ class ChattingViewModel: ObservableObject {
                 let data = try document.data(as: Message.self)
                 messageList.append(data)
             }
-            return messageList
+            return messageList.sorted{$0.time < $1.time}
         }
         catch {
             return nil
@@ -163,7 +167,6 @@ class ChattingViewModel: ObservableObject {
     }
     
     public func loadChatsOnAppear() async {
-        print("Loading")
         do {
             let documents = try await FirebaseManager.shared.firestore
                 .collection(FirebaseConstants.users)
@@ -180,8 +183,7 @@ class ChattingViewModel: ObservableObject {
                     mostRecent: chatLogs.first ?? Message(contentType: .text, content: "No message exists")
                 )
                 withAnimation(.smooth) {
-                    print("Added new chat: \(mapItem.chatID)")
-                    self.chatMap.insertSorted(newItem: mapItem)
+                    self.chatMap.insertSorted(newItem: mapItem, descending: false)
                 }
             }
         }
@@ -282,6 +284,17 @@ class ChattingViewModel: ObservableObject {
         return total
     }
     
+    public func sendMessage(messageContent: String, chatID: String) async {
+        if messageContent.isEmpty {return}
+        await FirebaseManager.sendMessage(
+            fromSender: self.currentUserID,
+            toChat: chatID,
+            contentType: .text,
+            content: messageContent,
+            time: .now
+        )
+    }
+    
     public func processSendButtonClick() async{
         var chatMembers: [String] = self.recipientList.compactMap { friend in
             return friend.userID
@@ -310,12 +323,12 @@ class ChattingViewModel: ObservableObject {
             guard let selfAsFriend =  await FirebaseManager.makeFriend(from: self.currentUserID)
             else {return}
             let members = [selfAsFriend, friend]
-            await self.processGroupChatCreation(with: friend.userName, of: members, sendWelcomeMessage: false)
+            await self.processGroupChatCreation(with: friend.userName, of: members)
         }
         
     }
     
-    public func processGroupChatCreation(with name: String, of members: [Friend], sendWelcomeMessage: Bool = true) async {
+    public func processGroupChatCreation(with name: String, of members: [Friend]) async {
         let (toast, chat) = await FirebaseManager.makeGroupChat(with: name, of: members)
         if toast.style == .success, let chat = chat {
             withAnimation(.smooth) {
@@ -326,18 +339,6 @@ class ChattingViewModel: ObservableObject {
                     self.showMessageView = true
                 }
             }
-            
-            if !sendWelcomeMessage {
-                return
-            }
-            
-            await FirebaseManager.sendMessage(
-                fromSender: self.currentUserID,
-                toChat: toast.message,
-                contentType: .text,
-                content: "You have been invited to \(name)",
-                time: .now
-            )
         }
         else {
             self.toast = toast
@@ -404,5 +405,32 @@ class ChattingViewModel: ObservableObject {
             .collection(FirebaseConstants.chats)
             .document(chatID)
             .collection(FirebaseConstants.chatLogs)
+    }
+    
+    public func determineIsShowProfile(_ message: Message) -> Bool {
+        guard let messageIndex = messagesInView.firstIndex(of: message) else {
+            return true
+        }
+        if messageIndex == 0 {
+            return true
+        }
+        
+        let previousMessage = messagesInView[messageIndex - 1]
+        if previousMessage.fromUserID != message.fromUserID {
+            return true
+        }
+        return messageMoreThanMinutesApart(
+            message: message,
+            previousMessage: previousMessage,
+            minutes: 10
+        )
+        
+    }
+    
+    public func messageMoreThanMinutesApart(message: Message, previousMessage: Message, minutes: Double) -> Bool {
+        let messageTime = message.time
+        let previousTime = previousMessage.time
+        let timeDifference = messageTime.timeIntervalSince(previousTime)
+        return timeDifference > minutes * 60
     }
 }

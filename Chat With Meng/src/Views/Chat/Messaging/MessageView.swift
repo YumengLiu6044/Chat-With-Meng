@@ -23,8 +23,8 @@ struct MessageView: View {
             ProfilePicView(
                 imageURL: chatInView.chatCoverURL,
                 imageOverlayData: chatInView.chatCoverOverlay,
-                width: width * 0.11,
-                height: width * 0.11
+                width: width * 0.12,
+                height: width * 0.12
             )
             // .padding(.leading, width * 0.12)
             
@@ -32,11 +32,10 @@ struct MessageView: View {
                 .font(.title)
                 .fontWeight(.medium)
                 .lineLimit(1)
-                .minimumScaleFactor(0.5)
                 .padding(.leading)
                 // .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.bottom)
+        .padding(.bottom, height * 0.03)
         .background {
             Rectangle()
                 .fill()
@@ -50,29 +49,57 @@ struct MessageView: View {
     
     @ViewBuilder
     func entryBox() -> some View {
-        TextField(
-            "Name", text: $chattingVM.messageText,
-            prompt: Text("Message").foregroundStyle(.gray)
-        )
-        .submitLabel(.send)
-        .onSubmit {
-            print("Sending message:\n\(chattingVM.messageText)")
-        }
-        .frame(height: height * 0.015)
-        .padding()
-        .background(.ultraThickMaterial)
-        .clipShape(.rect(cornerRadius: width * 0.03))
-        .shadow(radius: 3)
-        .overlay {
-            RoundedRectangle(cornerRadius: width * 0.03)
-                .stroke(.blue.opacity(0.8), lineWidth: (focus == .messageField) ? 2 : 0)
+        let messageText = chattingVM.messageText
+        HStack {
+            IconView(iconName: "photo")
+                .padding(.trailing, width * 0.02)
+                .shadow(radius: 2)
+            
+            TextField(
+                "Name", text: $chattingVM.messageText,
+                prompt: Text("Message").foregroundStyle(.gray)
+            )
+            .submitLabel(.send)
+            .onSubmit {
+                Task {
+                    if let chatID = chattingVM.chatObjInView.chatID {
+                        await chattingVM.sendMessage(messageContent: messageText, chatID: chatID)
+                        
+                        chattingVM.messageText = ""
+                    }
+                    
+                }
+            }
+            .frame(height: height * 0.015)
+            .padding()
+            .background(.ultraThickMaterial)
+            .clipShape(.rect(cornerRadius: width * 0.03))
+            .shadow(radius: 3)
+            .overlay {
+                RoundedRectangle(cornerRadius: width * 0.03)
+                    .stroke(.blue.opacity(0.8), lineWidth: (focus == .messageField) ? 2 : 0)
+            }
+            .focused($focus, equals: .messageField)
+            .onDisappear {
+                focus = nil
+            }
+            
+            IconView(iconName: "paperplane.fill", color: .blue) {
+                Task {
+                    if let chatID = chattingVM.chatObjInView.chatID {
+                        await chattingVM.sendMessage(messageContent: messageText, chatID: chatID)
+                        
+                        chattingVM.messageText = ""
+                    }
+                    
+                }
+            }
+                .shadow(radius: 2)
+                .disabled(messageText.isEmpty)
+                
         }
         .frame(maxHeight: .infinity, alignment: .bottom)
         .padding([.leading, .trailing, .bottom])
-        .focused($focus, equals: .messageField)
-        .onDisappear {
-            focus = nil
-        }
     }
     
     var body: some View {
@@ -80,20 +107,27 @@ struct MessageView: View {
         let messagesInView = chattingVM.messagesInView
         
         ScrollView {
-            LazyVStack {
+            VStack(spacing: height * 0.01) {
                 ForEach(messagesInView) {
                     message in
-                    Text(message.content)
-                        .foregroundStyle(.primary)
+                    MessageRowView(
+                        message: message,
+                        width: width,
+                        senderIsSelf: chattingVM.idIsSelf(other: message.fromUserID),
+                        showProfile: chattingVM.determineIsShowProfile(message)
+                    )
+                    .environmentObject(chattingVM)
+                    
                 }
             }
         }
+        .scrollIndicators(.hidden)
         .onAppear {
             Task {
                 guard let chatID = chatInView.chatID else {return}
+                (chattingVM.chatObjInView.chatCoverURL, chattingVM.chatObjInView.chatCoverOverlay) = await chattingVM.determineCoverPic(forChat: chatInView)
                 let messages = await chattingVM.loadChatLogs(forChat: chatID)
                 chattingVM.messagesInView = messages ?? []
-                print(messages ?? [])
             }
         }
         .onDisappear {
@@ -106,6 +140,7 @@ struct MessageView: View {
         .safeAreaInset(edge: .bottom) {
             entryBox()
         }
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarRole(.editor)
     }
 }

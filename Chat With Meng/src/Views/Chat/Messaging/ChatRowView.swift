@@ -58,7 +58,6 @@ struct ChatRowView: View {
                     .font(.system(size: height * 0.24))
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
-                    .minimumScaleFactor(0.5)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity , alignment: .leading)
                 
@@ -94,6 +93,8 @@ struct ChatRowView: View {
         
         self.chatObj = obj
         (self.chatObj.chatCoverURL, self.chatObj.chatCoverOverlay) = await chattingVM.determineCoverPic(forChat: chatObj)
+        
+        
         
     }
 }
