@@ -25,9 +25,7 @@ struct MessageLogsSectionView: View {
                         height: height * 0.1
                     )
                     .environmentObject(chattingVM)
-                    
                 }
-                
             }
             
             .onDelete { indexSet in

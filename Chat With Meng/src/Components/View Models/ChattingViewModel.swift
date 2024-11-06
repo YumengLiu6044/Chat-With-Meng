@@ -78,8 +78,12 @@ class ChattingViewModel: ObservableObject {
                 withAnimation(.smooth) {
                     self.chatMap.insertSorted(newItem: newItem)
                 }
+                print("New chat inserted: \(message.chatID)")
+                print("Chat map size: \(chatMap.count)")
                 return
             }
+            print("Existing chat updated")
+            print("Chat map size: \(chatMap.count)")
             withAnimation(.smooth) {
                 let current = self.chatMap[index].mostRecent
                 self.chatMap[index].mostRecent = max(current, message)
@@ -184,6 +188,9 @@ class ChattingViewModel: ObservableObject {
                     chatID: data.chatID,
                     mostRecent: chatLogs.first ?? Message(contentType: .text, content: "No message exists")
                 )
+                if self.chatMap.contains(where: {$0.chatID == data.chatID}) {
+                    continue
+                }
                 withAnimation(.smooth) {
                     self.chatMap.insertSorted(newItem: mapItem, descending: false)
                 }
