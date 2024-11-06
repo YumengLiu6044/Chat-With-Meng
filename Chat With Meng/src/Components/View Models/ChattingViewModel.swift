@@ -67,7 +67,9 @@ class ChattingViewModel: ObservableObject {
         case .text:
             // Insert to messagesInView
             if let chatID = chatObjInView.chatID, message.chatID == chatID {
-                self.messagesInView.insertSorted(newItem: message, descending: true)
+                withAnimation(.smooth) {
+                    self.messagesInView.insertSorted(newItem: message, descending: true)
+                }
             }
             
             // Create new chatMap if it doesn't exist

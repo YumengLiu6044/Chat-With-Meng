@@ -107,7 +107,7 @@ struct MessageView: View {
         let messagesInView = chattingVM.messagesInView
         
         ScrollView {
-            VStack(spacing: height * 0.01) {
+            LazyVStack(spacing: height * 0.01) {
                 ForEach(messagesInView) {
                     message in
                     MessageRowView(
