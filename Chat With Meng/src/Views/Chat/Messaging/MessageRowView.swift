@@ -21,21 +21,21 @@ struct MessageRowView: View {
     var body: some View {
         HStack {
             FlipGroup(if: senderIsSelf) {
-                if let senderObj = senderObj, showProfile, !senderIsSelf {
+                if let senderObj = senderObj, showProfile {
                     ProfilePicView(
                         imageURL: senderObj.profilePicURL,
                         imageOverlayData: senderObj.profileOverlayData,
-                        width: width * 0.11,
-                        height: width * 0.11
+                        width: width * 0.1,
+                        height: width * 0.1
                     )
-                    .padding(senderIsSelf ? .trailing : .leading, width * 0.03)
+                    .padding(senderIsSelf ? .trailing : .leading, width * 0.02)
                     .frame(maxHeight: .infinity, alignment: .top)
                 }
-                else if !senderIsSelf {
+                else {
                     Circle()
                         .hidden()
-                        .frame(width: width * 0.11, height: width * 0.11)
-                        .padding(senderIsSelf ? .trailing : .leading, width * 0.03)
+                        .frame(width: width * 0.1, height: width * 0.1)
+                        .padding(senderIsSelf ? .trailing : .leading, width * 0.02)
                         .frame(maxHeight: .infinity, alignment: .top)
                 }
                 
@@ -43,13 +43,14 @@ struct MessageRowView: View {
                     .font(.system(size: width * 0.05))
                     .lineSpacing(3)
                     .foregroundStyle(senderIsSelf ? .white : .primary)
-                    .padding(width * 0.03)
+                    .padding(width * 0.025)
                     .background {
                         RoundedRectangle(cornerRadius: width * 0.05)
                             .fill()
                             .foregroundStyle(senderIsSelf ? .blue : .gray.opacity(0.6))
                     }
-                    .padding(senderIsSelf ? .trailing : .leading, width * 0.02)
+                    .textSelection(.enabled)
+                    .padding(senderIsSelf ? .trailing : .leading, width * 0.01)
                     .frame(maxWidth: width * 0.7, alignment: senderIsSelf ? .trailing : .leading)
             }
     
