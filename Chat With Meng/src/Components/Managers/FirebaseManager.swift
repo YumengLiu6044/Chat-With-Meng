@@ -61,7 +61,7 @@ class FirebaseManager: NSObject {
             let toast = Toast(style: .error, message: "The maximum character count is 30")
             return (toast, nil)
         }
-        let chat = Chat (
+        var chat = Chat (
             chatID: nil,
             userIDArray: Dictionary(uniqueKeysWithValues: members.map { ($0.userID, "") }),
             chatTitle: name
@@ -74,6 +74,7 @@ class FirebaseManager: NSObject {
         }
         
         let toast = Toast(style: .success, message: chatID)
+        chat.chatID = chatID
         return (toast, chat)
     }
     
