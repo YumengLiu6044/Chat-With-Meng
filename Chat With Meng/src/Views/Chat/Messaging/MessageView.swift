@@ -43,7 +43,7 @@ struct MessageView: View {
                 .frame(width: width)
                 .ignoresSafeArea(edges: [.top])
         }
-        .frame(maxHeight: .infinity, alignment: .topLeading)
+        // .frame(maxHeight: .infinity, alignment: .topLeading)
         .padding(.top, height * -0.055)
     }
     
@@ -98,7 +98,7 @@ struct MessageView: View {
                 .disabled(messageText.isEmpty)
                 
         }
-        .frame(maxHeight: .infinity, alignment: .bottom)
+        // .frame(maxHeight: .infinity, alignment: .bottom)
         .padding([.leading, .trailing, .bottom])
     }
     
@@ -106,22 +106,44 @@ struct MessageView: View {
         let chatInView = chattingVM.chatObjInView
         let messagesInView = chattingVM.messagesInView
         
-        ScrollView {
-            VStack {
-                ForEach(messagesInView) {
-                    message in
-                    MessageRowView(
-                        message: message,
-                        width: width,
-                        senderIsSelf: chattingVM.idIsSelf(other: message.fromUserID),
-                        showProfile: chattingVM.determineIsShowProfile(message)
-                    )
-                    .environmentObject(chattingVM)
+        VStack {
+            header()
+            
+            ScrollViewReader{
+                proxy in
+                ScrollView {
+                    ForEach(messagesInView) {
+                        message in
+                        MessageRowView(
+                            message: message,
+                            width: width,
+                            senderIsSelf: chattingVM.idIsSelf(other: message.fromUserID),
+                            showProfile: chattingVM.determineIsShowProfile(message)
+                        )
+                        .environmentObject(chattingVM)
+                        .id(message.id)
+//                        .scrollTransition {
+//                            content, phase in
+//                            content
+//                                .opacity(phase.isIdentity ? 1 : 0)
+//                        }
+                        
+                    }
                     
                 }
+                
+                // .scrollClipDisabled()
+                .onChange(of: chattingVM.messagesInView) {
+                    guard let messageID = messagesInView.last?.id else {return}
+                    withAnimation(.smooth) {
+                        proxy.scrollTo(messageID, anchor: .bottom)
+                    }
+                }
+                
             }
+            entryBox()
         }
-        .scrollIndicators(.hidden)
+        // .scrollIndicators(.hidden)
         .onAppear {
             Task {
                 guard let chatID = chatInView.chatID else {return}
@@ -133,12 +155,6 @@ struct MessageView: View {
         .onDisappear {
             chattingVM.messagesInView = []
             chattingVM.chatObjInView = Chat()
-        }
-        .safeAreaInset(edge: .top) {
-            header()
-        }
-        .safeAreaInset(edge: .bottom) {
-            entryBox()
         }
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarRole(.editor)
