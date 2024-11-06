@@ -131,7 +131,7 @@ struct MessageView: View {
                     }
                     
                 }
-                
+                .safeAreaPadding(.bottom, height * 0.01)
                 // .scrollClipDisabled()
                 .onChange(of: chattingVM.messagesInView) {
                     guard let messageID = messagesInView.last?.id else {return}
