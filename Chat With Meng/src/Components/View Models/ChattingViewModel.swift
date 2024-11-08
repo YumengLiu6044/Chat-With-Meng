@@ -73,7 +73,7 @@ class ChattingViewModel: ObservableObject {
                 }
                 print("New chat inserted: \(message.chatID)")
                 print("Chat map size: \(chatMap.count)")
-                return
+                break
             }
             print("Existing chat updated")
             print("Chat map size: \(chatMap.count)")
@@ -98,6 +98,10 @@ class ChattingViewModel: ObservableObject {
                 self.messagesInView.insertSorted(newItem: message, descending: true)
             }
             markAsRead(message: message)
+            print("Inserted")
+        }
+        else {
+            print("Not inserted")
         }
     }
     
