@@ -141,8 +141,10 @@ struct MessageView: View {
                 .safeAreaPadding(.bottom, height * 0.01)
                 .onChange(of: chattingVM.messagesInView) {
                     guard let messageID = messagesInView.last?.id else {return}
-                    withAnimation(.smooth) {
-                        proxy.scrollTo(messageID, anchor: .bottom)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation(.smooth) {
+                            proxy.scrollTo(messageID, anchor: .bottom)
+                        }
                     }
                 }
                 .onChange(of: focus) {
