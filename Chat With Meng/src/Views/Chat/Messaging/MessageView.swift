@@ -143,6 +143,14 @@ struct MessageView: View {
                         proxy.scrollTo(messageID, anchor: .bottom)
                     }
                 }
+                .onChange(of: focus) {
+                    guard let messageID = messagesInView.last?.id else {return}
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation(.smooth) {
+                            proxy.scrollTo(messageID, anchor: .bottom)
+                        }
+                    }
+                }
                 .scrollDismissesKeyboard(.interactively)
                 
             }

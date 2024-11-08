@@ -105,6 +105,7 @@ struct FriendsView: View {
                             .environmentObject(self.chattingVM)
                         }
                     }
+                    .scrollDismissesKeyboard(.interactively)
                     .safeAreaPadding(.bottom, height * 0.1)
                     .listRowSpacing(height * 0.05)
                     .scrollIndicators(.hidden)

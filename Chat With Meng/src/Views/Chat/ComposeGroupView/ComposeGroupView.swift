@@ -59,6 +59,7 @@ struct ComposeGroupView: View {
                     .padding([.top, .bottom], height * 0.01)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .scrollIndicators(.hidden)
             .scrollClipDisabled()
             .padding([.leading, .trailing])
