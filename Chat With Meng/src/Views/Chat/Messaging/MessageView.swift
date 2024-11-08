@@ -92,7 +92,8 @@ struct MessageView: View {
                         await chattingVM.sendMessage(messageContent: messageText, chatID: chatID)
                         
                         chattingVM.messageText = ""
-                        focus = nil
+                        // Optionally exits focus after sending message
+                        // focus = nil
                     }
                     
                 }
@@ -142,6 +143,7 @@ struct MessageView: View {
                         proxy.scrollTo(messageID, anchor: .bottom)
                     }
                 }
+                .scrollDismissesKeyboard(.interactively)
                 
             }
             entryBox()
