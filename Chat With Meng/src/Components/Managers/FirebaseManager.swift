@@ -45,10 +45,10 @@ class FirebaseManager: NSObject {
     }
     
     static func makeGroupChat(with name: String, of members: [Friend]) async -> (Toast, Chat?) {
-        if (name.isEmpty) {
-            let toast = Toast(style: .error, message: "Name is empty")
-            return (toast, nil)
-        }
+//        if (name.isEmpty) {
+//            let toast = Toast(style: .error, message: "Name is empty")
+//            return (toast, nil)
+//        }
         if (name.allSatisfy {$0.isWhitespace}) {
             let toast = Toast(style: .error, message: "At least one non-space character is required")
             return (toast, nil)
@@ -126,7 +126,9 @@ class FirebaseManager: NSObject {
             }
         }
         catch {
-            
+            print("Failed to send message")
+            print(error.localizedDescription)
+            return
         }
     }
     

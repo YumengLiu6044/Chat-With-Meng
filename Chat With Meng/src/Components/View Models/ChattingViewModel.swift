@@ -65,14 +65,6 @@ class ChattingViewModel: ObservableObject {
         
         switch message.contentType {
         case .text:
-            // Insert to messagesInView
-            if let chatID = chatObjInView.chatID, message.chatID == chatID {
-                withAnimation(.smooth) {
-                    self.messagesInView.insertSorted(newItem: message, descending: true)
-                }
-                markAsRead(message: message)
-            }
-            
             // Create new chatMap if it doesn't exist
             guard let index = self.chatMap.firstIndex(where: {$0.chatID == message.chatID}) else {
                 let newItem = ChatMapItem(chatID: message.chatID, mostRecent: message)
@@ -98,6 +90,14 @@ class ChattingViewModel: ObservableObject {
         case .video:
             // TODO: implement handling videos
             break
+        }
+        
+        // Insert to messagesInView
+        if let chatID = chatObjInView.chatID, message.chatID == chatID {
+            withAnimation(.smooth) {
+                self.messagesInView.insertSorted(newItem: message, descending: true)
+            }
+            markAsRead(message: message)
         }
     }
     
@@ -169,6 +169,7 @@ class ChattingViewModel: ObservableObject {
             return messageList.sorted{$0.time < $1.time}
         }
         catch {
+            print(error.localizedDescription)
             return nil
         }
     }
@@ -215,7 +216,9 @@ class ChattingViewModel: ObservableObject {
     }
     
     public func countUnreadMessages() -> Int {
-        return self.chatMap.count(where: {!$0.mostRecent.isRead})
+        return self.chatMap.reduce(0) {
+            $0 + (isRead($1.mostRecent) ? 0 : 1)
+        }
     }
     
     public func timeAgoDescription(from date: Date, detailed: Bool = false) -> String {
@@ -339,7 +342,7 @@ class ChattingViewModel: ObservableObject {
             guard let selfAsFriend =  await FirebaseManager.makeFriend(from: self.currentUserID)
             else {return}
             let members = [selfAsFriend, friend]
-            await self.processGroupChatCreation(with: friend.userName, of: members)
+            await self.processGroupChatCreation(with: "", of: members)
         }
         
     }
@@ -389,6 +392,31 @@ class ChattingViewModel: ObservableObject {
         self.chatObjInView = chatObj
     }
     
+    public func determineGroupName(forChat chatObj: Chat) async -> String {
+        if !chatObj.chatTitle.isEmpty {
+            return chatObj.chatTitle
+        }
+        
+        if chatObj.userIDArray.count == 2 {
+            guard let other = chatObj.userIDArray.first(where: {$0.key != self.currentUserID})?.key else {
+                return ""
+            }
+            do {
+                let document = try await FirebaseManager.shared.firestore
+                    .collection(FirebaseConstants.users)
+                    .document(other)
+                    .getDocument(as: User.self)
+                return document.userName
+            }
+            catch {
+                print(error.localizedDescription.localizedLowercase)
+                return ""
+            }
+                
+        }
+        return ""
+    }
+    
     public func determineCoverPic(forChat chatObj: Chat) async -> (String, [CGFloat]) {
         if !chatObj.chatCoverURL.isEmpty {
             return (chatObj.chatCoverURL, chatObj.chatCoverOverlay)
@@ -416,21 +444,26 @@ class ChattingViewModel: ObservableObject {
     
     public func markAsRead(message: Message) {
         guard let messageID = message.id else {return}
-        if message.isRead {return}
+        if message.readBy.contains(self.currentUserID) {
+            print("Already read")
+            return
+        }
         
         FirebaseManager.shared.firestore
             .collection(FirebaseConstants.chats)
             .document(message.chatID)
             .collection(FirebaseConstants.chatLogs)
             .document(messageID)
-            .updateData([Message.keys.isRead.rawValue : true]) { error in
+            .updateData([Message.keys.readBy.rawValue : FieldValue.arrayUnion([self.currentUserID])]) { error in
                 if let error = error {
                     print(error.localizedDescription)
                     return
                 }
-                guard let index = self.chatMap.firstIndex(where: {$0.mostRecent == message})
-                else {return}
-                self.chatMap[index].mostRecent.isRead = true
+                guard let index = self.chatMap.firstIndex(where: {$0.mostRecent.id == messageID})
+                else {
+                    return
+                }
+                self.chatMap[index].mostRecent.readBy.append(self.currentUserID)
             }
     }
     
@@ -475,5 +508,12 @@ class ChattingViewModel: ObservableObject {
             previousMessage: previousMessage,
             minutes: 10
         )
+    }
+    
+    public func isRead(_ message: Message) -> Bool {
+        if message.fromUserID == self.currentUserID {
+            return true
+        }
+        return message.readBy.contains(self.currentUserID)
     }
 }

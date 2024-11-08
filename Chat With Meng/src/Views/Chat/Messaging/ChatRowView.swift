@@ -22,7 +22,7 @@ struct ChatRowView: View {
                 Circle()
                     .fill()
                     .frame(width: height * 0.15)
-                    .foregroundStyle(.myBlue.opacity(lastMessage.isRead ? 0: 1))
+                    .foregroundStyle(.myBlue.opacity(chattingVM.isRead(lastMessage) ? 0: 1))
                 
                 ProfilePicView(
                     imageURL: chatObj.chatCoverURL,
@@ -93,9 +93,7 @@ struct ChatRowView: View {
         
         self.chatObj = obj
         (self.chatObj.chatCoverURL, self.chatObj.chatCoverOverlay) = await chattingVM.determineCoverPic(forChat: chatObj)
-        
-        
-        
+        self.chatObj.chatTitle = await chattingVM.determineGroupName(forChat: self.chatObj)
     }
 }
 

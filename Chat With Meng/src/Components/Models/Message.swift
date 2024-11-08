@@ -15,7 +15,7 @@ struct Message: Codable, Comparable, Identifiable {
     var time: Date = .now
     var chatID: String = ""
     var fromUserID: String = ""
-    var isRead: Bool = false
+    var readBy: [String] = []
     
     static func <(lhs: Message, rhs: Message) -> Bool{
         return lhs.time < rhs.time
@@ -28,7 +28,7 @@ struct Message: Codable, Comparable, Identifiable {
         case time
         case chatID
         case fromUserID
-        case isRead
+        case readBy
     }
 }
 

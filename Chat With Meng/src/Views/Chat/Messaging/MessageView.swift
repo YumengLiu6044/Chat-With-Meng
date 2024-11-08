@@ -61,11 +61,13 @@ struct MessageView: View {
             )
             .submitLabel(.send)
             .onSubmit {
+                
                 Task {
                     if let chatID = chattingVM.chatObjInView.chatID {
                         await chattingVM.sendMessage(messageContent: messageText, chatID: chatID)
                         
                         chattingVM.messageText = ""
+                        
                     }
                     
                 }
@@ -130,17 +132,10 @@ struct MessageView: View {
                         )
                         .environmentObject(chattingVM)
                         .id(message.id)
-//                        .scrollTransition {
-//                            content, phase in
-//                            content
-//                                .opacity(phase.isIdentity ? 1 : 0)
-//                        }
-                        
                     }
                     
                 }
                 .safeAreaPadding(.bottom, height * 0.01)
-                // .scrollClipDisabled()
                 .onChange(of: chattingVM.messagesInView) {
                     guard let messageID = messagesInView.last?.id else {return}
                     withAnimation(.smooth) {
@@ -151,7 +146,6 @@ struct MessageView: View {
             }
             entryBox()
         }
-        // .scrollIndicators(.hidden)
         .onAppear {
             Task {
                 guard let chatID = chatInView.chatID else {return}
@@ -159,6 +153,8 @@ struct MessageView: View {
                 let messages = await chattingVM.loadChatLogs(forChat: chatID)
                 chattingVM.messagesInView = messages ?? []
                 let _ = chattingVM.messagesInView.map{chattingVM.markAsRead(message: $0)}
+                chattingVM.chatObjInView.chatTitle = await chattingVM.determineGroupName(forChat: chattingVM.chatObjInView)
+//                chattingVM.markAsRead(message: chattingVM.messagesInView.last ?? Message())
             }
         }
         .onDisappear {
