@@ -71,12 +71,8 @@ class ChattingViewModel: ObservableObject {
                 withAnimation(.smooth) {
                     self.chatMap.insertSorted(newItem: newItem)
                 }
-                print("New chat inserted: \(message.chatID)")
-                print("Chat map size: \(chatMap.count)")
                 break
             }
-            print("Existing chat updated")
-            print("Chat map size: \(chatMap.count)")
             withAnimation(.smooth) {
                 let current = self.chatMap[index].mostRecent
                 self.chatMap[index].mostRecent = max(current, message)
@@ -98,10 +94,6 @@ class ChattingViewModel: ObservableObject {
                 self.messagesInView.insertSorted(newItem: message, descending: true)
             }
             markAsRead(message: message)
-            print("Inserted")
-        }
-        else {
-            print("Not inserted")
         }
     }
     
