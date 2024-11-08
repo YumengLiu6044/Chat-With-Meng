@@ -123,7 +123,9 @@ struct MessageView: View {
                         if showTime {
                             let description = chattingVM.timeAgoDescription(from: message.time, detailed: true)
                             Text(description)
+                                .font(.caption)
                                 .foregroundStyle(.gray.opacity(0.5))
+                                .padding(height * 0.01)
                         }
                         MessageRowView(
                             message: message,

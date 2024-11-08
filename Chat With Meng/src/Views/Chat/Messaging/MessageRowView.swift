@@ -30,6 +30,7 @@ struct MessageRowView: View {
                     )
                     .padding(senderIsSelf ? .trailing : .leading, width * 0.02)
                     .frame(maxHeight: .infinity, alignment: .top)
+                    .padding(.top, 22)
                 }
                 else {
                     Circle()
@@ -39,19 +40,26 @@ struct MessageRowView: View {
                         .frame(maxHeight: .infinity, alignment: .top)
                 }
                 
-                Text(message.content)
-                    .font(.system(size: width * 0.05))
-                    .lineSpacing(3)
-                    .foregroundStyle(senderIsSelf ? .white : .primary)
-                    .padding(width * 0.025)
-                    .background {
-                        RoundedRectangle(cornerRadius: width * 0.05)
-                            .fill()
-                            .foregroundStyle(senderIsSelf ? .blue : .gray.opacity(0.6))
+                VStack(alignment: senderIsSelf ? .trailing : .leading) {
+                    if showProfile {
+                        Text(senderObj?.userName ?? "")
+                            .font(.caption)
+                            .foregroundStyle(.gray.opacity(0.5))
                     }
-                    .textSelection(.enabled)
-                    .padding(senderIsSelf ? .trailing : .leading, width * 0.01)
-                    .frame(maxWidth: width * 0.7, alignment: senderIsSelf ? .trailing : .leading)
+                    Text(message.content)
+                        .font(.system(size: width * 0.048))
+                        .lineSpacing(3)
+                        .foregroundStyle(senderIsSelf ? .white : .primary)
+                        .padding(width * 0.025)
+                        .background {
+                            RoundedRectangle(cornerRadius: width * 0.05)
+                                .fill()
+                                .foregroundStyle(senderIsSelf ? .blue : .gray.opacity(0.6))
+                        }
+                        .textSelection(.enabled)
+                        .frame(maxWidth: width * 0.7, alignment: senderIsSelf ? .trailing : .leading)
+                }
+                .padding(senderIsSelf ? .trailing : .leading, width * 0.01)
             }
     
         }
