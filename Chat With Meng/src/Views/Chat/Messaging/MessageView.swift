@@ -147,6 +147,15 @@ struct MessageView: View {
                 
             }
             entryBox()
+                .gesture(DragGesture(minimumDistance: 3.0, coordinateSpace: .local)
+                    .onEnded { value in
+                        print(value.translation)
+                        switch(value.translation.width, value.translation.height) {
+                        case (-100...100, 0...):  focus = nil
+                        default:  print("no clue")
+                        }
+                    }
+                )
         }
         .onAppear {
             Task {
