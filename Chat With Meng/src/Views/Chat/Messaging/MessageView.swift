@@ -148,6 +148,10 @@ struct MessageView: View {
                     }
                 }
                 .onChange(of: focus) {
+                    if focus == nil {
+                        return
+                    }
+                    
                     guard let messageID = messagesInView.last?.id else {return}
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         withAnimation(.smooth) {
