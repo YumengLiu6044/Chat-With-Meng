@@ -44,22 +44,24 @@ class FirebaseManager: NSObject {
         }
     }
     
-    static func makeGroupChat(with name: String, of members: [Friend]) async -> (Toast, Chat?) {
+    static func makeGroupChat(with name: String, of members: [Friend], ignoreRules: Bool = false) async -> (Toast, Chat?) {
 //        if (name.isEmpty) {
 //            let toast = Toast(style: .error, message: "Name is empty")
 //            return (toast, nil)
 //        }
-        if (name.allSatisfy {$0.isWhitespace}) {
-            let toast = Toast(style: .error, message: "At least one non-space character is required")
-            return (toast, nil)
-        }
-        if (!name.allSatisfy {$0.isLetter || $0.isNumber || $0.isWhitespace}) {
-            let toast = Toast(style: .error, message: "Only alpha-numeric characters and spaces are allowed")
-            return (toast, nil)
-        }
-        if (name.count > 30) {
-            let toast = Toast(style: .error, message: "The maximum character count is 30")
-            return (toast, nil)
+        if !ignoreRules {
+            if (name.allSatisfy {$0.isWhitespace}) {
+                let toast = Toast(style: .error, message: "At least one non-space character is required")
+                return (toast, nil)
+            }
+            if (!name.allSatisfy {$0.isLetter || $0.isNumber || $0.isWhitespace}) {
+                let toast = Toast(style: .error, message: "Only alpha-numeric characters and spaces are allowed")
+                return (toast, nil)
+            }
+            if (name.count > 30) {
+                let toast = Toast(style: .error, message: "The maximum character count is 30")
+                return (toast, nil)
+            }
         }
         var chat = Chat (
             chatID: nil,

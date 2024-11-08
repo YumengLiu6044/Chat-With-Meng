@@ -342,13 +342,13 @@ class ChattingViewModel: ObservableObject {
             guard let selfAsFriend =  await FirebaseManager.makeFriend(from: self.currentUserID)
             else {return}
             let members = [selfAsFriend, friend]
-            await self.processGroupChatCreation(with: "", of: members)
+            await self.processGroupChatCreation(with: "", of: members, ignoreRules: true)
         }
         
     }
     
-    public func processGroupChatCreation(with name: String, of members: [Friend]) async {
-        let (toast, chat) = await FirebaseManager.makeGroupChat(with: name, of: members)
+    public func processGroupChatCreation(with name: String, of members: [Friend], ignoreRules: Bool = false) async {
+        let (toast, chat) = await FirebaseManager.makeGroupChat(with: name, of: members, ignoreRules: ignoreRules)
         if toast.style == .success, let chat = chat {
             withAnimation(.smooth) {
                 self.showNewChat = false
