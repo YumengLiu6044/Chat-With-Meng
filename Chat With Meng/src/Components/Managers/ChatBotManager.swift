@@ -37,13 +37,17 @@ class ChatBotManager {
             result in
             guard let result = result else {return}
             
-            roboSend(
-                fromSender: FirebaseConstants.botID,
-                toChat: message.chatID,
-                contentType: .text,
-                content: result,
-                time: .now
-            )
+            for part in result.components(separatedBy: "\n") {
+                roboSend(
+                    fromSender: FirebaseConstants.botID,
+                    toChat: message.chatID,
+                    contentType: .text,
+                    content: part,
+                    time: .now
+                )
+            }
+            
+            
         }
         
     }
