@@ -100,6 +100,7 @@ class FirebaseManager: NSObject {
         content: String,
         time: Date
     ) async {
+        
         var message = Message(
             contentType: contentType,
             content: content,
@@ -124,7 +125,13 @@ class FirebaseManager: NSObject {
                 .getDocument(as: Chat.self)
             
             for member in data.userIDArray {
-                setIncomingMessage(for: member.key, message: message)
+                // TODO: If member is MengBot, send message to him and continue
+                if member.key == FirebaseConstants.botID {
+                    ChatBotManager.sendMessageToBot(message: message)
+                }
+                else {
+                    setIncomingMessage(for: member.key, message: message)
+                }
             }
         }
         catch {
@@ -134,7 +141,7 @@ class FirebaseManager: NSObject {
         }
     }
     
-    static private func updateChatLog(atChatID chatID: String, message: Message) -> String? {
+    static func updateChatLog(atChatID chatID: String, message: Message) -> String? {
         do {
             let docID = try FirebaseManager.shared.firestore
                 .collection(FirebaseConstants.chats)
@@ -150,7 +157,7 @@ class FirebaseManager: NSObject {
         
     }
     
-    static private func setIncomingMessage(for userID: String, message: Message) {
+    static func setIncomingMessage(for userID: String, message: Message) {
         do {
             guard let messageID = message.id else {return}
             try FirebaseManager.shared.firestore
