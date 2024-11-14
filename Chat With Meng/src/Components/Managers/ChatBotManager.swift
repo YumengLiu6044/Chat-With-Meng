@@ -105,7 +105,7 @@ class ChatBotManager {
     }
     
     static private func loadDataFromURL(chat_id: String, prompt: String, completion: @escaping (String?) -> Void ) {
-        let URLString = "http://34.72.119.6:9092/generate/"
+        let URLString = "http://35.208.196.115:9092/generate/"
 
         guard let url = URL(string: URLString) else {
             print("Invalid URL")
