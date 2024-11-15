@@ -125,13 +125,7 @@ class FirebaseManager: NSObject {
                 .getDocument(as: Chat.self)
             
             for member in data.userIDArray {
-                // TODO: If member is MengBot, send message to him and continue
-                if member.key == FirebaseConstants.botID {
-                    ChatBotManager.sendMessageToBot(message: message)
-                }
-                else {
-                    setIncomingMessage(for: member.key, message: message)
-                }
+                setIncomingMessage(for: member.key, message: message)
             }
         }
         catch {
